@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Pet - PetStory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes flipPage {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(-180deg); }
+        }
+        
+        @keyframes flipPageReverse {
+            0% { transform: rotateY(-180deg); }
+            100% { transform: rotateY(0deg); }
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-in { animation: slideIn 0.6s ease-out; }
+        .animate-scale-in { animation: scaleIn 0.6s ease-out; }
+        
+        input[type="text"],
+        input[type="date"],
+        select,
+        input[type="file"] {
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.2);
+        }
+        
+        /* Book Styles */
+        .book-container {
+            perspective: 2000px;
+            perspective-origin: center center;
+        }
+        
+        .book {
+            position: relative;
+            transform-style: preserve-3d;
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
+            margin: 0 auto;
+        }
+        
+        .book-page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-origin: left center;
+            backface-visibility: hidden;
+        }
+        
+        .book-page.page-1 {
+            z-index: 3;
+            transform: rotateY(0deg);
+        }
+        
+        .book-page.page-2 {
+            z-index: 2;
+            transform: rotateY(-180deg);
+        }
+        
+        .book-page.page-3 {
+            z-index: 1;
+            transform: rotateY(-180deg);
+        }
+        
+        .book-page.active {
+            transform: rotateY(0deg) !important;
+            z-index: 3;
+        }
+        
+        .book-page.flipping-forward {
+            animation: flipForward 1s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+        }
+        
+        .book-page.flipping-backward {
+            animation: flipBackward 1s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+        }
+        
+        @keyframes flipForward {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(-180deg); }
+        }
+        
+        @keyframes flipBackward {
+            0% { transform: rotateY(-180deg); }
+            100% { transform: rotateY(0deg); }
+        }
+        
+        .page-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            border-radius: 4px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(0, 0, 0, 0.1),
+                inset -2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .page-content::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, 
+                rgba(0,0,0,0.15) 0%,
+                rgba(0,0,0,0.08) 50%,
+                rgba(0,0,0,0.15) 100%);
+            z-index: 10;
+            box-shadow: inset 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .book-page.active .page-content {
+            box-shadow: 
+                0 25px 70px rgba(0, 0, 0, 0.4),
+                inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .page-indicator.active {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            transform: scale(1.3);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-2 text-xl font-bold">
+                    <i class="bi bi-heart-fill text-pink-500"></i>
+                    <span class="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">PetStory</span>
+                </a>
+                <a href="/pets/dashboard/" class="text-gray-600 hover:text-purple-600 transition">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <div class="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+            <!-- Formulário -->
+            <div class="animate-fade-in">
+                <div class="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                            <i class="bi bi-plus-circle text-purple-600"></i> Criar Novo Pet
+                        </h1>
+                        <p class="text-gray-500">Preencha os dados do seu pet e veja o preview ao lado</p>
+                    </div>
+                    
+                    <form method="post" enctype="multipart/form-data" id="petForm" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <!-- Nome -->
+                        <div class="animate-slide-in" style="animation-delay: 0.1s;">
+                            <label for="id_name" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="bi bi-tag text-purple-500"></i> Nome do Pet
+                            </label>
+                            <input 
+                                type="text" 
+                                name="name" 
+                                id="id_name" 
+                                required
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all"
+                                placeholder="Ex: Max, Luna, Thor..."
+                            >
+                            {% if form.name.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.name.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Espécie -->
+                        <div class="animate-slide-in" style="animation-delay: 0.2s;">
+                            <label for="id_species" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="bi bi-heart text-purple-500"></i> Espécie
+                            </label>
+                            <select 
+                                name="species" 
+                                id="id_species" 
+                                required
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all bg-white"
+                            >
+                                <option value="">Selecione a espécie</option>
+                                <option value="dog">🐕 Cachorro</option>
+                                <option value="cat">🐱 Gato</option>
+                                <option value="bird">🐦 Pássaro</option>
+                                <option value="rabbit">🐰 Coelho</option>
+                                <option value="other">🐾 Outro</option>
+                            </select>
+                            {% if form.species.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.species.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Data de Nascimento -->
+                        <div class="animate-slide-in" style="animation-delay: 0.3s;">
+                            <label for="id_birth_date" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="bi bi-calendar-heart text-purple-500"></i> Data de Nascimento
+                            </label>
+                            <input 
+                                type="date" 
+                                name="birth_date" 
+                                id="id_birth_date"
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all"
+                            >
+                            {% if form.birth_date.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.birth_date.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Foto -->
+                        <div class="animate-slide-in" style="animation-delay: 0.4s;">
+                            <label for="id_photo" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="bi bi-camera text-purple-500"></i> Foto Principal
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="file" 
+                                    name="photo" 
+                                    id="id_photo" 
+                                    required
+                                    accept="image/*"
+                                    class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                                >
+                            </div>
+                            <p class="text-gray-500 text-sm mt-2">
+                                <i class="bi bi-info-circle"></i> Envie uma foto principal do seu pet
+                            </p>
+                            {% if form.photo.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.photo.errors }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Plano -->
+                        <div class="animate-slide-in" style="animation-delay: 0.5s;">
+                            <label class="block text-sm font-semibold text-gray-700 mb-4">
+                                <i class="bi bi-star text-purple-500"></i> Escolha o Plano
+                            </label>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <!-- Plano FREE -->
+                                <label class="relative cursor-pointer group">
+                                    <input 
+                                        type="radio" 
+                                        name="plan" 
+                                        value="free" 
+                                        id="id_plan_0" 
+                                        checked
+                                        class="peer sr-only"
+                                    >
+                                    <div class="p-6 rounded-2xl border-2 border-gray-200 peer-checked:border-purple-500 peer-checked:bg-gradient-to-br peer-checked:from-purple-50 peer-checked:to-pink-50 transition-all duration-300 hover:shadow-lg group-hover:scale-105">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-lg font-bold text-gray-800">Plano FREE</h3>
+                                            <div class="w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-purple-500 peer-checked:bg-purple-500 flex items-center justify-center transition-all">
+                                                <div class="w-2 h-2 rounded-full bg-white peer-checked:block hidden"></div>
+                                            </div>
+                                        </div>
+                                        <div class="text-3xl font-bold text-purple-600 mb-4">Grátis</div>
+                                        <ul class="space-y-2 text-sm text-gray-600">
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                História gerada com IA
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Download em PDF
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Página pública
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Até 2 momentos/imagens
+                                            </li>
+                                            <li class="flex items-center text-gray-400">
+                                                <i class="bi bi-x-circle mr-2"></i>
+                                                Com marca d'água
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </label>
+                                
+                                <!-- Plano Premium -->
+                                <label class="relative cursor-pointer group">
+                                    <input 
+                                        type="radio" 
+                                        name="plan" 
+                                        value="premium" 
+                                        id="id_plan_1"
+                                        class="peer sr-only"
+                                    >
+                                    <div class="p-6 rounded-2xl border-2 border-yellow-400 peer-checked:border-yellow-500 peer-checked:bg-gradient-to-br peer-checked:from-yellow-50 peer-checked:to-orange-50 transition-all duration-300 hover:shadow-lg group-hover:scale-105 relative overflow-hidden">
+                                        <div class="absolute top-2 right-2">
+                                            <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                                RECOMENDADO
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-lg font-bold text-gray-800">Plano Premium</h3>
+                                            <div class="w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-yellow-500 peer-checked:bg-yellow-500 flex items-center justify-center transition-all">
+                                                <div class="w-2 h-2 rounded-full bg-white peer-checked:block hidden"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-baseline mb-4">
+                                            <span class="text-3xl font-bold text-yellow-600">R$ 49</span>
+                                            <span class="text-gray-400 line-through ml-2">R$ 59</span>
+                                        </div>
+                                        <ul class="space-y-2 text-sm text-gray-600">
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                História gerada com IA
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Download em PDF
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Página pública
+                                            </li>
+                                            <li class="flex items-center font-semibold text-gray-800">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Até 10 momentos/imagens
+                                            </li>
+                                            <li class="flex items-center font-semibold text-gray-800">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Sem marca d'água
+                                            </li>
+                                            <li class="flex items-center font-semibold text-gray-800">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                PDF de alta qualidade
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </label>
+                            </div>
+                            <p class="text-gray-500 text-sm mt-3">
+                                <i class="bi bi-info-circle"></i> 
+                                <strong>FREE:</strong> Até 2 momentos/imagens | 
+                                <strong>Premium:</strong> Até 10 momentos/imagens. 
+                                O plano Premium também remove a marca d'água e oferece recursos exclusivos.
+                            </p>
+                        </div>
+                        
+                        <!-- Botões -->
+                        <div class="flex gap-4 pt-4 animate-slide-in" style="animation-delay: 0.6s;">
+                            <button 
+                                type="submit" 
+                                class="flex-1 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold py-4 px-6 rounded-xl hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+                            >
+                                <i class="bi bi-check-circle"></i>
+                                Criar Pet
+                            </button>
+                            <a 
+                                href="/pets/dashboard/" 
+                                class="px-6 py-4 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center justify-center"
+                            >
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Preview - Livro Interativo -->
+            <div class="sticky top-24 h-fit">
+                <div class="bg-white rounded-3xl shadow-xl mb-4 border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-500 text-white p-4 text-center">
+                        <h5 class="font-semibold"><i class="bi bi-book"></i> Preview do Livro</h5>
+                    </div>
+                </div>
+                
+                <!-- Book Container -->
+                <div class="book-container relative">
+                    <div class="book relative mx-auto">
+                        <!-- Página 1 - Capa -->
+                        <div class="book-page page-1 active" data-page="1">
+                            <div class="page-content h-full bg-gradient-to-br from-purple-600 via-pink-500 to-indigo-600 text-white p-8 flex flex-col items-center justify-center relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                                <div class="relative z-10 text-center">
+                                    <div class="w-full h-64 rounded-2xl overflow-hidden shadow-2xl bg-white/20 backdrop-blur-sm border-2 border-white/30 mb-6" id="previewImage">
+                                        <div class="w-full h-full flex flex-col items-center justify-center">
+                                            <i class="bi bi-heart-fill text-6xl animate-pulse"></i>
+                                            <span class="mt-4 font-medium">Adicione uma foto</span>
+                                        </div>
+                                    </div>
+                                    <h1 class="text-4xl font-bold mb-4" id="previewName">Nome do Pet</h1>
+                                    <p class="text-xl opacity-90 mb-2" id="previewSpecies">🐾 Espécie</p>
+                                    <p class="text-sm opacity-75" id="previewDate"></p>
+                                    <div class="mt-6">
+                                        <span id="previewPlan" class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold border border-white/30">
+                                            <i class="bi bi-gift"></i>
+                                            <span>Plano FREE</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Página 2 - História -->
+                        <div class="book-page page-2" data-page="2">
+                            <div class="page-content h-full bg-gradient-to-br from-amber-50 to-orange-50 p-8 flex flex-col">
+                                <div class="mb-6">
+                                    <h2 class="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                        <i class="bi bi-book-heart text-purple-600"></i>
+                                        A História
+                                    </h2>
+                                    <div class="w-20 h-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full"></div>
+                                </div>
+                                <div class="flex-1 overflow-y-auto">
+                                    <p class="text-gray-700 leading-relaxed text-sm">
+                                        Esta é a história encantadora de <strong class="text-purple-600" id="previewStoryName2">seu pet</strong>, 
+                                        um <strong class="text-purple-600" id="previewStorySpecies2">companheiro</strong> especial que trouxe muita 
+                                        alegria e amor para a vida de seus tutores.
+                                    </p>
+                                    <p class="text-gray-700 leading-relaxed text-sm mt-4">
+                                        Desde o primeiro dia, <span id="previewStoryName3">seu pet</span> mostrou ser mais do que um animal de estimação. 
+                                        Cada momento ao lado dele é uma nova aventura e uma nova razão para sorrir.
+                                    </p>
+                                    <p class="text-gray-700 leading-relaxed text-sm mt-4">
+                                        Esta história foi criada com muito carinho para preservar as memórias mais especiais.
+                                    </p>
+                                </div>
+                                <div class="mt-4 text-center text-xs text-gray-500">
+                                    <i class="bi bi-magic"></i> Gerado com Inteligência Artificial
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Página 3 - Momentos -->
+                        <div class="book-page page-3" data-page="3">
+                            <div class="page-content h-full bg-gradient-to-br from-pink-50 to-rose-50 p-8 flex flex-col">
+                                <div class="mb-6">
+                                    <h2 class="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                        <i class="bi bi-stars text-purple-600"></i>
+                                        Momentos Especiais
+                                    </h2>
+                                    <div class="w-20 h-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full"></div>
+                                </div>
+                                <div class="flex-1 grid grid-cols-2 gap-4">
+                                    <div class="bg-white rounded-xl p-4 shadow-md border-2 border-dashed border-purple-200 flex flex-col items-center justify-center">
+                                        <i class="bi bi-camera-fill text-purple-600 text-3xl mb-2"></i>
+                                        <div class="text-xs text-gray-600 font-medium">Momento 1</div>
+                                    </div>
+                                    <div class="bg-white rounded-xl p-4 shadow-md border-2 border-dashed border-purple-200 flex flex-col items-center justify-center">
+                                        <i class="bi bi-camera-fill text-purple-600 text-3xl mb-2"></i>
+                                        <div class="text-xs text-gray-600 font-medium">Momento 2</div>
+                                    </div>
+                                    <div class="bg-white rounded-xl p-4 shadow-md border-2 border-dashed border-purple-200 flex flex-col items-center justify-center opacity-50">
+                                        <i class="bi bi-plus-circle text-gray-400 text-3xl mb-2"></i>
+                                        <div class="text-xs text-gray-400">Adicione mais</div>
+                                    </div>
+                                    <div class="bg-white rounded-xl p-4 shadow-md border-2 border-dashed border-purple-200 flex flex-col items-center justify-center opacity-50">
+                                        <i class="bi bi-plus-circle text-gray-400 text-3xl mb-2"></i>
+                                        <div class="text-xs text-gray-400">Adicione mais</div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center text-xs text-gray-500">
+                                    ✨ Adicione 2-5 momentos após criar
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Controles de Navegação -->
+                    <div class="flex items-center justify-center gap-4 mt-6">
+                        <button id="prevPage" class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg hover:shadow-xl transform hover:scale-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <div class="flex gap-2">
+                            <span class="page-indicator active w-2 h-2 rounded-full bg-purple-600 transition-all"></span>
+                            <span class="page-indicator w-2 h-2 rounded-full bg-gray-300 transition-all"></span>
+                            <span class="page-indicator w-2 h-2 rounded-full bg-gray-300 transition-all"></span>
+                        </div>
+                        <button id="nextPage" class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg hover:shadow-xl transform hover:scale-110 transition-all">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="text-center mt-4 text-sm text-gray-500">
+                        Página <span id="currentPage">1</span> de <span id="totalPages">3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Book Navigation
+        let currentPage = 1;
+        const totalPages = 3;
+        const pages = document.querySelectorAll('.book-page');
+        const indicators = document.querySelectorAll('.page-indicator');
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        const currentPageSpan = document.getElementById('currentPage');
+        
+        function updatePageDisplay() {
+            currentPageSpan.textContent = currentPage;
+            
+            // Update indicators
+            indicators.forEach((indicator, index) => {
+                if (index === currentPage - 1) {
+                    indicator.classList.add('active');
+                    indicator.style.background = 'linear-gradient(135deg, #8b5cf6, #ec4899)';
+                    indicator.style.transform = 'scale(1.2)';
+                } else {
+                    indicator.classList.remove('active');
+                    indicator.style.background = '#d1d5db';
+                    indicator.style.transform = 'scale(1)';
+                }
+            });
+            
+            // Update buttons
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            
+            // Update page visibility with 3D transform
+            pages.forEach((page, index) => {
+                const pageNum = index + 1;
+                if (pageNum === currentPage) {
+                    page.style.transform = 'rotateY(0deg)';
+                    page.style.zIndex = '3';
+                    page.classList.add('active');
+                } else if (pageNum < currentPage) {
+                    page.style.transform = 'rotateY(-180deg)';
+                    page.style.zIndex = '1';
+                    page.classList.remove('active');
+                } else {
+                    page.style.transform = 'rotateY(-180deg)';
+                    page.style.zIndex = '2';
+                    page.classList.remove('active');
+                }
+            });
+        }
+        
+        function flipPage(direction) {
+            if (direction === 'next' && currentPage < totalPages) {
+                const currentPageEl = pages[currentPage - 1];
+                currentPageEl.classList.add('flipping-forward');
+                setTimeout(() => {
+                    currentPage++;
+                    currentPageEl.classList.remove('flipping-forward');
+                    updatePageDisplay();
+                }, 500);
+            } else if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+                const currentPageEl = pages[currentPage - 1];
+                currentPageEl.classList.add('flipping-backward');
+                setTimeout(() => {
+                    currentPageEl.classList.remove('flipping-backward');
+                    updatePageDisplay();
+                }, 500);
+            }
+        }
+        
+        nextBtn.addEventListener('click', () => flipPage('next'));
+        prevBtn.addEventListener('click', () => flipPage('prev'));
+        
+        // Atualizar preview em tempo real
+        const nameInput = document.getElementById('id_name');
+        const speciesSelect = document.getElementById('id_species');
+        const birthDateInput = document.getElementById('id_birth_date');
+        const photoInput = document.getElementById('id_photo');
+        const planInputs = document.querySelectorAll('input[name="plan"]');
+        
+        const previewName = document.getElementById('previewName');
+        const previewSpecies = document.getElementById('previewSpecies');
+        const previewDate = document.getElementById('previewDate');
+        const previewImage = document.getElementById('previewImage');
+        const previewStoryName2 = document.getElementById('previewStoryName2');
+        const previewStoryName3 = document.getElementById('previewStoryName3');
+        const previewStorySpecies2 = document.getElementById('previewStorySpecies2');
+        const previewPlan = document.getElementById('previewPlan');
+        
+        const speciesMap = {
+            'dog': '🐕 Cachorro',
+            'cat': '🐱 Gato',
+            'bird': '🐦 Pássaro',
+            'rabbit': '🐰 Coelho',
+            'other': '🐾 Pet'
+        };
+        
+        nameInput.addEventListener('input', function() {
+            const value = this.value.trim() || 'Nome do Pet';
+            previewName.textContent = value;
+            previewStoryName2.textContent = value;
+            previewStoryName3.textContent = value;
+        });
+        
+        speciesSelect.addEventListener('change', function() {
+            const value = speciesMap[this.value] || '🐾 Pet';
+            previewSpecies.innerHTML = value;
+            const speciesText = this.options[this.selectedIndex].text.toLowerCase();
+            previewStorySpecies2.textContent = speciesText;
+        });
+        
+        birthDateInput.addEventListener('change', function() {
+            if (this.value) {
+                const date = new Date(this.value);
+                const formatted = date.toLocaleDateString('pt-BR', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+                previewDate.innerHTML = `<i class="bi bi-calendar-heart"></i> Nascido em ${formatted}`;
+            } else {
+                previewDate.innerHTML = '';
+            }
+        });
+        
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.innerHTML = `
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <i class="bi bi-heart-fill text-6xl animate-pulse"></i>
+                        <span class="mt-4 font-medium">Adicione uma foto</span>
+                    </div>
+                `;
+            }
+        });
+        
+        planInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.value === 'premium') {
+                    previewPlan.innerHTML = '<i class="bi bi-star-fill"></i><span>Plano Premium</span>';
+                    previewPlan.className = 'inline-flex items-center gap-2 bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold border border-white/40';
+                } else {
+                    previewPlan.innerHTML = '<i class="bi bi-gift"></i><span>Plano FREE</span>';
+                    previewPlan.className = 'inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold border border-white/30';
+                }
+            });
+        });
+        
+        // Initialize
+        updatePageDisplay();
+    </script>
+</body>
+</html>

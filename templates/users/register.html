@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Criar Conta - PetStory{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body p-5">
+                <h2 class="card-title text-center mb-4">
+                    <i class="bi bi-person-plus"></i> Criar Conta
+                </h2>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Usuário</label>
+                        <input type="text" name="username" id="id_username" class="form-control" required autofocus>
+                        <small class="form-text text-muted">Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label">Senha</label>
+                        <input type="password" name="password1" id="id_password1" class="form-control" required>
+                        <small class="form-text text-muted">
+                            <ul class="mb-0">
+                                <li>Sua senha não pode ser muito similar às suas outras informações pessoais.</li>
+                                <li>Sua senha precisa conter pelo menos 8 caracteres.</li>
+                                <li>Sua senha não pode ser uma senha comumente usada.</li>
+                                <li>Sua senha não pode ser inteiramente numérica.</li>
+                            </ul>
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_password2" class="form-label">Confirmação de senha</label>
+                        <input type="password" name="password2" id="id_password2" class="form-control" required>
+                        <small class="form-text text-muted">Digite a mesma senha novamente, para verificação.</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        Criar Conta
+                    </button>
+                </form>
+                
+                <div class="text-center">
+                    <p class="mb-0">Já tem uma conta? <a href="{% url 'users:login' %}">Entrar</a></p>
+                    <p class="mt-2"><a href="{% url 'users:landing' %}">Voltar para a página inicial</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

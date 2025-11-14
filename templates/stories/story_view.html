@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}História de {{ pet.name }} - PetStory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="bi bi-book"></i> História de {{ pet.name }}</h3>
+                {% if not story.is_premium %}
+                <span class="badge bg-secondary">Versão FREE</span>
+                {% else %}
+                <span class="badge bg-success">Versão Premium</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if pet.photo %}
+                <div class="text-center mb-4">
+                    <img src="{{ pet.photo.url }}" alt="{{ pet.name }}" class="img-fluid rounded" style="max-height: 300px;">
+                </div>
+                {% endif %}
+                
+                <div style="white-space: pre-line; line-height: 1.8; font-size: 1.1rem;">
+                    {{ story.generated_text }}
+                </div>
+                
+                {% if not story.is_premium %}
+                <div class="alert alert-info mt-4">
+                    <i class="bi bi-info-circle"></i> Esta é a versão gratuita. 
+                    <a href="{% url 'stories:premium_success' %}" class="alert-link">Compre a versão Premium</a> 
+                    para remover a marca d'água e ter acesso a recursos exclusivos!
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if moments %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-clock-history"></i> Momentos que Inspiraram Esta História</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for moment in moments %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            {% if moment.image %}
+                            <img src="{{ moment.image.url }}" class="card-img-top" alt="{{ moment.title }}" style="height: 150px; object-fit: cover;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h6 class="card-title">{{ moment.title }}</h6>
+                                <p class="card-text small">{{ moment.text }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Ações</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'pets:pdf' pet.slug %}" class="btn btn-primary">
+                        <i class="bi bi-file-pdf"></i> Baixar PDF
+                    </a>
+                    <a href="{% url 'pets:public_pet' pet.slug %}" class="btn btn-outline-primary" target="_blank">
+                        <i class="bi bi-share"></i> Ver Página Pública
+                    </a>
+                    <a href="{% url 'pets:pet_detail' pet.slug %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar para o Pet
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        {% if not story.is_premium %}
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-star-fill"></i> Upgrade para Premium</h5>
+            </div>
+            <div class="card-body">
+                <h4 class="text-center mb-3">R$ 49,90</h4>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-check-circle text-success"></i> Sem marca d'água</li>
+                    <li><i class="bi bi-check-circle text-success"></i> PDF de alta qualidade</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Recursos exclusivos</li>
+                </ul>
+                <a href="{% url 'stories:premium_success' %}" class="btn btn-warning w-100">
+                    <i class="bi bi-cart"></i> Comprar Versão Premium
+                </a>
+                <small class="text-muted d-block text-center mt-2">
+                    * Integração de pagamento será implementada em breve
+                </small>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

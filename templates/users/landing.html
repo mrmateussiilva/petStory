@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetStory - Crie Histórias Encantadoras do Seu Pet com IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 8s ease infinite;
+        }
+        
+        .animate-shimmer {
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-white overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-2 text-2xl font-bold">
+                    <i class="bi bi-heart-fill text-pink-500"></i>
+                    <span class="gradient-text">PetStory</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#precos" class="text-gray-600 hover:text-purple-600 transition font-medium">Preços</a>
+                    <a href="#como-fazer" class="text-gray-600 hover:text-purple-600 transition font-medium">Como Fazer</a>
+                    <a href="#faq" class="text-gray-600 hover:text-purple-600 transition font-medium">FAQ</a>
+                    <a href="{% url 'pets:pet_create' %}" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                        Criar História
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <!-- Animated Background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-indigo-600 animate-gradient"></div>
+        
+        <!-- Floating Elements -->
+        <div class="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-20 right-10 w-40 h-40 bg-pink-300/20 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/4 w-24 h-24 bg-yellow-300/20 rounded-full blur-2xl animate-float" style="animation-delay: 4s;"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center text-white max-w-4xl mx-auto">
+                <div class="animate-fade-in-up">
+                    <h1 class="text-6xl md:text-8xl font-bold mb-6 leading-tight">
+                        Surpreenda com a<br/>
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200">
+                            História do Seu Pet
+                        </span>
+                    </h1>
+                </div>
+                
+                <p class="text-xl md:text-2xl mb-10 text-white/90 max-w-2xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s;">
+                    Crie um contador dinâmico e uma história encantadora do seu pet com IA.<br/>
+                    Compartilhe com quem você ama e faça um presente surpresa inesquecível. 💕
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up" style="animation-delay: 0.4s;">
+                    <a href="{% url 'pets:pet_create' %}" class="px-10 py-4 bg-white text-purple-600 rounded-full font-bold text-lg hover:shadow-2xl transform hover:scale-110 transition-all duration-300 flex items-center space-x-2">
+                        <span>Quero fazer minha história</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a href="#como-fazer" class="px-10 py-4 glass-effect text-white rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-300">
+                        Saiba Mais
+                    </a>
+                </div>
+                
+                <!-- Preview Card -->
+                <div class="mt-16 animate-fade-in-up" style="animation-delay: 0.6s;">
+                    <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl max-w-2xl mx-auto">
+                        <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 shadow-xl">
+                            <div class="bg-white/20 backdrop-blur-sm rounded-xl h-64 flex items-center justify-center">
+                                <i class="bi bi-heart-fill text-white text-6xl animate-pulse"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="mt-8 text-white/80 animate-fade-in-up" style="animation-delay: 0.8s;">
+                    <i class="bi bi-star-fill text-yellow-300"></i>
+                    Em destaque em <strong>+4516</strong> pets felizes
+                </p>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="bi bi-chevron-down text-white text-3xl"></i>
+        </div>
+    </section>
+
+    <!-- Como Fazer Section -->
+    <section id="como-fazer" class="py-24 bg-gradient-to-b from-white to-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20 animate-fade-in-up">
+                <h2 class="text-5xl font-bold text-gray-800 mb-4">Como fazer?</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Quatro passos simples para criar a história perfeita do seu pet
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                <!-- Step 1 -->
+                <div class="feature-card bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl border border-gray-100">
+                    <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 transform hover:scale-110 transition-transform">
+                        <i class="bi bi-heart text-white text-3xl"></i>
+                    </div>
+                    <div class="text-center mb-4">
+                        <span class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-bold">1</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">Preencha os dados</h3>
+                    <p class="text-gray-600 leading-relaxed text-center">
+                        Adicione informações do seu pet e escolha o plano ideal
+                    </p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="feature-card bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl border border-gray-100">
+                    <div class="w-20 h-20 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-6 transform hover:scale-110 transition-transform">
+                        <i class="bi bi-camera text-white text-3xl"></i>
+                    </div>
+                    <div class="text-center mb-4">
+                        <span class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm font-bold">2</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">Adicione momentos</h3>
+                    <p class="text-gray-600 leading-relaxed text-center">
+                        Registre 2 a 5 momentos especiais com fotos e descrições
+                    </p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="feature-card bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl border border-gray-100">
+                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6 transform hover:scale-110 transition-transform">
+                        <i class="bi bi-magic text-white text-3xl"></i>
+                    </div>
+                    <div class="text-center mb-4">
+                        <span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-sm font-bold">3</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">IA gera a história</h3>
+                    <p class="text-gray-600 leading-relaxed text-center">
+                        Nossa IA transforma seus momentos em uma narrativa única
+                    </p>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="feature-card bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl border border-gray-100">
+                    <div class="w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 transform hover:scale-110 transition-transform">
+                        <i class="bi bi-share text-white text-3xl"></i>
+                    </div>
+                    <div class="text-center mb-4">
+                        <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-sm font-bold">4</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">Compartilhe</h3>
+                    <p class="text-gray-600 leading-relaxed text-center">
+                        Receba o link e compartilhe com quem você ama
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Novidade Section -->
+    <section class="py-24 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="max-w-4xl mx-auto text-white">
+                <div class="text-6xl mb-6 animate-bounce">✨</div>
+                <h2 class="text-5xl font-bold mb-6">Novidade</h2>
+                <p class="text-2xl mb-8 text-white/90 leading-relaxed">
+                    Suas fotos são transformadas em histórias encantadoras com IA.<br/>
+                    Só adicionar os momentos e ver a mágica acontecer.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Preços Section -->
+    <section id="precos" class="py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl font-bold text-gray-800 mb-4">Preços</h2>
+                <p class="text-xl text-gray-600">Escolha o plano ideal para você</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <!-- Plano Básico -->
+                <div class="bg-white rounded-3xl p-8 border-2 border-gray-200 hover:border-purple-300 transition-all shadow-lg hover:shadow-2xl transform hover:-translate-y-2">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i class="bi bi-heart text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Básico</h3>
+                        <div class="text-5xl font-bold text-gray-800 mb-2">R$ 0</div>
+                        <p class="text-gray-500">Grátis</p>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="bi bi-check-circle-fill text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">História gerada com IA</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="bi bi-check-circle-fill text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">Download em PDF</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="bi bi-check-circle-fill text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">Página pública</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="bi bi-x-circle text-gray-400 text-xl mr-3"></i>
+                            <span class="text-gray-400">Com marca d'água</span>
+                        </li>
+                    </ul>
+                    <a href="{% url 'pets:pet_create' %}" class="block w-full text-center px-6 py-4 bg-gray-100 text-gray-700 rounded-full font-semibold hover:bg-gray-200 transition-all">
+                        Quero fazer minha história
+                    </a>
+                </div>
+
+                <!-- Plano Premium -->
+                <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-3xl p-8 border-2 border-yellow-400 relative hover:shadow-2xl transform hover:-translate-y-2 transition-all shadow-xl">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+                            Mais escolhido
+                        </span>
+                    </div>
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <i class="bi bi-heart-fill text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Premium</h3>
+                        <div class="flex items-baseline justify-center mb-2">
+                            <span class="text-5xl font-bold text-yellow-600">R$ 49</span>
+                            <span class="text-gray-400 line-through ml-2 text-2xl">R$ 59</span>
+                        </div>
+                        <p class="text-gray-600">Pra sempre</p>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="bi bi-check-circle-fill text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">História gerada com IA</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="bi bi-check-circle-fill text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">Download em PDF</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="bi bi-check-circle-fill text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700">Página pública</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="bi bi-check-circle-fill text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700 font-semibold">Sem marca d'água</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="bi bi-check-circle-fill text-green-500 text-xl mr-3"></i>
+                            <span class="text-gray-700 font-semibold">PDF de alta qualidade</span>
+                        </li>
+                    </ul>
+                    <a href="{% url 'pets:pet_create' %}" class="block w-full text-center px-6 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                        Quero fazer minha história
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-24 bg-gradient-to-b from-gray-50 to-white">
+        <div class="container mx-auto px-6 max-w-4xl">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl font-bold text-gray-800 mb-4">Perguntas Frequentes</h2>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">O que é o PetStory?</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        PetStory é uma plataforma que permite criar histórias encantadoras do seu pet usando inteligência artificial. 
+                        Você pode adicionar fotos, momentos especiais e nossa IA transforma tudo em uma narrativa única e memorável. 
+                        Perfeito para presentear e compartilhar.
+                    </p>
+                </div>
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Quanto tempo demora para gerar a história?</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        A geração da história é instantânea! Após adicionar 2 a 5 momentos do seu pet, 
+                        nossa IA gera a história em segundos. Você recebe o link público e pode baixar o PDF imediatamente.
+                    </p>
+                </div>
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">A página tem validade?</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Não! Sua página fica disponível para sempre. Você pode compartilhar o link quando quiser 
+                        e acessar a qualquer momento. No plano Premium, você tem acesso ilimitado.
+                    </p>
+                </div>
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Posso editar minha história depois de criá-la?</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Sim! Você pode adicionar mais momentos, editar informações do pet e regenerar a história 
+                        quantas vezes quiser. Todas as alterações são salvas automaticamente.
+                    </p>
+                </div>
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Qual a diferença entre o plano Básico e Premium?</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        O plano Básico é gratuito e inclui todas as funcionalidades principais, mas com marca d'água. 
+                        O plano Premium remove a marca d'água, oferece PDF de alta qualidade e recursos exclusivos por apenas R$ 49,90.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="py-24 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="max-w-4xl mx-auto text-white">
+                <h2 class="text-5xl md:text-6xl font-bold mb-6">
+                    Vamos criar a história do seu pet?
+                </h2>
+                <p class="text-2xl mb-10 text-white/90">
+                    Demora menos de 5 minutos. É sério!
+                </p>
+                <a href="{% url 'pets:pet_create' %}" class="inline-block px-12 py-5 bg-white text-purple-600 rounded-full font-bold text-xl hover:shadow-2xl transform hover:scale-110 transition-all duration-300">
+                    Quero fazer minha história
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-2 mb-6">
+                    <i class="bi bi-heart-fill text-pink-500 text-3xl"></i>
+                    <span class="text-3xl font-bold">PetStory</span>
+                </div>
+                <p class="text-gray-400 mb-8 text-lg">
+                    Surpreenda criando a história do seu pet com IA
+                </p>
+                <p class="text-gray-500 text-sm">
+                    Copyright © 2024 - Todos os direitos reservados
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Intersection Observer para animações ao scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out';
+                    entry.target.style.opacity = '1';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.feature-card, .bg-white.rounded-2xl').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

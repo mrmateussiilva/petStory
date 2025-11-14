@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>História de {{ pet.name }} - PetStory</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.8;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #6c63ff;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #6c63ff;
+            margin: 0;
+        }
+        .pet-photo {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pet-photo img {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 10px;
+        }
+        .story-content {
+            white-space: pre-line;
+            font-size: 14px;
+            text-align: justify;
+        }
+        .moments-section {
+            margin-top: 30px;
+            page-break-inside: avoid;
+        }
+        .moment-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #6c63ff;
+        }
+        .watermark {
+            position: fixed;
+            bottom: 1cm;
+            right: 1cm;
+            color: rgba(0, 0, 0, 0.3);
+            font-size: 10px;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>A História de {{ pet.name }}</h1>
+        <p>{{ pet.get_species_display }}</p>
+        {% if pet.birth_date %}
+        <p>Nascido em {{ pet.birth_date|date:"d/m/Y" }}</p>
+        {% endif %}
+    </div>
+    
+    {% if photo_path %}
+    <div class="pet-photo">
+        <img src="file://{{ photo_path }}" alt="{{ pet.name }}">
+    </div>
+    {% endif %}
+    
+    <div class="story-content">
+        {{ story.generated_text }}
+    </div>
+    
+    {% if moments %}
+    <div class="moments-section">
+        <h2>Momentos Especiais</h2>
+        {% for moment in moments %}
+        <div class="moment-item">
+            <h3>{{ moment.title }}</h3>
+            <p>{{ moment.text }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="footer">
+        <p>Gerado por PetStory - Histórias de Pets com IA</p>
+        <p>{{ story.created_at|date:"d/m/Y H:i" }}</p>
+    </div>
+    
+    {% if not story.is_premium %}
+    <div class="watermark">
+        FREE - PetStory
+    </div>
+    {% endif %}
+</body>
+</html>
+

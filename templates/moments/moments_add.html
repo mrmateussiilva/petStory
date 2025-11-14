@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Adicionar Momentos - PetStory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="bi bi-plus-circle"></i> Adicionar Momento - {{ pet.name }}</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    Você já adicionou <strong>{{ moments_count }}</strong> de <strong>{{ max_moments }}</strong> momentos 
+                    {% if pet.plan == 'premium' %}
+                        <span class="badge bg-warning text-dark">Premium</span>
+                    {% else %}
+                        <span class="badge bg-secondary">FREE</span>
+                    {% endif %}
+                    {% if moments_count < min_moments %}
+                    <br><strong class="text-warning">Adicione pelo menos {{ min_moments }} momentos para gerar a história!</strong>
+                    {% elif moments_count >= max_moments %}
+                    <br><strong class="text-danger">Você atingiu o limite máximo de {{ max_moments }} momentos do seu plano!</strong>
+                    {% endif %}
+                </p>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.text.id_for_label }}" class="form-label">{{ form.text.label }}</label>
+                        {{ form.text }}
+                        {% if form.text.errors %}
+                            <div class="text-danger">{{ form.text.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.image.id_for_label }}" class="form-label">{{ form.image.label }}</label>
+                        {{ form.image }}
+                        {% if form.image.errors %}
+                            <div class="text-danger">{{ form.image.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        {% if can_add_more %}
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Adicionar Momento
+                        </button>
+                        {% else %}
+                        <button type="button" class="btn btn-secondary" disabled>
+                            <i class="bi bi-x-circle"></i> Limite Atingido
+                        </button>
+                        {% endif %}
+                        <a href="{% url 'pets:pet_detail' pet.slug %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Momentos Adicionados</h5>
+            </div>
+            <div class="card-body">
+                {% if moments %}
+                    {% for moment in moments %}
+                    <div class="mb-3 pb-3 border-bottom">
+                        <h6>{{ moment.title }}</h6>
+                        <p class="small text-muted">{{ moment.text|truncatewords:15 }}</p>
+                        {% if moment.image %}
+                        <img src="{{ moment.image.url }}" class="img-thumbnail" style="max-width: 100%; height: auto;">
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center">Nenhum momento adicionado ainda</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

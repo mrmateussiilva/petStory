@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ pet.name }} - PetStory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            {% if pet.photo %}
+            <img src="{{ pet.photo.url }}" class="card-img-top" alt="{{ pet.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ pet.name }}</h3>
+                <p class="card-text">
+                    <strong>Espécie:</strong> {{ pet.get_species_display }}<br>
+                    {% if pet.birth_date %}
+                    <strong>Data de Nascimento:</strong> {{ pet.birth_date|date:"d/m/Y" }}<br>
+                    {% endif %}
+                    <strong>Plano:</strong> 
+                    {% if pet.plan == 'premium' %}
+                        <span class="badge bg-warning text-dark">Premium</span>
+                    {% else %}
+                        <span class="badge bg-secondary">FREE</span>
+                    {% endif %}<br>
+                    <strong>Criado em:</strong> {{ pet.created_at|date:"d/m/Y" }}
+                </p>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'moments:add' pet.slug %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Adicionar Momentos
+                    </a>
+                    {% if can_generate_story %}
+                    <a href="{% url 'stories:generate' pet.slug %}" class="btn btn-success">
+                        <i class="bi bi-magic"></i> Gerar História com IA
+                    </a>
+                    {% elif story %}
+                    <a href="{% url 'stories:view' pet.slug %}" class="btn btn-info">
+                        <i class="bi bi-book"></i> Ver História Gerada
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'pets:public_pet' pet.slug %}" class="btn btn-outline-primary" target="_blank">
+                        <i class="bi bi-share"></i> Ver Página Pública
+                    </a>
+                    <a href="{% url 'pets:pet_delete' pet.slug %}" class="btn btn-outline-danger">
+                        <i class="bi bi-trash"></i> Deletar Pet
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-clock-history"></i> Momentos ({{ moments|length }}/{{ max_moments }})
+                    {% if pet.plan == 'premium' %}
+                        <span class="badge bg-warning text-dark">Premium</span>
+                    {% else %}
+                        <span class="badge bg-secondary">FREE</span>
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if moments %}
+                    <div class="row">
+                        {% for moment in moments %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                {% if moment.image %}
+                                <img src="{{ moment.image.url }}" class="card-img-top" alt="{{ moment.title }}" style="height: 150px; object-fit: cover;">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ moment.title }}</h6>
+                                    <p class="card-text small">{{ moment.text|truncatewords:20 }}</p>
+                                    <a href="{% url 'moments:delete' pet.slug moment.id %}" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Deletar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3">Nenhum momento adicionado ainda. Adicione pelo menos 2 momentos para gerar a história!</p>
+                {% endif %}
+                
+                {% if can_add_more %}
+                <div class="text-center">
+                    <a href="{% url 'moments:add' pet.slug %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Adicionar Momento
+                    </a>
+                    {% if moments|length < min_moments %}
+                    <p class="text-warning mt-2">
+                        <i class="bi bi-exclamation-triangle"></i> 
+                        Adicione pelo menos {{ min_moments }} momentos para gerar a história!
+                    </p>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="alert alert-warning text-center">
+                    <i class="bi bi-info-circle"></i> 
+                    Você atingiu o limite máximo de {{ max_moments }} momentos do plano 
+                    {% if pet.plan == 'premium' %}Premium{% else %}FREE{% endif %}!
+                    {% if pet.plan == 'free' %}
+                    <br><a href="#" class="btn btn-sm btn-warning mt-2">Upgrade para Premium e adicione até 10 momentos!</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if story %}
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-book"></i> História Gerada</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">História criada em {{ story.created_at|date:"d/m/Y H:i" }}</p>
+                <a href="{% url 'stories:view' pet.slug %}" class="btn btn-primary">
+                    <i class="bi bi-eye"></i> Ver História Completa
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
