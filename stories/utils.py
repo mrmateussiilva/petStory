@@ -32,7 +32,7 @@ def add_watermark_to_image(image_path, is_premium=False):
                 font = None
         
         # Texto da marca d'água
-        watermark_text = "FREE - PetStory"
+        watermark_text = "Criado com PetStory — Faça o seu!"
         
         # Calcular posição (canto inferior direito)
         if font:
@@ -111,7 +111,8 @@ def generate_pdf(pet, story):
         bottom: 1cm;
         right: 1cm;
         color: rgba(0, 0, 0, 0.3);
-        font-size: 12px;
+        font-size: 10px;
+        font-style: italic;
     }
     """
     

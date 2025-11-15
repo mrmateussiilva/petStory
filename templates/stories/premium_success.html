@@ -1,34 +1,82 @@
 {% extends 'base.html' %}
 
-{% block title %}Premium - PetStory{% endblock %}
+{% block title %}Premium Liberado - PetStory{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    @keyframes confetti {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: #f0f;
+        animation: confetti 3s linear forwards;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-success text-white text-center">
-                <h3 class="mb-0"><i class="bi bi-check-circle-fill"></i> Em Desenvolvimento</h3>
+    <div class="col-md-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-gradient text-white text-center py-4" style="background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);">
+                <i class="bi bi-check-circle-fill" style="font-size: 4rem;"></i>
+                <h2 class="mb-0 mt-3">Obrigado! Seu livro premium está liberado!</h2>
             </div>
             <div class="card-body text-center py-5">
-                <i class="bi bi-credit-card" style="font-size: 4rem; color: #6c63ff;"></i>
-                <h4 class="mt-4">Sistema de Pagamento Premium</h4>
-                <p class="text-muted">
-                    A funcionalidade de compra da versão Premium está em desenvolvimento.
-                    Em breve você poderá:
+                <div class="mb-4">
+                    <i class="bi bi-star-fill text-warning" style="font-size: 5rem;"></i>
+                </div>
+                <h3 class="mb-4 text-success">🎉 Parabéns!</h3>
+                <p class="lead mb-4">
+                    Você agora tem acesso completo à versão Premium do PetStory!
                 </p>
-                <ul class="list-unstyled text-start" style="max-width: 300px; margin: 0 auto;">
-                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Remover marca d'água</li>
-                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> PDF de alta qualidade</li>
-                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Recursos exclusivos</li>
-                </ul>
-                <div class="mt-4">
-                    <a href="{% url 'pets:dashboard' %}" class="btn btn-primary">
-                        <i class="bi bi-arrow-left"></i> Voltar para o Dashboard
+                <div class="alert alert-success mb-4">
+                    <h5><i class="bi bi-check-circle-fill"></i> Recursos Premium Ativados:</h5>
+                    <ul class="list-unstyled text-start" style="max-width: 400px; margin: 0 auto;">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Sem marca d'água</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> PDF de alta qualidade</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Capa personalizada</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Página pública sem watermark</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Recursos exclusivos</li>
+                    </ul>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                    <a href="{% url 'pets:dashboard' %}" class="btn btn-primary btn-lg px-5">
+                        <i class="bi bi-house"></i> Voltar para o Dashboard
+                    </a>
+                    <a href="{% url 'pets:dashboard' %}" class="btn btn-outline-primary btn-lg px-5">
+                        <i class="bi bi-book"></i> Ver Minhas Histórias
                     </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Efeito de confete (opcional)
+    function createConfetti() {
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }, i * 50);
+        }
+    }
+    
+    // Criar confete ao carregar a página
+    window.addEventListener('load', createConfetti);
+</script>
 {% endblock %}
 

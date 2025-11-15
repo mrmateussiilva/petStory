@@ -120,14 +120,13 @@
                     </h1>
                 </div>
                 
-                <p class="text-xl md:text-2xl mb-10 text-white/90 max-w-2xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s;">
-                    Crie um contador dinâmico e uma história encantadora do seu pet com IA.<br/>
-                    Compartilhe com quem você ama e faça um presente surpresa inesquecível. 💕
+                <p class="text-3xl md:text-4xl mb-10 text-white/95 max-w-3xl mx-auto animate-fade-in-up font-bold" style="animation-delay: 0.2s;">
+                    Crie o livro e o site da história do seu pet em minutos
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up" style="animation-delay: 0.4s;">
-                    <a href="{% url 'pets:pet_create' %}" class="px-10 py-4 bg-white text-purple-600 rounded-full font-bold text-lg hover:shadow-2xl transform hover:scale-110 transition-all duration-300 flex items-center space-x-2">
-                        <span>Quero fazer minha história</span>
+                    <a href="{% url 'pets:pet_create' %}" class="px-12 py-5 bg-white text-purple-600 rounded-full font-bold text-xl hover:shadow-2xl transform hover:scale-110 transition-all duration-300 flex items-center space-x-2">
+                        <span>Começar agora</span>
                         <i class="bi bi-arrow-right"></i>
                     </a>
                     <a href="#como-fazer" class="px-10 py-4 glass-effect text-white rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-300">
@@ -135,12 +134,12 @@
                     </a>
                 </div>
                 
-                <!-- Preview Card -->
+                <!-- Imagem Grande de Pet -->
                 <div class="mt-16 animate-fade-in-up" style="animation-delay: 0.6s;">
-                    <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl max-w-2xl mx-auto">
+                    <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl max-w-4xl mx-auto">
                         <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 shadow-xl">
-                            <div class="bg-white/20 backdrop-blur-sm rounded-xl h-64 flex items-center justify-center">
-                                <i class="bi bi-heart-fill text-white text-6xl animate-pulse"></i>
+                            <div class="bg-white/20 backdrop-blur-sm rounded-xl h-96 flex items-center justify-center overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&h=600&fit=crop" alt="Pet feliz" class="w-full h-full object-cover rounded-xl">
                             </div>
                         </div>
                     </div>

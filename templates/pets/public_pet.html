@@ -3,9 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ pet.name }} - PetStory</title>
+    <title>A história de {{ pet.name }} - PetStory</title>
+    
+    <!-- Meta Tags Open Graph -->
+    <meta property="og:title" content="A história de {{ pet.name }}">
+    <meta property="og:description" content="Veja a história completa do pet {{ pet.name }}">
+    {% if pet.photo %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ pet.photo.url }}">
+    {% endif %}
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="PetStory">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="A história de {{ pet.name }}">
+    <meta name="twitter:description" content="Veja a história completa do pet {{ pet.name }}">
+    {% if pet.photo %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ pet.photo.url }}">
+    {% endif %}
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .watermark-overlay {
             position: fixed;
@@ -21,42 +41,88 @@
         .hero-section {
             background: linear-gradient(135deg, #6c63ff 0%, #8b7fff 100%);
             color: white;
-            padding: 60px 0;
+            padding: 80px 0;
+        }
+        .share-btn {
+            transition: all 0.3s ease;
+        }
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
+    {% if pet.plan == 'free' %}
     <div class="watermark-overlay">
-        FREE - PetStory
+        Criado com PetStory — Faça o seu!
     </div>
+    {% endif %}
 
     <nav class="navbar navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/" style="color: #6c63ff;">
                 <i class="bi bi-heart-fill"></i> PetStory
             </a>
-            <a href="/register/" class="btn btn-primary">Crie a história do seu pet</a>
+            <a href="{% url 'pets:pet_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Crie a história do seu pet
+            </a>
         </div>
     </nav>
 
+    <!-- Header com Foto e Nome -->
     <section class="hero-section text-center">
         <div class="container">
             {% if pet.photo %}
-            <img src="{{ pet.photo.url }}" alt="{{ pet.name }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; border: 5px solid white;">
+            <img src="{{ pet.photo.url }}" alt="{{ pet.name }}" class="rounded-circle mb-4 shadow-lg" style="width: 200px; height: 200px; object-fit: cover; border: 8px solid white;">
             {% endif %}
-            <h1 class="display-4 fw-bold">{{ pet.name }}</h1>
-            <p class="lead">{{ pet.get_species_display }}</p>
+            <h1 class="display-3 fw-bold mb-3">{{ pet.name }}</h1>
+            <p class="lead fs-4">{{ pet.get_species_display }}</p>
+            {% if pet.birth_date %}
+            <p class="fs-5 opacity-90"><i class="bi bi-calendar-heart"></i> Nascido em {{ pet.birth_date|date:"d/m/Y" }}</p>
+            {% endif %}
         </div>
     </section>
+    
+    <!-- Seção de Compartilhamento -->
+    <div class="container my-5">
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #6c63ff 0%, #8b7fff 100%);">
+                <h4 class="mb-0"><i class="bi bi-share-fill"></i> Compartilhar história do {{ pet.name }}</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <button class="btn btn-success w-100 share-btn py-3" onclick="shareWhatsApp()">
+                            <i class="bi bi-whatsapp fs-4"></i><br>
+                            <span class="fw-bold">WhatsApp</span>
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-primary w-100 share-btn py-3" onclick="copyLink()">
+                            <i class="bi bi-link-45deg fs-4"></i><br>
+                            <span class="fw-bold">Copiar Link</span>
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-danger w-100 share-btn py-3" onclick="shareInstagram()">
+                            <i class="bi bi-instagram fs-4"></i><br>
+                            <span class="fw-bold">Instagram</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="container my-5">
         {% if story %}
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #6c63ff 0%, #8b7fff 100%);">
                 <h3 class="mb-0"><i class="bi bi-book"></i> História</h3>
             </div>
-            <div class="card-body">
-                <div style="white-space: pre-line; line-height: 1.8;">{{ story.generated_text }}</div>
+            <div class="card-body p-4">
+                <div style="white-space: pre-line; line-height: 1.8; font-size: 1.1rem;">{{ story.generated_text }}</div>
             </div>
         </div>
         {% endif %}
@@ -87,6 +153,18 @@
         {% endif %}
     </div>
 
+    <!-- Call-to-Action Final -->
+    <div class="container my-5">
+        <div class="card shadow-lg border-0 bg-gradient text-white" style="background: linear-gradient(135deg, #6c63ff 0%, #8b7fff 100%);">
+            <div class="card-body text-center p-5">
+                <h3 class="mb-3">Gostou? Crie a versão do seu pet clicando aqui.</h3>
+                <a href="{% url 'pets:pet_create' %}" class="btn btn-light btn-lg px-5 py-3 fw-bold">
+                    <i class="bi bi-plus-circle"></i> Criar História do Meu Pet
+                </a>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-light text-center py-4 mt-5">
         <div class="container">
             <p class="mb-0 text-muted">&copy; 2024 PetStory - Histórias de Pets com IA</p>
@@ -94,6 +172,44 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const currentUrl = window.location.href;
+        const petName = "{{ pet.name }}";
+        const shareText = `Olha que legal! A história do ${petName} criada com PetStory: ${currentUrl}`;
+        
+        function shareWhatsApp() {
+            const url = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+            window.open(url, '_blank');
+        }
+        
+        function copyLink() {
+            navigator.clipboard.writeText(currentUrl).then(function() {
+                alert('Link copiado para a área de transferência!');
+            }, function(err) {
+                // Fallback para navegadores antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = currentUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Link copiado para a área de transferência!');
+            });
+        }
+        
+        function shareInstagram() {
+            // Instagram não permite compartilhamento direto via URL
+            // Abre o app ou site do Instagram
+            const url = `https://www.instagram.com/`;
+            window.open(url, '_blank');
+            // Mostrar mensagem para o usuário copiar o link manualmente
+            setTimeout(() => {
+                if (confirm('Instagram não permite compartilhamento direto. Deseja copiar o link para colar no Instagram?')) {
+                    copyLink();
+                }
+            }, 500);
+        }
+    </script>
 </body>
 </html>
 

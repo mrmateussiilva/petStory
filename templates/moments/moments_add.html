@@ -1,34 +1,101 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Adicionar Momentos - PetStory{% endblock %}
 
+{% block extra_css %}
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    .example-title {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .example-title:hover {
+        background-color: #f3f4f6;
+        transform: translateX(5px);
+    }
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+    .loading-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <h4>Criando sua história...</h4>
+        <p class="text-muted">Aguarde enquanto nossa IA trabalha na mágica!</p>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-2 rounded-full font-bold">
+                        Etapa 2 de 3
+                    </div>
+                </div>
                 <h3 class="mb-0"><i class="bi bi-plus-circle"></i> Adicionar Momento - {{ pet.name }}</h3>
             </div>
             <div class="card-body">
-                <p class="text-muted">
-                    Você já adicionou <strong>{{ moments_count }}</strong> de <strong>{{ max_moments }}</strong> momentos 
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Adicione de 2 a 5 momentos importantes da vida do seu pet</strong>
+                    <br>
+                    <small>Você já adicionou <strong>{{ moments_count }}</strong> de <strong>{{ max_moments }}</strong> momentos 
                     {% if pet.plan == 'premium' %}
                         <span class="badge bg-warning text-dark">Premium</span>
                     {% else %}
                         <span class="badge bg-secondary">FREE</span>
                     {% endif %}
+                    </small>
                     {% if moments_count < min_moments %}
-                    <br><strong class="text-warning">Adicione pelo menos {{ min_moments }} momentos para gerar a história!</strong>
+                    <br><strong class="text-warning mt-2 d-block">Adicione pelo menos {{ min_moments }} momentos para gerar a história!</strong>
                     {% elif moments_count >= max_moments %}
-                    <br><strong class="text-danger">Você atingiu o limite máximo de {{ max_moments }} momentos do seu plano!</strong>
+                    <br><strong class="text-danger mt-2 d-block">Você atingiu o limite máximo de {{ max_moments }} momentos do seu plano!</strong>
                     {% endif %}
-                </p>
+                </div>
                 
-                <form method="post" enctype="multipart/form-data">
+                <!-- Exemplos de Títulos -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">💡 Exemplos de títulos:</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="example-title badge bg-light text-dark p-2 rounded" onclick="document.getElementById('{{ form.title.id_for_label }}').value='Primeiro dia'">Primeiro dia</span>
+                        <span class="example-title badge bg-light text-dark p-2 rounded" onclick="document.getElementById('{{ form.title.id_for_label }}').value='Travessuras'">Travessuras</span>
+                        <span class="example-title badge bg-light text-dark p-2 rounded" onclick="document.getElementById('{{ form.title.id_for_label }}').value='Brincadeiras'">Brincadeiras</span>
+                        <span class="example-title badge bg-light text-dark p-2 rounded" onclick="document.getElementById('{{ form.title.id_for_label }}').value='Dia no parque'">Dia no parque</span>
+                        <span class="example-title badge bg-light text-dark p-2 rounded" onclick="document.getElementById('{{ form.title.id_for_label }}').value='Aniversário'">Aniversário</span>
+                        <span class="example-title badge bg-light text-dark p-2 rounded" onclick="document.getElementById('{{ form.title.id_for_label }}').value='Primeira viagem'">Primeira viagem</span>
+                        <span class="example-title badge bg-light text-dark p-2 rounded" onclick="document.getElementById('{{ form.title.id_for_label }}').value='Momento especial'">Momento especial</span>
+                    </div>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data" id="momentForm">
                     {% csrf_token %}
                     
                     <div class="mb-3">
-                        <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                        <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">{{ form.title.label }}</label>
                         {{ form.title }}
                         {% if form.title.errors %}
                             <div class="text-danger">{{ form.title.errors }}</div>
@@ -36,15 +103,18 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="{{ form.text.id_for_label }}" class="form-label">{{ form.text.label }}</label>
+                        <label for="{{ form.text.id_for_label }}" class="form-label fw-bold">{{ form.text.label }}</label>
                         {{ form.text }}
+                        <small class="form-text text-muted">
+                            <i class="bi bi-lightbulb"></i> Descreva o que aconteceu neste momento especial. Por exemplo: "Foi o primeiro dia que {{ pet.name }} chegou em casa. Todos ficaram muito felizes e ele se adaptou rapidamente ao novo ambiente."
+                        </small>
                         {% if form.text.errors %}
                             <div class="text-danger">{{ form.text.errors }}</div>
                         {% endif %}
                     </div>
                     
                     <div class="mb-3">
-                        <label for="{{ form.image.id_for_label }}" class="form-label">{{ form.image.label }}</label>
+                        <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">{{ form.image.label }}</label>
                         {{ form.image }}
                         {% if form.image.errors %}
                             <div class="text-danger">{{ form.image.errors }}</div>
@@ -53,19 +123,27 @@
                     
                     <div class="d-flex gap-2">
                         {% if can_add_more %}
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary btn-lg flex-1">
                             <i class="bi bi-check-circle"></i> Adicionar Momento
                         </button>
                         {% else %}
-                        <button type="button" class="btn btn-secondary" disabled>
+                        <button type="button" class="btn btn-secondary btn-lg flex-1" disabled>
                             <i class="bi bi-x-circle"></i> Limite Atingido
                         </button>
                         {% endif %}
-                        <a href="{% url 'pets:pet_detail' pet.slug %}" class="btn btn-secondary">
+                        <a href="{% url 'pets:pet_detail' pet.slug %}" class="btn btn-secondary btn-lg">
                             <i class="bi bi-x-circle"></i> Cancelar
                         </a>
                     </div>
                 </form>
+                
+                {% if moments_count >= min_moments %}
+                <div class="mt-4">
+                    <a href="{% url 'stories:generate' pet.slug %}" class="btn btn-success btn-lg w-100" id="generateStoryBtn">
+                        <i class="bi bi-magic"></i> Gerar História com IA
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -73,13 +151,13 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Momentos Adicionados</h5>
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Momentos Adicionados</h5>
             </div>
             <div class="card-body">
                 {% if moments %}
                     {% for moment in moments %}
                     <div class="mb-3 pb-3 border-bottom">
-                        <h6>{{ moment.title }}</h6>
+                        <h6><i class="bi bi-star-fill text-warning"></i> {{ moment.title }}</h6>
                         <p class="small text-muted">{{ moment.text|truncatewords:15 }}</p>
                         {% if moment.image %}
                         <img src="{{ moment.image.url }}" class="img-thumbnail" style="max-width: 100%; height: auto;">
@@ -93,5 +171,25 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Loading state ao gerar história
+    document.getElementById('generateStoryBtn')?.addEventListener('click', function(e) {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+    });
+    
+    // Loading state ao adicionar momento (se for o último e redirecionar para gerar)
+    document.getElementById('momentForm')?.addEventListener('submit', function(e) {
+        const form = this;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const momentsCount = {{ moments_count }};
+        const minMoments = {{ min_moments }};
+        
+        // Se após adicionar este momento, tiver o mínimo, pode mostrar loading
+        if (momentsCount + 1 >= minMoments) {
+            // Não mostrar loading aqui, apenas no botão de gerar história
+        }
+    });
+</script>
 {% endblock %}
 
