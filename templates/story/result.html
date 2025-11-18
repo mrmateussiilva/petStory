@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+
+{% block title %}História de {{ pet.name }} - PetStory{% endblock %}
+
+{% block extra_css %}
+<style>
+    .result-container {
+        background: linear-gradient(135deg, var(--rosa-algodao) 0%, var(--lilas-lavanda) 50%, var(--azul-sereno) 100%);
+        min-height: calc(100vh - 80px);
+    }
+    
+    .story-card-premium {
+        background: white;
+        border-radius: 2rem;
+        box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .story-card-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #F472B6 0%, #A78BFA 50%, #60A5FA 100%);
+    }
+    
+    .story-text {
+        line-height: 2.2;
+        font-size: 1.125rem;
+        color: var(--preto-carvao);
+        text-align: justify;
+        white-space: pre-line;
+    }
+    
+    .story-text p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .copy-button {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .copy-button::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+    
+    .copy-button.copied::after {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .moment-card {
+        background: white;
+        border-radius: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .moment-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .badge-premium {
+        background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+        color: white;
+    }
+    
+    .badge-free {
+        background: linear-gradient(135deg, var(--rosa-algodao) 0%, var(--lilas-lavanda) 100%);
+        color: var(--preto-carvao);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="result-container py-12">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-12 animate-fade-in-up">
+                <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold mb-4 {% if story.is_premium %}badge-premium{% else %}badge-free{% endif %}">
+                    {% if story.is_premium %}
+                        <i class="bi bi-star-fill"></i>
+                        <span>Versão Premium</span>
+                    {% else %}
+                        <i class="bi bi-gift"></i>
+                        <span>Versão FREE</span>
+                    {% endif %}
+                </div>
+                <h1 class="text-4xl md:text-5xl font-semibold text-gray-800 mb-6" style="font-family: 'Poppins', sans-serif;">
+                    <i class="bi bi-book-heart text-pink-500"></i> A História de {{ pet.name }}
+                </h1>
+                {% if pet.photo %}
+                    <div class="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white shadow-soft mb-4">
+                        <img src="{{ pet.photo.url }}" alt="{{ pet.name }}" class="w-full h-full object-cover">
+                    </div>
+                {% endif %}
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Esta é a história do seu pet. Guarde com carinho. Compartilhe com amor.
+                </p>
+            </div>
+            
+            <!-- Card Premium da História -->
+            <div class="story-card-premium p-8 md:p-12 mb-8 animate-fade-in-up">
+                <div class="story-text">
+                    {{ story.generated_text }}
+                </div>
+            </div>
+            
+            <!-- Botões de Ação -->
+            <div class="grid sm:grid-cols-3 gap-4 mb-8">
+                <button 
+                    id="copyBtn"
+                    class="copy-button bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+                >
+                    <i class="bi bi-clipboard"></i>
+                    <span>Copiar história</span>
+                </button>
+                
+                <a 
+                    href="{% url 'pets:pet_detail' pet.slug %}" 
+                    class="bg-white text-purple-600 py-4 rounded-full font-semibold shadow-soft hover:shadow-soft-hover transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 border-2 border-purple-200"
+                >
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Criar outra história</span>
+                </a>
+                
+                <a 
+                    href="{% url 'stories:pdf' pet.slug %}" 
+                    class="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+                >
+                    <i class="bi bi-download"></i>
+                    <span>Baixar PDF</span>
+                </a>
+            </div>
+            
+            <!-- Versão Visual (Placeholder) -->
+            <div class="bg-white rounded-2xl p-8 shadow-soft mb-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-pink-200 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="bi bi-image text-4xl text-purple-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Poppins', sans-serif;">
+                        Baixar versão visual
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        Em breve você poderá baixar uma versão visual linda da história com imagens e formatação especial!
+                    </p>
+                    <button class="btn-primary opacity-50 cursor-not-allowed" disabled>
+                        Em breve
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Momentos que Inspiraram -->
+            {% if moments %}
+            <div class="bg-white rounded-2xl p-8 shadow-soft mb-8">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2" style="font-family: 'Poppins', sans-serif;">
+                    <i class="bi bi-stars text-purple-500"></i>
+                    Momentos que Inspiraram Esta História
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    {% for moment in moments %}
+                    <div class="moment-card p-6">
+                        {% if moment.image %}
+                            <div class="aspect-video bg-gray-100 rounded-xl overflow-hidden mb-4">
+                                <img src="{{ moment.image.url }}" alt="{{ moment.title }}" class="w-full h-full object-cover">
+                            </div>
+                        {% endif %}
+                        <h4 class="font-semibold text-gray-800 mb-2">{{ moment.title }}</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed">{{ moment.text|truncatewords:25 }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Compartilhar História -->
+            <div class="bg-white rounded-2xl p-8 shadow-soft">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2" style="font-family: 'Poppins', sans-serif;">
+                    <i class="bi bi-share text-blue-500"></i>
+                    Compartilhar História
+                </h3>
+                <div class="flex flex-col sm:flex-row gap-4 items-center">
+                    <input 
+                        type="text" 
+                        id="publicLink" 
+                        value="{{ request.scheme }}://{{ request.get_host }}{% url 'pets:public_pet' pet.slug %}" 
+                        readonly
+                        class="flex-1 w-full px-6 py-4 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 text-gray-800 bg-gray-50"
+                    >
+                    <button 
+                        onclick="copyPublicLink()"
+                        class="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+                    >
+                        <i class="bi bi-link-45deg"></i>
+                        Copiar link
+                    </button>
+                </div>
+                <a 
+                    href="{% url 'pets:public_pet' pet.slug %}" 
+                    target="_blank"
+                    class="mt-4 inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium"
+                >
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    Abrir página pública
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Copiar texto da história
+    document.getElementById('copyBtn').addEventListener('click', function() {
+        const storyText = document.querySelector('.story-text').innerText;
+        navigator.clipboard.writeText(storyText).then(() => {
+            const btn = this;
+            btn.classList.add('copied');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check-circle"></i> <span>Copiado!</span>';
+            
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = originalHTML;
+            }, 2000);
+        }).catch(err => {
+            console.error('Erro ao copiar:', err);
+            alert('Erro ao copiar. Tente novamente.');
+        });
+    });
+    
+    // Copiar link público
+    function copyPublicLink() {
+        const linkInput = document.getElementById('publicLink');
+        linkInput.select();
+        linkInput.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(linkInput.value).then(() => {
+            alert('Link copiado para a área de transferência!');
+        }).catch(err => {
+            console.error('Erro ao copiar:', err);
+            alert('Erro ao copiar. Tente novamente.');
+        });
+    }
+</script>
+{% endblock %}

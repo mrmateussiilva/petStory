@@ -1,0 +1,28 @@
+{% comment %}
+Componente de Input Emocional
+Uso: {% include 'components/input.html' with name="name" label="Como é o nome dele?" placeholder="Ex: Max, Luna..." %}
+{% endcomment %}
+<div class="mb-6">
+    <label for="{{ name }}" class="block text-sm font-semibold text-gray-700 mb-2">
+        {% if icon %}
+            <i class="{{ icon }} mr-2"></i>
+        {% endif %}
+        {{ label }}
+    </label>
+    <input 
+        type="{{ type|default:'text' }}" 
+        name="{{ name }}" 
+        id="{{ name }}" 
+        {% if required %}required{% endif %}
+        placeholder="{{ placeholder|default:'' }}"
+        class="w-full px-6 py-4 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 text-gray-800 placeholder-gray-400"
+        {% if value %}value="{{ value }}"{% endif %}
+    >
+    {% if help_text %}
+        <p class="text-sm text-gray-500 mt-2">{{ help_text }}</p>
+    {% endif %}
+    {% if error %}
+        <p class="text-sm text-red-500 mt-2">{{ error }}</p>
+    {% endif %}
+</div>
+

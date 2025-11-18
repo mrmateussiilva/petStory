@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 def landing(request):
     """Página inicial/landing page"""
-    return render(request, 'users/landing.html')
+    return render(request, 'landing/index.html')
 
 
 def register_view(request):

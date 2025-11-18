@@ -43,7 +43,7 @@ def pet_create(request):
     else:
         form = PetForm()
     
-    return render(request, 'pets/pet_create.html', {'form': form})
+    return render(request, 'story/create.html', {'form': form})
 
 
 def pet_detail(request, slug):

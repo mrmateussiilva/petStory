@@ -1,0 +1,14 @@
+{% comment %}
+Componente de Card Pastel
+Uso: {% include 'components/card.html' with title="Título" content="Conteúdo" %}
+{% endcomment %}
+<div class="bg-white rounded-3xl p-8 shadow-soft hover:shadow-soft-hover transition-all duration-300 {{ class|default:'' }}">
+    {% if title %}
+        <h3 class="text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif;">{{ title }}</h3>
+    {% endif %}
+    {% if content %}
+        <div class="text-gray-600 leading-relaxed">{{ content|safe }}</div>
+    {% endif %}
+    {% block card_content %}{% endblock %}
+</div>
+

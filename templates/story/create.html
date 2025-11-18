@@ -1,0 +1,409 @@
+{% extends 'base.html' %}
+
+{% block title %}Criar História - PetStory{% endblock %}
+
+{% block extra_css %}
+<style>
+    .create-container {
+        background: linear-gradient(135deg, var(--rosa-algodao) 0%, var(--lilas-lavanda) 50%, var(--azul-sereno) 100%);
+        min-height: calc(100vh - 80px);
+    }
+    
+    .main-card {
+        background: white;
+        border-radius: 2rem;
+        box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .sidebar-card {
+        background: linear-gradient(135deg, rgba(252, 231, 243, 0.5) 0%, rgba(233, 213, 255, 0.5) 100%);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 2rem;
+    }
+    
+    .file-upload-area {
+        border: 3px dashed #E5E7EB;
+        border-radius: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .file-upload-area:hover {
+        border-color: #A78BFA;
+        background: rgba(167, 139, 250, 0.05);
+    }
+    
+    .file-upload-area.dragover {
+        border-color: #A78BFA;
+        background: rgba(167, 139, 250, 0.1);
+    }
+    
+    .plan-card {
+        border: 2px solid #E5E7EB;
+        border-radius: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .plan-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .plan-card.selected {
+        border-color: #A78BFA;
+        background: linear-gradient(135deg, rgba(252, 231, 243, 0.3) 0%, rgba(233, 213, 255, 0.3) 100%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-container py-12">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-12 animate-fade-in-up">
+                <h1 class="text-4xl md:text-5xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif;">
+                    <i class="bi bi-heart-fill text-pink-500"></i> Criar Nova História
+                </h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Vamos criar uma história inesquecível do seu pet. Preencha os dados abaixo com carinho.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Formulário Principal -->
+                <div class="lg:col-span-2">
+                    <div class="main-card p-8 md:p-12">
+                        <form method="post" enctype="multipart/form-data" id="createForm" class="space-y-8">
+                            {% csrf_token %}
+                            
+                            <!-- Nome do Pet -->
+                            <div>
+                                <label for="id_name" class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="bi bi-heart text-pink-500"></i> Como é o nome dele?
+                                </label>
+                                <input 
+                                    type="text" 
+                                    name="name" 
+                                    id="id_name" 
+                                    required
+                                    placeholder="Ex: Max, Luna, Thor..."
+                                    class="w-full px-6 py-4 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 text-gray-800 placeholder-gray-400"
+                                >
+                                {% if form.name.errors %}
+                                    <p class="text-red-500 text-sm mt-2">{{ form.name.errors }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Espécie -->
+                            <div>
+                                <label for="id_species" class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="bi bi-paw text-purple-500"></i> Qual a espécie?
+                                </label>
+                                <select 
+                                    name="species" 
+                                    id="id_species" 
+                                    required
+                                    class="w-full px-6 py-4 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 text-gray-800 bg-white"
+                                >
+                                    <option value="">Selecione a espécie</option>
+                                    <option value="dog">🐕 Cachorro</option>
+                                    <option value="cat">🐱 Gato</option>
+                                    <option value="bird">🐦 Pássaro</option>
+                                    <option value="rabbit">🐰 Coelho</option>
+                                    <option value="other">🐾 Outro</option>
+                                </select>
+                                {% if form.species.errors %}
+                                    <p class="text-red-500 text-sm mt-2">{{ form.species.errors }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Data de Nascimento -->
+                            <div>
+                                <label for="id_birth_date" class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="bi bi-calendar-heart text-blue-500"></i> Data de nascimento (ou adoção)
+                                </label>
+                                <input 
+                                    type="date" 
+                                    name="birth_date" 
+                                    id="id_birth_date"
+                                    class="w-full px-6 py-4 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 text-gray-800 bg-white"
+                                >
+                                {% if form.birth_date.errors %}
+                                    <p class="text-red-500 text-sm mt-2">{{ form.birth_date.errors }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Foto -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="bi bi-camera text-pink-500"></i> Foto principal do seu pet
+                                </label>
+                                <div class="file-upload-area p-8 text-center" id="fileUploadArea">
+                                    <input 
+                                        type="file" 
+                                        name="photo" 
+                                        id="id_photo" 
+                                        required
+                                        accept="image/*"
+                                        class="hidden"
+                                        onchange="handleFileSelect(event)"
+                                    >
+                                    <div id="fileUploadContent">
+                                        <i class="bi bi-cloud-upload text-4xl text-gray-400 mb-4"></i>
+                                        <p class="text-gray-600 mb-2 font-medium">Clique para enviar ou arraste uma foto aqui</p>
+                                        <p class="text-sm text-gray-500">PNG, JPG ou GIF até 10MB</p>
+                                    </div>
+                                    <div id="filePreview" class="hidden">
+                                        <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-64 rounded-xl mx-auto mb-4">
+                                        <button type="button" onclick="clearFile()" class="text-red-500 hover:text-red-700 text-sm font-medium">
+                                            Remover foto
+                                        </button>
+                                    </div>
+                                </div>
+                                {% if form.photo.errors %}
+                                    <p class="text-red-500 text-sm mt-2">{{ form.photo.errors }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Estilo da História -->
+                            <div>
+                                <label for="story_style" class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="bi bi-palette text-purple-500"></i> Qual emoção você quer transmitir?
+                                </label>
+                                <select 
+                                    name="story_style" 
+                                    id="story_style"
+                                    class="w-full px-6 py-4 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 text-gray-800 bg-white"
+                                >
+                                    <option value="fofinha">🐾 Fofinha</option>
+                                    <option value="emocionante">💝 Emocionante</option>
+                                    <option value="engracada">😄 Engraçada</option>
+                                    <option value="epica">⚡ Épica</option>
+                                    <option value="nostalgica">📸 Nostálgica</option>
+                                    <option value="aventura">🗺️ Aventura</option>
+                                    <option value="amizade">🤝 Amizade</option>
+                                </select>
+                                <p class="text-sm text-gray-500 mt-2">
+                                    <i class="bi bi-info-circle"></i> Escolha o estilo que melhor combina com a personalidade do seu pet
+                                </p>
+                            </div>
+                            
+                            <!-- Plano -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-4">
+                                    <i class="bi bi-star text-purple-500"></i> Escolha o Plano
+                                </label>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <!-- Plano FREE -->
+                                    <label class="plan-card p-6" onclick="selectPlan('free'); event.stopPropagation();">
+                                        <input 
+                                            type="radio" 
+                                            name="plan" 
+                                            value="free" 
+                                            id="id_plan_0" 
+                                            checked
+                                            class="sr-only"
+                                        >
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-lg font-semibold text-gray-800">Plano FREE</h3>
+                                            <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center plan-radio">
+                                                <div class="w-2 h-2 rounded-full bg-purple-500 hidden plan-radio-dot"></div>
+                                            </div>
+                                        </div>
+                                        <div class="text-3xl font-semibold text-pink-600 mb-4">Grátis</div>
+                                        <ul class="space-y-2 text-sm text-gray-600">
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                História gerada com IA
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Até 2 momentos
+                                            </li>
+                                            <li class="flex items-center text-gray-400">
+                                                <i class="bi bi-x-circle mr-2"></i>
+                                                Com marca d'água
+                                            </li>
+                                        </ul>
+                                    </label>
+                                    
+                                    <!-- Plano Premium -->
+                                    <label class="plan-card p-6 relative" onclick="selectPlan('premium'); event.stopPropagation();">
+                                        <div class="absolute top-2 right-2">
+                                            <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                                RECOMENDADO
+                                            </span>
+                                        </div>
+                                        <input 
+                                            type="radio" 
+                                            name="plan" 
+                                            value="premium" 
+                                            id="id_plan_1"
+                                            class="sr-only"
+                                        >
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-lg font-semibold text-gray-800">Plano Premium</h3>
+                                            <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center plan-radio">
+                                                <div class="w-2 h-2 rounded-full bg-yellow-500 hidden plan-radio-dot"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-baseline mb-4">
+                                            <span class="text-3xl font-semibold text-yellow-600">R$ 49</span>
+                                            <span class="text-gray-400 line-through ml-2">R$ 59</span>
+                                        </div>
+                                        <ul class="space-y-2 text-sm text-gray-600">
+                                            <li class="flex items-center">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                História gerada com IA
+                                            </li>
+                                            <li class="flex items-center font-semibold">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Até 10 momentos
+                                            </li>
+                                            <li class="flex items-center font-semibold">
+                                                <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                                                Sem marca d'água
+                                            </li>
+                                        </ul>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Botão Primário -->
+                            <div class="pt-4">
+                                <button 
+                                    type="submit" 
+                                    class="w-full btn-primary py-5 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+                                >
+                                    <i class="bi bi-heart-fill"></i>
+                                    Continuar e criar história
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Sidebar com Dica -->
+                <div class="lg:col-span-1">
+                    <div class="sidebar-card p-8 sticky top-24">
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-pink-400 to-purple-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="bi bi-lightbulb text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2" style="font-family: 'Poppins', sans-serif;">
+                                Dica do PetStory
+                            </h3>
+                        </div>
+                        
+                        <div class="space-y-4 text-sm text-gray-600 leading-relaxed">
+                            <p>
+                                <i class="bi bi-heart text-pink-500"></i>
+                                <strong>Seja carinhoso:</strong> Use palavras que descrevam a personalidade única do seu pet.
+                            </p>
+                            <p>
+                                <i class="bi bi-camera text-purple-500"></i>
+                                <strong>Foto especial:</strong> Escolha uma foto que capture a essência do seu companheiro.
+                            </p>
+                            <p>
+                                <i class="bi bi-stars text-blue-500"></i>
+                                <strong>Estilo certo:</strong> O estilo escolhido vai definir o tom emocional da história.
+                            </p>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-white/50 rounded-xl">
+                            <p class="text-xs text-gray-600 text-center">
+                                Após criar, você poderá adicionar momentos especiais que tornarão a história ainda mais emocionante!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // File upload handling
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const fileInput = document.getElementById('id_photo');
+    const fileUploadContent = document.getElementById('fileUploadContent');
+    const filePreview = document.getElementById('filePreview');
+    const previewImage = document.getElementById('previewImage');
+    
+    fileUploadArea.addEventListener('click', () => fileInput.click());
+    
+    fileUploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        fileUploadArea.classList.add('dragover');
+    });
+    
+    fileUploadArea.addEventListener('dragleave', () => {
+        fileUploadArea.classList.remove('dragover');
+    });
+    
+    fileUploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        fileUploadArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileSelect({ target: { files: files } });
+        }
+    });
+    
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                fileUploadContent.classList.add('hidden');
+                filePreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    function clearFile() {
+        fileInput.value = '';
+        fileUploadContent.classList.remove('hidden');
+        filePreview.classList.add('hidden');
+    }
+    
+    // Plan selection
+    function selectPlan(plan) {
+        const clickedCard = event.currentTarget || event.target.closest('.plan-card');
+        
+        document.querySelectorAll('.plan-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        clickedCard.classList.add('selected');
+        
+        document.querySelectorAll('.plan-radio').forEach(radio => {
+            radio.classList.remove('border-purple-500', 'bg-purple-500');
+            const dot = radio.querySelector('.plan-radio-dot');
+            if (dot) dot.classList.add('hidden');
+        });
+        
+        const selectedRadio = clickedCard.querySelector('.plan-radio');
+        if (selectedRadio) {
+            selectedRadio.classList.add('border-purple-500', 'bg-purple-500');
+            const dot = selectedRadio.querySelector('.plan-radio-dot');
+            if (dot) dot.classList.remove('hidden');
+        }
+    }
+    
+    // Update radio buttons on page load
+    document.querySelectorAll('input[name="plan"]').forEach(radio => {
+        if (radio.checked) {
+            const card = radio.closest('.plan-card');
+            card.classList.add('selected');
+            const radioDiv = card.querySelector('.plan-radio');
+            radioDiv.classList.add('border-purple-500', 'bg-purple-500');
+            radioDiv.querySelector('.plan-radio-dot').classList.remove('hidden');
+        }
+    });
+</script>
+{% endblock %}

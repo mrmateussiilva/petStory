@@ -77,7 +77,7 @@ def story_view(request, slug):
         'moments': moments,
     }
     
-    return render(request, 'stories/story_view.html', context)
+    return render(request, 'story/result.html', context)
 
 
 def download_pdf(request, slug):

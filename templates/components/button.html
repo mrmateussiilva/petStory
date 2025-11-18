@@ -1,0 +1,11 @@
+{% comment %}
+Componente de Botão Primário
+Uso: {% include 'components/button.html' with text="Criar história agora" href="/create/" %}
+{% endcomment %}
+<a href="{{ href|default:'#' }}" class="inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold text-lg bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 {{ class|default:'' }}">
+    {{ text }}
+    {% if icon %}
+        <i class="{{ icon }} ml-2"></i>
+    {% endif %}
+</a>
+

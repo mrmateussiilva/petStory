@@ -3,107 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}PetStory - Histórias de Pets com IA{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>{% block title %}PetStory - Crie uma história inesquecível do seu pet{% endblock %}</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
     <style>
+        /* Paleta Oficial */
+        :root {
+            --rosa-algodao: #FCE7F3;
+            --lilas-lavanda: #E9D5FF;
+            --azul-sereno: #DBEAFE;
+            --creme-aconchego: #FFF7ED;
+            --branco: #FFFFFF;
+            --cinza-suave: #737373;
+            --preto-carvao: #1E1E1E;
+        }
+        
+        /* Tipografia */
         body {
-            background-color: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+            color: var(--preto-carvao);
+            background: linear-gradient(135deg, var(--rosa-algodao) 0%, var(--lilas-lavanda) 50%, var(--azul-sereno) 100%);
+            min-height: 100vh;
         }
-        .navbar-brand {
-            font-weight: bold;
-            color: #6c63ff !important;
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
         }
-        .card {
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+        
+        /* Gradientes Oficiais */
+        .gradient-rosa-lilas {
+            background: linear-gradient(135deg, var(--rosa-algodao) 0%, var(--lilas-lavanda) 100%);
         }
+        
+        .gradient-azul-lilas {
+            background: linear-gradient(135deg, var(--azul-sereno) 0%, var(--lilas-lavanda) 100%);
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #60A5FA 100%);
+        }
+        
+        /* Sombras Leves */
+        .shadow-soft {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+        }
+        
+        .shadow-soft-hover {
+            box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Animações Suaves */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Loading Animation */
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+        
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--lilas-lavanda);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+        
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Header Transparente */
+        .header-transparent {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Footer Pastel */
+        .footer-pastel {
+            background: linear-gradient(135deg, var(--rosa-algodao) 0%, var(--lilas-lavanda) 100%);
+        }
+        
+        /* Inputs Estilizados */
+        .input-pastel:focus {
+            border-color: #A78BFA;
+            box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.1);
+        }
+        
+        /* Cards com Cantos Muito Arredondados */
+        .card-pastel {
+            border-radius: 2rem;
+        }
+        
+        /* Botão Primário */
         .btn-primary {
-            background-color: #6c63ff;
-            border-color: #6c63ff;
-        }
-        .btn-primary:hover {
-            background-color: #5a52e5;
-            border-color: #5a52e5;
-        }
-        .watermark {
-            position: relative;
-        }
-        .watermark::after {
-            content: "FREE - PetStory";
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
+            background: linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #60A5FA 100%);
             color: white;
-            padding: 5px 10px;
-            font-size: 12px;
-            border-radius: 3px;
+            border-radius: 9999px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px -2px rgba(244, 114, 182, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px -4px rgba(244, 114, 182, 0.4);
         }
     </style>
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'users:landing' %}">
-                <i class="bi bi-heart-fill"></i> PetStory
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'pets:dashboard' %}">
-                            <i class="bi bi-house"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'pets:pet_create' %}">
-                            <i class="bi bi-plus-circle"></i> Novo Pet
-                        </a>
-                    </li>
+    <!-- Header Minimalista -->
+    <header class="header-transparent sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="{% url 'users:landing' %}" class="flex items-center space-x-2 group">
+                    <i class="bi bi-heart-fill text-2xl text-pink-500 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-2xl font-semibold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent" style="font-family: 'Poppins', sans-serif;">
+                        PetStory
+                    </span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'users:logout' %}">
-                            <i class="bi bi-box-arrow-right"></i> Sair
+                        <a href="{% url 'pets:dashboard' %}" class="text-gray-600 hover:text-purple-600 transition font-medium">
+                            Meus Pets
                         </a>
-                    </li>
+                        <a href="{% url 'pets:pet_create' %}" class="text-gray-600 hover:text-purple-600 transition font-medium">
+                            Criar História
+                        </a>
+                        <a href="{% url 'users:logout' %}" class="text-gray-600 hover:text-purple-600 transition font-medium">
+                            Sair
+                        </a>
                     {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'users:login' %}">
-                            <i class="bi bi-box-arrow-in-right"></i> Entrar
+                        <a href="{% url 'users:login' %}" class="text-gray-600 hover:text-purple-600 transition font-medium">
+                            Entrar
                         </a>
-                    </li>
+                        <a href="{% url 'users:register' %}" class="btn-primary text-sm">
+                            Começar
+                        </a>
                     {% endif %}
-                </ul>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-600 hover:text-purple-600">
+                    <i class="bi bi-list text-2xl"></i>
+                </button>
             </div>
-        </div>
-    </nav>
+            
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'pets:dashboard' %}" class="block py-2 text-gray-600 hover:text-purple-600 transition">
+                        Meus Pets
+                    </a>
+                    <a href="{% url 'pets:pet_create' %}" class="block py-2 text-gray-600 hover:text-purple-600 transition">
+                        Criar História
+                    </a>
+                    <a href="{% url 'users:logout' %}" class="block py-2 text-gray-600 hover:text-purple-600 transition">
+                        Sair
+                    </a>
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="block py-2 text-gray-600 hover:text-purple-600 transition">
+                        Entrar
+                    </a>
+                    <a href="{% url 'users:register' %}" class="block py-2 text-gray-600 hover:text-purple-600 transition">
+                        Começar
+                    </a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
 
-    <main class="container my-4">
-        {% if messages %}
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-6">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="bg-white rounded-2xl p-4 shadow-soft mb-4 animate-fade-in-up flex items-center justify-between" role="alert">
+                    <span class="flex items-center space-x-2">
+                        {% if message.tags == 'success' %}
+                            <i class="bi bi-check-circle-fill text-green-500"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="bi bi-x-circle-fill text-red-500"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="bi bi-exclamation-triangle-fill text-yellow-500"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill text-blue-500"></i>
+                        {% endif %}
+                        <span class="text-gray-800">{{ message }}</span>
+                    </span>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
             {% endfor %}
-        {% endif %}
+        </div>
+    {% endif %}
 
+    <!-- Main Content -->
+    <main class="{% block main_class %}{% endblock %}">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-light text-center py-3 mt-5">
-        <div class="container">
-            <p class="mb-0 text-muted">&copy; 2024 PetStory - Histórias de Pets com IA</p>
+    <!-- Footer Emocional -->
+    <footer class="footer-pastel mt-auto">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center mb-8">
+                <p class="text-lg text-gray-700 font-medium mb-6">
+                    Criado para quem acredita que amor merece ser lembrado.
+                </p>
+                <div class="flex items-center justify-center space-x-6 text-sm text-gray-600">
+                    <a href="{% url 'users:landing' %}" class="hover:text-purple-600 transition">Início</a>
+                    <a href="#" class="hover:text-purple-600 transition">Sobre</a>
+                    <a href="#" class="hover:text-purple-600 transition">Contato</a>
+                    <a href="#" class="hover:text-purple-600 transition">Privacidade</a>
+                </div>
+            </div>
+            <div class="text-center text-xs text-gray-500">
+                &copy; 2024 PetStory. Todos os direitos reservados.
+            </div>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>
-

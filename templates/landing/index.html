@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% block title %}PetStory - Crie uma história inesquecível do seu pet{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-bg {
+        background: linear-gradient(135deg, var(--rosa-algodao) 0%, var(--lilas-lavanda) 50%, var(--azul-sereno) 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-bg::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        animation: float 20s ease-in-out infinite;
+    }
+    
+    .mockup-container {
+        perspective: 1000px;
+    }
+    
+    .mockup-card {
+        background: white;
+        border-radius: 2rem;
+        box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.2);
+        transform: rotateY(-5deg) rotateX(5deg);
+        transition: transform 0.5s ease;
+    }
+    
+    .mockup-card:hover {
+        transform: rotateY(0deg) rotateX(0deg) scale(1.05);
+    }
+    
+    .demo-card {
+        background: white;
+        border-radius: 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .demo-card:hover {
+        transform: translateY(-8px);
+    }
+    
+    .step-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transition: transform 0.3s ease;
+    }
+    
+    .step-icon:hover {
+        transform: scale(1.1);
+    }
+</style>
+{% endblock %}
+
+{% block main_class %}overflow-x-hidden{% endblock %}
+
+{% block content %}
+<!-- Hero Emocional -->
+<section class="hero-bg min-h-screen flex items-center justify-center relative pt-20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 animate-fade-in-up">
+                <!-- H1 Gigante -->
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-semibold mb-6 leading-tight" style="font-family: 'Poppins', sans-serif;">
+                    <span class="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                        Crie uma história<br/>inesquecível<br/>do seu pet.
+                    </span>
+                </h1>
+                
+                <!-- Subtítulo Suave -->
+                <p class="text-2xl md:text-3xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up" style="animation-delay: 0.2s;">
+                    Transforme amor em memória.
+                </p>
+                
+                <!-- CTA Grande e Redondo -->
+                <div class="animate-fade-in-up" style="animation-delay: 0.4s;">
+                    <a href="{% url 'pets:pet_create' %}" class="inline-flex items-center justify-center px-12 py-6 rounded-full font-semibold text-xl bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
+                        Criar história agora
+                        <i class="bi bi-arrow-right ml-3"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Mockup -->
+            <div class="mockup-container max-w-3xl mx-auto animate-fade-in-up" style="animation-delay: 0.6s;">
+                <div class="mockup-card p-8">
+                    <div class="gradient-rosa-lilas rounded-2xl p-6">
+                        <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-soft">
+                            <div class="aspect-video bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center overflow-hidden mb-4">
+                                <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&h=600&fit=crop" alt="Pet feliz" class="w-full h-full object-cover rounded-xl">
+                            </div>
+                            <h3 class="text-2xl font-semibold text-gray-800 mb-2" style="font-family: 'Poppins', sans-serif;">
+                                A História de Luna
+                            </h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                Luna chegou em nossas vidas como um raio de sol, trazendo alegria e amor incondicional a cada dia...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <i class="bi bi-chevron-down text-3xl text-gray-600"></i>
+    </div>
+</section>
+
+<!-- Demonstração do Produto -->
+<section class="py-24 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif;">
+                Veja o que você pode criar
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Histórias encantadoras que capturam a essência do seu pet
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <!-- Card 1 -->
+            <div class="demo-card shadow-soft p-8">
+                <div class="aspect-video bg-gradient-to-br from-pink-200 to-purple-200 rounded-2xl mb-6 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop" alt="Cachorro" class="w-full h-full object-cover">
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3" style="font-family: 'Poppins', sans-serif;">
+                    A Aventura de Max
+                </h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Max é um golden retriever cheio de energia que adora brincar no parque e fazer novos amigos...
+                </p>
+                <a href="{% url 'pets:pet_create' %}" class="inline-flex items-center text-purple-600 font-semibold hover:text-purple-700 transition">
+                    Gerar algo assim
+                    <i class="bi bi-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="demo-card shadow-soft p-8">
+                <div class="aspect-video bg-gradient-to-br from-purple-200 to-blue-200 rounded-2xl mb-6 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=300&fit=crop" alt="Gato" class="w-full h-full object-cover">
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3" style="font-family: 'Poppins', sans-serif;">
+                    Os Mistérios de Luna
+                </h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Luna é uma gata persa curiosa que adora explorar cada canto da casa e descobrir novos lugares...
+                </p>
+                <a href="{% url 'pets:pet_create' %}" class="inline-flex items-center text-purple-600 font-semibold hover:text-purple-700 transition">
+                    Gerar algo assim
+                    <i class="bi bi-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="demo-card shadow-soft p-8">
+                <div class="aspect-video bg-gradient-to-br from-blue-200 to-pink-200 rounded-2xl mb-6 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400&h=300&fit=crop" alt="Pássaro" class="w-full h-full object-cover">
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3" style="font-family: 'Poppins', sans-serif;">
+                    As Canções de Piu
+                </h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Piu é um canário que enche a casa de música todas as manhãs com suas melodias encantadoras...
+                </p>
+                <a href="{% url 'pets:pet_create' %}" class="inline-flex items-center text-purple-600 font-semibold hover:text-purple-700 transition">
+                    Gerar algo assim
+                    <i class="bi bi-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Como Funciona -->
+<section class="py-24 gradient-rosa-lilas">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif;">
+                Como funciona?
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Três passos simples para criar a história perfeita
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            <!-- Passo 1 -->
+            <div class="text-center">
+                <div class="step-icon bg-gradient-to-br from-pink-400 to-purple-400 mb-6">
+                    <i class="bi bi-heart text-white text-4xl"></i>
+                </div>
+                <div class="mb-4">
+                    <span class="bg-pink-200 text-pink-700 px-4 py-2 rounded-full text-sm font-semibold">1</span>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif;">
+                    Conte sobre seu pet
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Adicione o nome, espécie, foto e informações especiais do seu companheiro com carinho
+                </p>
+            </div>
+            
+            <!-- Passo 2 -->
+            <div class="text-center">
+                <div class="step-icon bg-gradient-to-br from-purple-400 to-blue-400 mb-6">
+                    <i class="bi bi-stars text-white text-4xl"></i>
+                </div>
+                <div class="mb-4">
+                    <span class="bg-purple-200 text-purple-700 px-4 py-2 rounded-full text-sm font-semibold">2</span>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif;">
+                    Escolha o estilo da história
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Selecione entre fofinha, emocionante, engraçada, épica, nostálgica, aventura ou amizade
+                </p>
+            </div>
+            
+            <!-- Passo 3 -->
+            <div class="text-center">
+                <div class="step-icon bg-gradient-to-br from-blue-400 to-pink-400 mb-6">
+                    <i class="bi bi-magic text-white text-4xl"></i>
+                </div>
+                <div class="mb-4">
+                    <span class="bg-blue-200 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold">3</span>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif;">
+                    Receba uma história incrível
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Em segundos, nossa IA cria uma narrativa única e emocionante do seu pet para você guardar
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Final -->
+<section class="py-24 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 relative overflow-hidden">
+    <div class="absolute inset-0 bg-black/10"></div>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div class="max-w-4xl mx-auto text-white">
+            <h2 class="text-4xl md:text-6xl font-semibold mb-6" style="font-family: 'Poppins', sans-serif;">
+                Pronto para criar a história do seu pet?
+            </h2>
+            <p class="text-2xl mb-10 text-white/90 leading-relaxed">
+                Demora menos de 5 minutos. É sério!
+            </p>
+            <a href="{% url 'pets:pet_create' %}" class="inline-flex items-center justify-center px-12 py-6 bg-white text-purple-600 rounded-full font-semibold text-xl hover:shadow-2xl transform hover:scale-110 transition-all duration-300">
+                Criar história agora
+                <i class="bi bi-arrow-right ml-3"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
