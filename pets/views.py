@@ -3,7 +3,6 @@ from django.contrib import messages
 from django.http import Http404, HttpResponse
 from .models import Pet
 from .forms import PetForm
-from stories.utils import generate_pdf
 
 
 def dashboard(request):
@@ -105,6 +104,8 @@ def public_pet(request, slug):
 
 def download_pdf(request, slug):
     """Baixar PDF da história"""
+    from stories.utils import generate_pdf
+    
     pet = get_object_or_404(Pet, slug=slug)
     
     if not hasattr(pet, 'story'):

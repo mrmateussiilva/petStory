@@ -4,10 +4,58 @@
 
 {% block extra_css %}
 <style>
+    /* Animações */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+    }
+    
+    @keyframes glow {
+        0%, 100% { box-shadow: 0 4px 30px -2px rgba(244, 114, 182, 0.3); }
+        50% { box-shadow: 0 8px 40px -2px rgba(244, 114, 182, 0.5); }
+    }
+    
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .animate-glow {
+        animation: glow 3s ease-in-out infinite;
+    }
+    
+    /* Hero Section */
     .hero-bg {
-        background: linear-gradient(135deg, var(--rosa-algodao) 0%, var(--lilas-lavanda) 50%, var(--azul-sereno) 100%);
+        background: linear-gradient(135deg, #FCE7F3 0%, #E9D5FF 100%);
         position: relative;
         overflow: hidden;
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        padding: 6rem 0;
     }
     
     .hero-bg::before {
@@ -17,121 +65,258 @@
         right: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
         animation: float 20s ease-in-out infinite;
     }
     
+    /* Mockup Premium */
     .mockup-container {
-        perspective: 1000px;
+        perspective: 1200px;
     }
     
     .mockup-card {
         background: white;
-        border-radius: 2rem;
-        box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.1);
-        transform: rotateY(-5deg) rotateX(5deg);
-        transition: transform 0.5s ease;
+        border-radius: 3rem;
+        box-shadow: 0 25px 80px -20px rgba(0, 0, 0, 0.15);
+        transform: rotateY(-8deg) rotateX(3deg);
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 1.5rem;
+        max-width: 400px;
+        margin: 0 auto;
     }
     
     .mockup-card:hover {
-        transform: rotateY(0deg) rotateX(0deg) scale(1.05);
+        transform: rotateY(0deg) rotateX(0deg) scale(1.03);
     }
     
-    .demo-card {
-        background: white;
-        border-radius: 2rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
-    }
-    
-    .demo-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.12);
-    }
-    
-    .step-card {
-        background: white;
-        border-radius: 2rem;
+    .mockup-inner {
+        background: linear-gradient(135deg, #FCE7F3 0%, #E9D5FF 50%, #DBEAFE 100%);
+        border-radius: 2.5rem;
         padding: 2rem;
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-    }
-    
-    .step-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.12);
-    }
-    
-    .step-number {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
+        aspect-ratio: 9/16;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin: 0 auto 1.5rem;
-        font-family: 'Poppins', sans-serif;
-    }
-    
-    .benefit-item {
-        background: white;
-        border-radius: 1.5rem;
-        padding: 1.5rem;
-        box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.06);
-        transition: all 0.3s ease;
-    }
-    
-    .benefit-item:hover {
-        transform: translateX(8px);
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
-    }
-    
-    .cta-section {
-        background: linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #60A5FA 100%);
+        flex-direction: column;
+        justify-content: space-between;
         position: relative;
         overflow: hidden;
     }
     
-    .cta-section::before {
+    .mockup-inner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    /* Cards Premium */
+    .demo-card {
+        background: white;
+        border-radius: 3rem;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    .demo-card:nth-child(1) { animation-delay: 0.1s; }
+    .demo-card:nth-child(2) { animation-delay: 0.2s; }
+    .demo-card:nth-child(3) { animation-delay: 0.3s; }
+    
+    .demo-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .demo-card-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        font-size: 2.5rem;
+    }
+    
+    /* Step Cards */
+    .step-card {
+        background: white;
+        border-radius: 2rem;
+        padding: 3rem 2rem;
+        box-shadow: 0 8px 30px -10px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    .step-card:nth-child(1) { animation-delay: 0.1s; }
+    .step-card:nth-child(2) { animation-delay: 0.2s; }
+    .step-card:nth-child(3) { animation-delay: 0.3s; }
+    
+    .step-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 50px -10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .step-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        color: white;
+        box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .step-number {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0 auto 1rem;
+        font-family: 'Poppins', sans-serif;
+        color: white;
+    }
+    
+    /* Benefit Items */
+    .benefit-item {
+        background: white;
+        border-radius: 2rem;
+        padding: 2rem;
+        box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+    
+    .benefit-item:nth-child(1) { animation-delay: 0.1s; }
+    .benefit-item:nth-child(2) { animation-delay: 0.2s; }
+    .benefit-item:nth-child(3) { animation-delay: 0.3s; }
+    .benefit-item:nth-child(4) { animation-delay: 0.4s; }
+    .benefit-item:nth-child(5) { animation-delay: 0.5s; }
+    
+    .benefit-item:hover {
+        transform: translateX(12px);
+        box-shadow: 0 8px 30px -5px rgba(0, 0, 0, 0.12);
+    }
+    
+    .benefit-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        flex-shrink: 0;
+    }
+    
+    /* CTA Final */
+    .cta-card {
+        background: linear-gradient(135deg, #FCE7F3 0%, #E9D5FF 100%);
+        border-radius: 3rem;
+        padding: 4rem 3rem;
+        box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.15);
+        max-width: 900px;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cta-card::before {
         content: '';
         position: absolute;
         top: -50%;
         right: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-        animation: float 20s ease-in-out infinite;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+        animation: float 15s ease-in-out infinite;
     }
     
-    .btn-primary-gradient {
+    /* Botões */
+    .btn-hero {
         background: linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #60A5FA 100%);
         color: white;
         border-radius: 9999px;
-        padding: 1rem 2.5rem;
+        padding: 1.25rem 3rem;
         font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px -2px rgba(244, 114, 182, 0.3);
+        font-size: 1.125rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 30px -5px rgba(244, 114, 182, 0.4);
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-family: 'Inter', sans-serif;
+        position: relative;
+        overflow: hidden;
     }
     
-    .btn-primary-gradient:hover {
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 8px 30px -4px rgba(244, 114, 182, 0.4);
+    .btn-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-hero:hover::before {
+        left: 100%;
+    }
+    
+    .btn-hero:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 40px -5px rgba(244, 114, 182, 0.5);
+    }
+    
+    .btn-cta-final {
+        background: linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #60A5FA 100%);
+        color: white;
+        border-radius: 9999px;
+        padding: 1.5rem 4rem;
+        font-weight: 600;
+        font-size: 1.25rem;
+        min-height: 3.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 30px -5px rgba(244, 114, 182, 0.4);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        position: relative;
+    }
+    
+    .btn-cta-final:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 40px -5px rgba(244, 114, 182, 0.6);
     }
     
     .btn-secondary {
         background: white;
         color: #A78BFA;
         border-radius: 9999px;
-        padding: 0.75rem 1.5rem;
+        padding: 0.875rem 2rem;
         font-weight: 600;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 15px -5px rgba(167, 139, 250, 0.3);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -140,7 +325,16 @@
     
     .btn-secondary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 20px -5px rgba(167, 139, 250, 0.4);
+    }
+    
+    /* Ilustração Patinha */
+    .paw-illustration {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        opacity: 0.8;
+        animation: float 4s ease-in-out infinite;
     }
 </style>
 {% endblock %}
@@ -149,52 +343,49 @@
 
 {% block content %}
 <!-- 1) HERO SECTION -->
-<section class="hero-bg min-h-screen flex items-center justify-center relative pt-20">
+<section class="hero-bg relative">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="max-w-7xl mx-auto">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
                 <!-- Conteúdo à esquerda -->
                 <div class="text-center lg:text-left animate-fade-in-up">
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 leading-tight text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold mb-8 leading-tight text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.2;">
                         Crie uma história inesquecível do seu pet.
                     </h1>
                     
-                    <p class="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                    <p class="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                         Transforme amor em memória. Gere uma história única, emocionante e pronta para compartilhar.
                     </p>
                     
-                    <p class="text-base md:text-lg text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0" style="font-family: 'Inter', sans-serif;">
+                    <p class="text-base md:text-lg text-gray-600 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                         Cada pet carrega um universo de momentos e carinho. O PetStory transforma isso em uma memória linda — feita com cuidado, do jeitinho que ele merece.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
-                        <a href="{% url 'pets:pet_create' %}" class="btn-primary-gradient text-lg">
+                        <a href="{% url 'pets:pet_create' %}" class="btn-hero">
                             Criar história agora
-                            <i class="bi bi-arrow-right ml-2"></i>
+                            <i class="bi bi-arrow-right ml-3 text-xl"></i>
                         </a>
                     </div>
                     
-                    <p class="text-sm text-gray-500" style="font-family: 'Inter', sans-serif;">
+                    <p class="text-sm md:text-base text-gray-500" style="font-family: 'Inter', sans-serif;">
                         É rápido, simples e emocionante. ✨
                     </p>
                 </div>
                 
-                <!-- Mockup à direita -->
-                <div class="mockup-container animate-fade-in-up" style="animation-delay: 0.2s;">
-                    <div class="mockup-card p-6">
-                        <div class="gradient-rosa-lilas rounded-2xl p-6">
-                            <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-soft">
-                                <div class="aspect-video bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center overflow-hidden mb-4">
-                                    <div class="text-center text-gray-400">
-                                        <i class="bi bi-image text-6xl mb-2"></i>
-                                        <p class="text-sm">Mockup placeholder</p>
-                                    </div>
+                <!-- Mockup Premium à direita -->
+                <div class="mockup-container animate-fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="mockup-card">
+                        <div class="mockup-inner relative z-10">
+                            <div class="flex-1 flex flex-col justify-center items-center text-center p-6">
+                                <div class="w-24 h-24 bg-white/30 rounded-3xl mb-4 flex items-center justify-center">
+                                    <i class="bi bi-heart-fill text-4xl text-white"></i>
                                 </div>
-                                <h3 class="text-xl font-semibold text-gray-800 mb-2" style="font-family: 'Poppins', sans-serif;">
+                                <h3 class="text-white text-xl font-semibold mb-2" style="font-family: 'Poppins', sans-serif;">
                                     História do Pet
                                 </h3>
-                                <p class="text-gray-600 leading-relaxed text-sm" style="font-family: 'Inter', sans-serif;">
-                                    Uma história única e emocionante...
+                                <p class="text-white/90 text-sm leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                                    Uma história única e emocionante criada especialmente para você
                                 </p>
                             </div>
                         </div>
@@ -205,34 +396,34 @@
     </div>
     
     <!-- Scroll Indicator -->
-    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <i class="bi bi-chevron-down text-3xl text-gray-600"></i>
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <i class="bi bi-chevron-down text-3xl text-gray-600 opacity-60"></i>
     </div>
 </section>
 
 <!-- 2) SEÇÃO DE DEMONSTRAÇÃO -->
 <section class="py-24 bg-white">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+        <div class="text-center mb-20">
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 mb-6" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.2;">
                 Histórias que aquecem o coração.
             </h2>
-            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed" style="font-family: 'Inter', sans-serif;">
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                 Veja alguns exemplos do que você pode criar com o PetStory.<br/>
                 Cada história é única — assim como cada pet. 💛
             </p>
         </div>
         
-        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
             <!-- Card 1 -->
-            <div class="demo-card p-8">
-                <div class="aspect-video bg-gradient-to-br from-pink-200 to-purple-200 rounded-2xl mb-6 overflow-hidden flex items-center justify-center">
-                    <i class="bi bi-heart-fill text-6xl text-pink-400"></i>
+            <div class="demo-card" style="background: linear-gradient(135deg, #FFF7ED 0%, #FCE7F3 100%);">
+                <div class="demo-card-icon bg-gradient-to-br from-pink-400 to-purple-400 text-white">
+                    <i class="bi bi-heart-fill"></i>
                 </div>
-                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.3;">
                     O dia em que Luna mudou minha vida.
                 </h3>
-                <p class="text-gray-600 mb-6 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <p class="text-gray-600 mb-8 leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Luna chegou pequena, assustada e carente… mas bastou um olhar para ela se tornar parte da família.
                 </p>
                 <a href="{% url 'pets:pet_create' %}" class="btn-secondary">
@@ -242,14 +433,14 @@
             </div>
             
             <!-- Card 2 -->
-            <div class="demo-card p-8">
-                <div class="aspect-video bg-gradient-to-br from-purple-200 to-blue-200 rounded-2xl mb-6 overflow-hidden flex items-center justify-center">
-                    <i class="bi bi-star-fill text-6xl text-purple-400"></i>
+            <div class="demo-card" style="background: linear-gradient(135deg, #E9D5FF 0%, #DBEAFE 100%);">
+                <div class="demo-card-icon bg-gradient-to-br from-purple-400 to-blue-400 text-white">
+                    <i class="bi bi-star-fill"></i>
                 </div>
-                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.3;">
                     Thor, o guardião de todos os sorrisos.
                 </h3>
-                <p class="text-gray-600 mb-6 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <p class="text-gray-600 mb-8 leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Não importa o dia: Thor sempre sabia como transformar tudo em alegria.
                 </p>
                 <a href="{% url 'pets:pet_create' %}" class="btn-secondary">
@@ -259,14 +450,14 @@
             </div>
             
             <!-- Card 3 -->
-            <div class="demo-card p-8">
-                <div class="aspect-video bg-gradient-to-br from-blue-200 to-pink-200 rounded-2xl mb-6 overflow-hidden flex items-center justify-center">
-                    <i class="bi bi-heart-pulse-fill text-6xl text-blue-400"></i>
+            <div class="demo-card" style="background: linear-gradient(135deg, #DBEAFE 0%, #FCE7F3 100%);">
+                <div class="demo-card-icon bg-gradient-to-br from-blue-400 to-pink-400 text-white">
+                    <i class="bi bi-heart-pulse-fill"></i>
                 </div>
-                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.3;">
                     Mel: a melhor amiga que o tempo me deu.
                 </h3>
-                <p class="text-gray-600 mb-6 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <p class="text-gray-600 mb-8 leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Pequena no tamanho, gigante no amor.
                 </p>
                 <a href="{% url 'pets:pet_create' %}" class="btn-secondary">
@@ -279,50 +470,59 @@
 </section>
 
 <!-- 3) SEÇÃO "COMO FUNCIONA" -->
-<section class="py-24 gradient-rosa-lilas">
+<section class="py-24" style="background: #FFF7ED;">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+        <div class="text-center mb-20">
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.2;">
                 Como funciona? É simples como amar um pet.
             </h2>
         </div>
         
-        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto">
             <!-- Passo 1 -->
             <div class="step-card text-center">
-                <div class="step-number bg-gradient-to-br from-pink-400 to-purple-400 text-white mb-6">
+                <div class="step-icon bg-gradient-to-br from-pink-400 to-purple-400 mb-4">
+                    <i class="bi bi-heart"></i>
+                </div>
+                <div class="step-number bg-gradient-to-br from-pink-500 to-purple-500 mb-6">
                     1
                 </div>
-                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.3;">
                     Conte um pouquinho sobre seu pet.
                 </h3>
-                <p class="text-gray-600 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <p class="text-gray-600 leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Nome, personalidade, uma lembrança especial…
                 </p>
             </div>
             
             <!-- Passo 2 -->
             <div class="step-card text-center">
-                <div class="step-number bg-gradient-to-br from-purple-400 to-blue-400 text-white mb-6">
+                <div class="step-icon bg-gradient-to-br from-purple-400 to-blue-400 mb-4">
+                    <i class="bi bi-stars"></i>
+                </div>
+                <div class="step-number bg-gradient-to-br from-purple-500 to-blue-500 mb-6">
                     2
                 </div>
-                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.3;">
                     Escolha o estilo da história.
                 </h3>
-                <p class="text-gray-600 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <p class="text-gray-600 leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Fofinha, emocionante, engraçada, nostálgica…
                 </p>
             </div>
             
             <!-- Passo 3 -->
             <div class="step-card text-center">
-                <div class="step-number bg-gradient-to-br from-blue-400 to-pink-400 text-white mb-6">
+                <div class="step-icon bg-gradient-to-br from-blue-400 to-pink-400 mb-4">
+                    <i class="bi bi-magic"></i>
+                </div>
+                <div class="step-number bg-gradient-to-br from-blue-500 to-pink-500 mb-6">
                     3
                 </div>
-                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.3;">
                     Receba uma história linda em segundos.
                 </h3>
-                <p class="text-gray-600 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <p class="text-gray-600 leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Feita com carinho, pronta para guardar ou compartilhar.
                 </p>
             </div>
@@ -331,41 +531,56 @@
 </section>
 
 <!-- 4) SEÇÃO DE BENEFÍCIOS -->
-<section class="py-24 bg-white">
+<section class="py-24" style="background: linear-gradient(135deg, #E9D5FF 0%, #DBEAFE 100%);">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+        <div class="text-center mb-20">
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.2;">
                 Por que criar uma história do seu pet?
             </h2>
         </div>
         
-        <div class="max-w-3xl mx-auto space-y-4">
+        <div class="max-w-4xl mx-auto space-y-6">
             <div class="benefit-item">
-                <p class="text-lg text-gray-700 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <div class="benefit-icon bg-gradient-to-br from-pink-400 to-purple-400 text-white">
+                    <i class="bi bi-bookmark-heart"></i>
+                </div>
+                <p class="text-lg md:text-xl text-gray-700 leading-relaxed flex-1" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Para registrar memórias que o tempo não apaga.
                 </p>
             </div>
             
             <div class="benefit-item">
-                <p class="text-lg text-gray-700 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <div class="benefit-icon bg-gradient-to-br from-purple-400 to-blue-400 text-white">
+                    <i class="bi bi-heart-pulse"></i>
+                </div>
+                <p class="text-lg md:text-xl text-gray-700 leading-relaxed flex-1" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Para homenagear um amigo que te ama sem condições.
                 </p>
             </div>
             
             <div class="benefit-item">
-                <p class="text-lg text-gray-700 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <div class="benefit-icon bg-gradient-to-br from-blue-400 to-pink-400 text-white">
+                    <i class="bi bi-sparkles"></i>
+                </div>
+                <p class="text-lg md:text-xl text-gray-700 leading-relaxed flex-1" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Para criar algo único e especial — feito só para vocês.
                 </p>
             </div>
             
             <div class="benefit-item">
-                <p class="text-lg text-gray-700 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <div class="benefit-icon bg-gradient-to-br from-pink-400 to-purple-400 text-white">
+                    <i class="bi bi-share"></i>
+                </div>
+                <p class="text-lg md:text-xl text-gray-700 leading-relaxed flex-1" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Para guardar, imprimir e compartilhar com quem você ama.
                 </p>
             </div>
             
             <div class="benefit-item">
-                <p class="text-lg text-gray-700 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <div class="benefit-icon bg-gradient-to-br from-purple-400 to-blue-400 text-white">
+                    <i class="bi bi-infinity"></i>
+                </div>
+                <p class="text-lg md:text-xl text-gray-700 leading-relaxed flex-1" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                     Para eternizar momentos que merecem ser lembrados.
                 </p>
             </div>
@@ -374,20 +589,32 @@
 </section>
 
 <!-- 5) SEÇÃO EMOCIONAL PROFUNDA -->
-<section class="py-24 gradient-azul-lilas">
+<section class="py-24 bg-white">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 mb-8" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+        <div class="max-w-2xl mx-auto text-center">
+            <!-- Ilustração Patinha SVG -->
+            <div class="paw-illustration">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="30" cy="30" r="12" fill="#FCE7F3"/>
+                    <circle cx="70" cy="30" r="12" fill="#E9D5FF"/>
+                    <circle cx="50" cy="50" r="15" fill="#DBEAFE"/>
+                    <ellipse cx="30" cy="75" rx="10" ry="18" fill="#FCE7F3"/>
+                    <ellipse cx="50" cy="75" rx="10" ry="18" fill="#E9D5FF"/>
+                    <ellipse cx="70" cy="75" rx="10" ry="18" fill="#DBEAFE"/>
+                </svg>
+            </div>
+            
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 mb-10" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.2;">
                 Amor merece ser lembrado.
             </h2>
-            <div class="space-y-6 text-lg md:text-xl text-gray-700 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+            <div class="space-y-6 text-lg md:text-xl text-gray-700 leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
                 <p>
                     Cada pet tem uma história linda — às vezes engraçada, às vezes emocionante, sempre verdadeira.
                 </p>
                 <p>
                     O PetStory transforma essas lembranças em palavras que tocam o coração.
                 </p>
-                <p class="text-xl md:text-2xl font-medium">
+                <p class="text-xl md:text-2xl font-medium text-gray-800" style="font-family: 'Inter', sans-serif; font-weight: 500;">
                     Porque memórias importantes merecem um lugar especial. 💛
                 </p>
             </div>
@@ -396,23 +623,25 @@
 </section>
 
 <!-- 6) CTA FINAL (SEGUNDA VEZ) -->
-<section class="cta-section py-24 relative">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <div class="max-w-4xl mx-auto text-white">
-            <h2 class="text-3xl md:text-4xl lg:text-6xl font-semibold mb-6" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
-                Pronto para eternizar a história do seu pet?
-            </h2>
-            <p class="text-xl md:text-2xl mb-10 text-white/90 leading-relaxed" style="font-family: 'Inter', sans-serif;">
-                Leva menos de um minuto. O resultado dura para sempre. ✨
-            </p>
-            <div class="flex flex-col items-center gap-4">
-                <a href="{% url 'pets:pet_create' %}" class="bg-white text-purple-600 rounded-full px-12 py-6 font-semibold text-xl hover:shadow-2xl transform hover:scale-110 transition-all duration-300 inline-flex items-center" style="font-family: 'Inter', sans-serif;">
-                    Criar história agora
-                    <i class="bi bi-arrow-right ml-3"></i>
-                </a>
-                <p class="text-sm text-white/80" style="font-family: 'Inter', sans-serif;">
-                    Sem cadastro. Gratuito para começar.
+<section class="py-24 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="cta-card relative z-10">
+            <div class="relative z-20 text-center">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 mb-6" style="font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.2;">
+                    Pronto para eternizar a história do seu pet?
+                </h2>
+                <p class="text-xl md:text-2xl text-gray-700 mb-10 leading-relaxed" style="font-family: 'Inter', sans-serif; line-height: 1.7;">
+                    Leva menos de um minuto. O resultado dura para sempre. ✨
                 </p>
+                <div class="flex flex-col items-center gap-4">
+                    <a href="{% url 'pets:pet_create' %}" class="btn-cta-final">
+                        Criar história agora
+                        <i class="bi bi-arrow-right ml-3 text-xl"></i>
+                    </a>
+                    <p class="text-sm md:text-base text-gray-600" style="font-family: 'Inter', sans-serif;">
+                        Sem cadastro. Gratuito para começar.
+                    </p>
+                </div>
             </div>
         </div>
     </div>

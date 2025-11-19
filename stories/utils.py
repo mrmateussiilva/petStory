@@ -4,8 +4,6 @@ Utilitários para geração de PDF e marca d'água
 from io import BytesIO
 from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
-from weasyprint import HTML, CSS
-from weasyprint.text.fonts import FontConfiguration
 import os
 
 
@@ -74,6 +72,12 @@ def generate_pdf(pet, story):
     """
     Gera PDF da história do pet
     """
+    try:
+        from weasyprint import HTML, CSS
+        from weasyprint.text.fonts import FontConfiguration
+    except ImportError:
+        raise ImportError("weasyprint não está instalado. Instale com: pip install weasyprint")
+    
     from django.template.loader import render_to_string
     
     # Preparar contexto
