@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from typing import List
 
 from fastapi import BackgroundTasks, FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.core.config import settings
@@ -52,6 +53,15 @@ app = FastAPI(
     description="API para transformar fotos de pets em desenhos de colorir",
     version="0.1.0",
     lifespan=lifespan,
+)
+
+# Configure CORS for frontend (GitHub Pages)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins_list,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

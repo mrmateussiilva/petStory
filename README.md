@@ -36,7 +36,13 @@ GEMINI_API_KEY=sua_chave_gemini_aqui
 RESEND_API_KEY=sua_chave_resend_aqui  # Opcional
 EMAIL_FROM=noreply@petstory.com
 EMAIL_FROM_NAME=PetStory
+
+# CORS Configuration (para frontend no GitHub Pages)
+# Substitua pelo URL do seu GitHub Pages
+CORS_ORIGINS=https://seu-usuario.github.io,http://localhost:3000,http://localhost:8000
 ```
+
+**Nota sobre CORS:** O backend está configurado para aceitar requisições do frontend hospedado no GitHub Pages. Certifique-se de atualizar `CORS_ORIGINS` com a URL correta do seu GitHub Pages.
 
 ## 🏃 Como Executar
 
@@ -161,6 +167,35 @@ petStoryArt/
 - Se uma imagem falhar na geração, o processamento continua com as outras
 - Erros são registrados em logs e incluídos na resposta final
 - Se o email falhar, o PDF ainda é gerado (erro é logado)
+
+## 🌐 Configuração CORS (Frontend Separado)
+
+O backend está configurado com CORS para aceitar requisições do frontend hospedado separadamente (ex: GitHub Pages).
+
+### Configuração
+
+No arquivo `.env`, configure `CORS_ORIGINS` com as URLs permitidas:
+
+```env
+# Formato: valores separados por vírgula
+CORS_ORIGINS=https://seu-usuario.github.io,http://localhost:3000,http://localhost:8000
+
+# Ou formato JSON array
+CORS_ORIGINS=["https://seu-usuario.github.io","http://localhost:3000"]
+```
+
+### No Frontend
+
+Ao fazer requisições do frontend, use a URL completa do backend:
+
+```javascript
+const API_URL = 'https://seu-backend.com';  // URL do backend em produção
+
+fetch(`${API_URL}/upload?email=${email}`, {
+    method: 'POST',
+    body: formData,
+});
+```
 
 ## 🔧 Desenvolvimento
 

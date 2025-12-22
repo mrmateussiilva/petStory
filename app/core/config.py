@@ -1,5 +1,8 @@
 """Application configuration using Pydantic Settings."""
 
+import json
+from typing import List
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -20,6 +23,36 @@ class Settings(BaseSettings):
 
     # Worker Configuration
     WORKER_SLEEP_SECONDS: float = 2.0  # Delay entre gerações para evitar rate limit
+
+    # CORS Configuration
+    # Pode ser uma string JSON ou valores separados por vírgula
+    CORS_ORIGINS: str = (
+        "https://seu-usuario.github.io,"
+        "http://localhost:3000,"
+        "http://localhost:8000,"
+        "http://127.0.0.1:8000"
+    )
+
+    def _parse_cors_origins(self, value: str | List[str]) -> List[str]:
+        """Parse CORS origins from string (JSON array or comma-separated)."""
+        if isinstance(value, list):
+            return value
+        if isinstance(value, str):
+            # Try to parse as JSON first
+            try:
+                parsed = json.loads(value)
+                if isinstance(parsed, list):
+                    return [str(origin) for origin in parsed]
+            except (json.JSONDecodeError, TypeError):
+                pass
+            # Fall back to comma-separated values
+            return [origin.strip() for origin in value.split(",") if origin.strip()]
+        return []
+
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Get CORS origins as a list."""
+        return self._parse_cors_origins(self.CORS_ORIGINS)
 
     model_config = SettingsConfigDict(
         env_file=".env",
