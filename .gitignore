@@ -69,4 +69,6 @@ dmypy.json
 *.pdf
 temp/
 tmp/
+# Backup directory (contains user-generated files)
+temp/
 

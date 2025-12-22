@@ -2,13 +2,17 @@
 
 import asyncio
 import logging
+import os
 import time
+from datetime import datetime
+from pathlib import Path
 from typing import List, Optional
 
 from app.core.config import settings
 from app.interfaces.image_generator import ImageGenerator
 from app.services.email_service import EmailService
 from app.services.pdf_service import PDFService
+from app.utils.slug import get_user_backup_dir
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +24,7 @@ COLORING_BOOK_PROMPT = (
 )
 
 
+
 async def process_pet_photos(
     images: List[bytes],
     email: str,
@@ -27,11 +32,11 @@ async def process_pet_photos(
     pdf_service: Optional[PDFService] = None,
     email_service: Optional[EmailService] = None,
 ) -> dict:
-    """Process multiple pet photos into a coloring book PDF and send via email.
+    """Process multiple pet photos into a coloring book PDF, save to backup folder and send via email.
     
     Args:
         images: List of image bytes (pet photos)
-        email: Recipient email address
+        email: User email address (used for backup folder organization and email recipient)
         image_generator: Image generator service (injected dependency)
         pdf_service: PDF service instance (optional, creates if None)
         email_service: Email service instance (optional, creates if None)
@@ -45,6 +50,11 @@ async def process_pet_photos(
     generated_images = []
     errors = []
     
+    # Create backup directory for user
+    user_backup_dir = get_user_backup_dir(settings.TEMP_DIR, email)
+    Path(user_backup_dir).mkdir(parents=True, exist_ok=True)
+    logger.info(f"Backup directory: {user_backup_dir}")
+    
     logger.info(f"Starting processing of {len(images)} images for {email}")
     
     # Process each image
@@ -57,6 +67,13 @@ async def process_pet_photos(
                 image_bytes, COLORING_BOOK_PROMPT
             )
             generated_images.append(generated_image)
+            
+            # Save generated image to backup
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            image_filename = f"{user_backup_dir}/image_{idx}_{timestamp}.png"
+            with open(image_filename, "wb") as f:
+                f.write(generated_image)
+            logger.info(f"Saved generated image to backup: {image_filename}")
             
             logger.info(f"Successfully generated image {idx}/{len(images)}")
             
@@ -89,6 +106,13 @@ async def process_pet_photos(
         if not pdf_bytes:
             raise ValueError("PDF generation returned empty bytes")
         
+        # Save PDF to backup
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        pdf_filename = f"{user_backup_dir}/livro_pet_{timestamp}.pdf"
+        with open(pdf_filename, "wb") as f:
+            f.write(pdf_bytes)
+        logger.info(f"Saved PDF to backup: {pdf_filename}")
+        
         logger.info(f"PDF created successfully ({len(pdf_bytes)} bytes)")
         
     except Exception as e:
@@ -119,13 +143,17 @@ async def process_pet_photos(
     except Exception as e:
         error_msg = f"Error sending email: {str(e)}"
         logger.error(error_msg, exc_info=True)
+        # Even if email fails, return success since PDF was created and saved
         return {
-            "success": False,
-            "error": error_msg,
-            "errors": errors,
+            "success": True,
             "images_processed": len(generated_images),
             "images_total": len(images),
-            "pdf_created": True,
+            "errors": errors,
+            "email": email,
+            "pdf_path": pdf_filename,
+            "backup_dir": user_backup_dir,
+            "email_sent": False,
+            "email_error": str(e),
         }
     
     # Success!
@@ -135,5 +163,8 @@ async def process_pet_photos(
         "images_total": len(images),
         "errors": errors,
         "email": email,
+        "pdf_path": pdf_filename,
+        "backup_dir": user_backup_dir,
+        "email_sent": True,
     }
 

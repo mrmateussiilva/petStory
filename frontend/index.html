@@ -131,11 +131,16 @@
            ✨ ANIMAÇÕES E MICRO-INTERACTIONS
            ======================================== */
         
-        /* Pop-In Elástico */
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
-            60% { opacity: 1; transform: scale(1.05) translateY(-5px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
+        /* Fade In Suave */
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
         }
         
         .reveal {
@@ -143,7 +148,7 @@
         }
         
         .reveal.active {
-            animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation: fadeInUp 0.6s ease-out forwards;
         }
 
         /* Fade In Suave */
@@ -192,14 +197,14 @@
             animation: drawLine 1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
         }
 
-        /* Flutuação */
+        /* Flutuação Suave */
         @keyframes floatY {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-5px); }
         }
         
         .animate-float { 
-            animation: floatY 4s ease-in-out infinite; 
+            animation: floatY 6s ease-in-out infinite; 
         }
         
         .delay-1000 { animation-delay: 1s; }
@@ -459,7 +464,8 @@
         }
         
         .pricing-card:hover { 
-            transform: rotate(1deg) scale(1.02);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
         }
 
         .pricing-header {
@@ -487,8 +493,8 @@
         }
         
         .step-card:hover { 
-            transform: translateY(-10px) rotate(2deg) !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
         
         .step-icon { 
@@ -525,9 +531,9 @@
         }
         
         .mural-card:hover {
-            transform: scale(1.12) rotate(0deg) !important;
+            transform: scale(1.05) translateY(-5px);
             z-index: 30;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
         }
         
         .mural-card img {
@@ -570,7 +576,8 @@
         }
         
         .before-after-item:hover {
-            transform: translateY(-8px) rotate(1deg);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
         }
         
         .before-after-label {
@@ -603,7 +610,8 @@
         }
         
         .testimonial-card:hover {
-            transform: rotate(-1deg) scale(1.02);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
         }
         
         .testimonial-stars {
@@ -740,7 +748,7 @@
         <section class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center pl-0 md:pl-16 mb-20 relative z-10 section-spacing">
             
             <div class="text-center lg:text-left reveal">
-                <div class="inline-block bg-black text-white px-4 py-2 rounded-lg font-hand transform -rotate-2 text-base md:text-lg mb-6 shadow-md animate-float">
+                <div class="inline-block bg-black text-white px-4 py-2 rounded-lg font-hand text-base md:text-lg mb-6 shadow-md animate-float">
                     #1 Trend do TikTok 🎵
                 </div>
                 
@@ -754,16 +762,16 @@
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
-                    <a href="criar.html" class="btn-sticker btn-green px-8 py-4 text-lg md:text-xl w-full sm:w-auto transform -rotate-1 hover-scale" aria-label="Ir para página de criação do livro de colorir">
+                    <a href="criar.html" class="btn-sticker btn-green px-8 py-4 text-lg md:text-xl w-full sm:w-auto hover-scale" aria-label="Ir para página de criação do livro de colorir">
                         Quero criar o meu! 🎨
                     </a>
-                    <a href="#como-funciona" class="btn-sticker btn-blue px-6 py-4 text-base md:text-lg w-full sm:w-auto transform rotate-1" aria-label="Saiba como funciona o processo de transformação">
+                    <a href="#como-funciona" class="btn-sticker btn-blue px-6 py-4 text-base md:text-lg w-full sm:w-auto" aria-label="Saiba como funciona o processo de transformação">
                         Como funciona? ✨
                     </a>
                 </div>
                 
                 <div class="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 text-sm md:text-base">
-                    <div class="flex items-center gap-2 text-sm font-bold text-gray-700 bg-white inline-block px-4 py-2 rounded-lg border border-gray-200 shadow-sm transform rotate-1 hover-wiggle cursor-default">
+                    <div class="flex items-center gap-2 text-sm font-bold text-gray-700 bg-white inline-block px-4 py-2 rounded-lg border border-gray-200 shadow-sm hover-wiggle cursor-default">
                     <div class="flex text-yellow-400"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
                     <span>"Amei demais!" - Julia M.</span>
                     </div>
@@ -790,14 +798,14 @@
                 
                 <div class="polaroid-caption">
                    <span class="text-gray-400">Foto</span>
-                   <span class="text-pink-400 font-bold text-sm transform -rotate-2">↔️ puxa ↔️</span>
+                   <span class="text-pink-400 font-bold text-sm">↔️ puxa ↔️</span>
                    <span class="text-pink-400 font-bold">Arte</span>
                 </div>
             </div>
         </section>
 
         <!-- Faixa Decorativa -->
-        <div class="w-full h-8 bg-[#cceeff] opacity-70 mb-16 transform -rotate-1 flex items-center justify-center overflow-hidden border-y-2 border-white shadow-sm reveal">
+        <div class="w-full h-8 bg-[#cceeff] opacity-70 mb-16 flex items-center justify-center overflow-hidden border-y-2 border-white shadow-sm reveal">
             <span class="text-xs text-blue-800 font-bold tracking-widest uppercase">PetStory • PetStory • PetStory • PetStory • PetStory • PetStory</span>
         </div>
 
@@ -836,19 +844,19 @@
             <h2 class="section-title reveal">Como funciona a mágica? ✨</h2>
             
             <div class="grid md:grid-cols-3 gap-6 md:gap-8">
-                <div class="step-card transform rotate-1 reveal delay-100">
+                <div class="step-card reveal">
                     <span class="step-icon">📸</span>
                     <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">1. Mande a Foto</h3>
                     <p class="text-gray-600 text-sm md:text-base leading-relaxed">Pode ser do celular mesmo. Nossa IA ajusta a iluminação e melhora a qualidade automaticamente.</p>
                 </div>
 
-                <div class="step-card transform -rotate-1 mt-4 md:mt-0 bg-[#fff5ba] reveal delay-200">
+                <div class="step-card mt-4 md:mt-0 bg-[#fff5ba] reveal">
                     <span class="step-icon">🖍️</span>
                     <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">2. IA Desenha</h3>
                     <p class="text-gray-600 text-sm md:text-base leading-relaxed">Nossa inteligência artificial cria o traço grosso e limpo estilo Doodle Goods em apenas 5 minutos.</p>
                 </div>
 
-                <div class="step-card transform rotate-1 reveal delay-300">
+                <div class="step-card reveal">
                     <span class="step-icon">💌</span>
                     <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">3. Você Recebe</h3>
                     <p class="text-gray-600 text-sm md:text-base leading-relaxed">O PDF completo e todos os bônus chegam direto no seu e-mail pronto para imprimir.</p>
@@ -863,7 +871,7 @@
             <h2 class="section-title">O que nossos clientes dizem 💕</h2>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="testimonial-card transform rotate-1 fade-in">
+                <div class="testimonial-card fade-in">
                     <div class="testimonial-stars">★★★★★</div>
                     <p class="text-gray-700 font-hand text-lg leading-relaxed">
                         "Meu gato ficou PERFEITO! A qualidade do traço é incrível. Já imprimi 3 vezes porque todo mundo quer colorir!"
@@ -871,7 +879,7 @@
                     <div class="testimonial-author">- Ana Paula, São Paulo</div>
                 </div>
                 
-                <div class="testimonial-card transform -rotate-1 fade-in delay-1000">
+                <div class="testimonial-card fade-in delay-1000">
                     <div class="testimonial-stars">★★★★★</div>
                     <p class="text-gray-700 font-hand text-lg leading-relaxed">
                         "Presenteei minha mãe e ela chorou de emoção. O livro ficou lindo e ela já está no segundo!"
@@ -879,7 +887,7 @@
                     <div class="testimonial-author">- Rafael, Belo Horizonte</div>
                 </div>
                 
-                <div class="testimonial-card transform rotate-1 fade-in delay-2000">
+                <div class="testimonial-card fade-in delay-2000">
                     <div class="testimonial-stars">★★★★★</div>
                     <p class="text-gray-700 font-hand text-lg leading-relaxed">
                         "Super rápido! Em 10 minutos já tinha o PDF. Minha cachorrinha virou obra de arte! 🐕"
@@ -899,25 +907,25 @@
                 <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-3xl animate-float">📌</div>
                 
                 <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-white border-2 border-black rounded-lg p-6 transform rotate-1 hover:scale-105 transition-transform">
+                    <div class="bg-white border-2 border-black rounded-lg p-6 hover:scale-105 transition-transform">
                         <div class="text-4xl mb-3">📚</div>
                         <h3 class="font-hand font-bold text-xl mb-2">Livro de Colorir PDF</h3>
                         <p class="text-gray-600 text-sm">Formato A4, pronto para imprimir. Alta qualidade e traço perfeito.</p>
                     </div>
                     
-                    <div class="bg-white border-2 border-black rounded-lg p-6 transform -rotate-1 hover:scale-105 transition-transform">
+                    <div class="bg-white border-2 border-black rounded-lg p-6 hover:scale-105 transition-transform">
                         <div class="text-4xl mb-3">🎨</div>
                         <h3 class="font-hand font-bold text-xl mb-2">Pack de Adesivos</h3>
                         <p class="text-gray-600 text-sm">12 adesivos digitais do seu pet para usar onde quiser!</p>
                     </div>
                     
-                    <div class="bg-white border-2 border-black rounded-lg p-6 transform rotate-1 hover:scale-105 transition-transform">
+                    <div class="bg-white border-2 border-black rounded-lg p-6 hover:scale-105 transition-transform">
                         <div class="text-4xl mb-3">📱</div>
                         <h3 class="font-hand font-bold text-xl mb-2">Wallpaper para Celular</h3>
                         <p class="text-gray-600 text-sm">Versão otimizada para usar de papel de parede no seu celular.</p>
                     </div>
                     
-                    <div class="bg-white border-2 border-pink-300 rounded-lg p-6 transform -rotate-1 hover:scale-105 transition-transform bg-pink-50">
+                    <div class="bg-white border-2 border-pink-300 rounded-lg p-6 hover:scale-105 transition-transform bg-pink-50">
                         <div class="text-4xl mb-3">🎁</div>
                         <h3 class="font-hand font-bold text-xl mb-2">Bônus: Site Homenagem</h3>
                         <p class="text-gray-600 text-sm">Uma página especial só do seu pet para compartilhar com quem ama!</p>
@@ -933,25 +941,25 @@
             <h2 class="section-title">Por que funciona tão bem? 🎯</h2>
             
             <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div class="bg-white border-3 border-black rounded-lg p-6 transform rotate-1">
+                <div class="bg-white border-3 border-black rounded-lg p-6">
                     <div class="text-3xl mb-4">🤖</div>
                     <h3 class="font-hand font-bold text-xl mb-3">IA de Última Geração</h3>
                     <p class="text-gray-600 leading-relaxed">Usamos tecnologia avançada para criar traços perfeitos que preservam a personalidade do seu pet.</p>
                 </div>
                 
-                <div class="bg-white border-3 border-black rounded-lg p-6 transform -rotate-1">
+                <div class="bg-white border-3 border-black rounded-lg p-6">
                     <div class="text-3xl mb-4">⚡</div>
                     <h3 class="font-hand font-bold text-xl mb-3">Super Rápido</h3>
                     <p class="text-gray-600 leading-relaxed">Em 5 a 10 minutos você já tem tudo pronto. Sem espera, sem complicação!</p>
                 </div>
                 
-                <div class="bg-white border-3 border-black rounded-lg p-6 transform rotate-1">
+                <div class="bg-white border-3 border-black rounded-lg p-6">
                     <div class="text-3xl mb-4">🎨</div>
                     <h3 class="font-hand font-bold text-xl mb-3">Estilo Único</h3>
                     <p class="text-gray-600 leading-relaxed">Traço grosso e fofo estilo "Doodle Goods" que está bombando nas redes sociais.</p>
                 </div>
                 
-                <div class="bg-white border-3 border-black rounded-lg p-6 transform -rotate-1">
+                <div class="bg-white border-3 border-black rounded-lg p-6">
                     <div class="text-3xl mb-4">💝</div>
                     <h3 class="font-hand font-bold text-xl mb-3">Presente Perfeito</h3>
                     <p class="text-gray-600 leading-relaxed">Presente único e personalizado que emociona quem recebe. Perfeito para qualquer ocasião!</p>
@@ -969,19 +977,19 @@
                 <h2 class="text-2xl md:text-3xl font-hand font-bold text-center mb-8 text-yellow-900">Mural da Comunidade</h2>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                    <div class="mural-card transform rotate-2 reveal delay-100">
+                    <div class="mural-card reveal">
                         <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400" alt="Gato chamado Miau transformado em desenho estilo livro de colorir" class="w-full aspect-square object-cover grayscale border border-gray-100" loading="lazy" width="400" height="400">
                         <p class="font-hand text-center mt-2 text-lg md:text-xl font-bold text-gray-600">Miau</p>
                     </div>
-                    <div class="mural-card transform -rotate-1 reveal delay-200">
+                    <div class="mural-card reveal">
                         <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400" alt="Cachorro chamado Thor transformado em desenho estilo livro de colorir" class="w-full aspect-square object-cover grayscale border border-gray-100" loading="lazy" width="400" height="400">
                         <p class="font-hand text-center mt-2 text-lg md:text-xl font-bold text-gray-600">Thor</p>
                     </div>
-                    <div class="mural-card transform rotate-3 reveal delay-300">
+                    <div class="mural-card reveal">
                         <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=400" alt="Cachorro chamado Luna transformado em desenho estilo livro de colorir" class="w-full aspect-square object-cover grayscale border border-gray-100" loading="lazy" width="400" height="400">
                         <p class="font-hand text-center mt-2 text-lg md:text-xl font-bold text-gray-600">Luna</p>
                     </div>
-                    <div class="mural-card transform -rotate-2 reveal delay-400">
+                    <div class="mural-card reveal">
                         <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400" alt="Cachorro chamado Max transformado em desenho estilo livro de colorir" class="w-full aspect-square object-cover grayscale border border-gray-100" loading="lazy" width="400" height="400">
                         <p class="font-hand text-center mt-2 text-lg md:text-xl font-bold text-gray-600">Max</p>
                     </div>
@@ -993,7 +1001,7 @@
              💰 OFERTA E PRICING
              ======================================== -->
         <section id="pricing" class="pl-0 md:pl-16 mb-20 reveal">
-            <div class="max-w-md mx-auto pricing-card text-center transform rotate-1">
+            <div class="max-w-md mx-auto pricing-card text-center">
                 <div class="pricing-header">OFERTA ESPECIAL</div>
                 
                 <h3 class="font-hand text-3xl md:text-4xl font-bold mb-2 text-gray-800">Kit Digital Completo</h3>
@@ -1024,7 +1032,7 @@
              🎁 PRESENTEIE ALGUÉM
              ======================================== -->
         <section id="presenteie" class="pl-0 md:pl-16 mb-20 section-spacing reveal">
-            <div class="max-w-3xl mx-auto bg-gradient-to-br from-pink-100 to-purple-100 border-3 border-black rounded-xl p-6 md:p-8 text-center transform rotate-1">
+            <div class="max-w-3xl mx-auto bg-gradient-to-br from-pink-100 to-purple-100 border-3 border-black rounded-xl p-6 md:p-8 text-center">
                 <div class="text-5xl mb-4 animate-float">🎁</div>
                 <h2 class="font-hand text-3xl md:text-4xl font-bold mb-4">Presenteie Alguém Especial!</h2>
                 <p class="text-gray-700 text-lg md:text-xl mb-6 font-hand leading-relaxed">
@@ -1043,7 +1051,7 @@
             <h2 class="section-title">Dúvidas Frequentes <span class="text-3xl">🤔</span></h2>
             
             <div class="max-w-2xl mx-auto space-y-4">
-                <details class="group step-card text-left p-0 overflow-hidden transform rotate-1 cursor-pointer">
+                <details class="group step-card text-left p-0 overflow-hidden cursor-pointer">
                     <summary class="flex justify-between items-center p-4 md:p-6 font-bold text-base md:text-lg list-none">
                         <span>🐶 Serve para qualquer animal?</span>
                         <span class="transition-transform group-open:rotate-180 text-2xl" aria-hidden="true">⌄</span>
@@ -1053,7 +1061,7 @@
                     </div>
                 </details>
 
-                <details class="group step-card text-left p-0 overflow-hidden transform -rotate-1 cursor-pointer">
+                <details class="group step-card text-left p-0 overflow-hidden cursor-pointer">
                     <summary class="flex justify-between items-center p-4 md:p-6 font-bold text-base md:text-lg list-none">
                         <span>⏱️ Quanto tempo demora?</span>
                         <span class="transition-transform group-open:rotate-180 text-2xl" aria-hidden="true">⌄</span>
@@ -1063,7 +1071,7 @@
                     </div>
                 </details>
 
-                <details class="group step-card text-left p-0 overflow-hidden transform rotate-1 cursor-pointer">
+                <details class="group step-card text-left p-0 overflow-hidden cursor-pointer">
                     <summary class="flex justify-between items-center p-4 md:p-6 font-bold text-base md:text-lg list-none">
                         <span>📦 Recebo algo em casa?</span>
                         <span class="transition-transform group-open:rotate-180 text-2xl" aria-hidden="true">⌄</span>
@@ -1073,7 +1081,7 @@
                     </div>
                 </details>
                 
-                <details class="group step-card text-left p-0 overflow-hidden transform -rotate-1 cursor-pointer">
+                <details class="group step-card text-left p-0 overflow-hidden cursor-pointer">
                     <summary class="flex justify-between items-center p-4 md:p-6 font-bold text-base md:text-lg list-none">
                         <span>🎨 Como devo imprimir?</span>
                         <span class="transition-transform group-open:rotate-180 text-2xl" aria-hidden="true">⌄</span>
@@ -1089,7 +1097,7 @@
              📤 CTA PARA CRIAÇÃO
              ======================================== -->
         <section id="checkout" class="pl-0 md:pl-16 mb-20 reveal">
-            <div class="max-w-2xl mx-auto bg-gradient-to-br from-pink-100 to-purple-100 border-3 border-black rounded-xl p-8 md:p-12 text-center transform rotate-1">
+            <div class="max-w-2xl mx-auto bg-gradient-to-br from-pink-100 to-purple-100 border-3 border-black rounded-xl p-8 md:p-12 text-center">
                 <div class="text-5xl mb-6 animate-float">🎨</div>
                 <h2 class="font-hand text-3xl md:text-4xl font-bold mb-4">Pronto para Criar?</h2>
                 <p class="text-gray-700 text-lg md:text-xl mb-8 font-hand leading-relaxed">
@@ -1303,13 +1311,13 @@
             window.initComparisons = initComparisons;
         })();
         
-        /* Scroll Reveal Melhorado */
+        /* Scroll Reveal Suave */
         function reveal() {
             var reveals = document.querySelectorAll(".reveal");
             for (var i = 0; i < reveals.length; i++) {
                 var windowHeight = window.innerHeight;
                 var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 150;
+                var elementVisible = 100;
                 if (elementTop < windowHeight - elementVisible) {
                     reveals[i].classList.add("active");
                 }
@@ -1328,7 +1336,19 @@
             }
         }
         
-        window.addEventListener("scroll", reveal);
+        // Throttle para melhor performance
+        let ticking = false;
+        function optimizedReveal() {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    reveal();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+        
+        window.addEventListener("scroll", optimizedReveal, { passive: true });
         reveal();
         
         /* Parallax Effect para os Doodles */
@@ -1361,19 +1381,6 @@
             });
         });
         
-        /* Melhorar performance do scroll */
-        let ticking = false;
-        const optimizedReveal = () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    reveal();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-        
-        window.addEventListener('scroll', optimizedReveal, { passive: true });
         
     </script>
 </body>

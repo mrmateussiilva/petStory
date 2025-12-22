@@ -75,12 +75,17 @@
         }
 
         /* ========================================
-           ✨ ANIMAÇÕES
+           ✨ ANIMAÇÕES SUAVES
            ======================================== */
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
-            60% { opacity: 1; transform: scale(1.05) translateY(-5px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
         }
         
         .reveal {
@@ -88,25 +93,7 @@
         }
         
         .reveal.active {
-            animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-
-        @keyframes floatY {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .animate-float { 
-            animation: floatY 4s ease-in-out infinite; 
+            animation: fadeInUp 0.6s ease-out forwards;
         }
 
         /* ========================================
@@ -181,35 +168,6 @@
         .btn-green { background-color: var(--pastel-green); color: var(--ink-black); }
         .btn-blue { background-color: var(--pastel-blue); color: var(--ink-black); }
 
-        /* ========================================
-           🎴 CARDS
-           ======================================== */
-        .step-card {
-            background: white;
-            border: var(--border-width) solid var(--ink-black);
-            border-radius: var(--radius-md);
-            padding: var(--space-lg);
-            text-align: center;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
-            position: relative;
-        }
-        
-        .step-card:hover { 
-            transform: translateY(-10px) rotate(2deg) !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-        }
-
-        /* ========================================
-           🎨 DOODLES
-           ======================================== */
-        .doodle { 
-            position: absolute;
-            font-size: 28px;
-            opacity: 0.9;
-            z-index: 5;
-            pointer-events: none;
-            transition: transform 0.1s ease-out;
-        }
 
         /* Acessibilidade */
         @media (prefers-reduced-motion: reduce) {
@@ -240,11 +198,6 @@
             <div class="hole"></div>
         </div>
 
-        <!-- Doodles -->
-        <div class="doodle" style="top: 50px; right: 50px;">✨</div>
-        <div class="doodle" style="top: 150px; left: 80px;">🐾</div>
-        <div class="doodle" style="bottom: 100px; right: 100px;">🖍️</div>
-        <div class="doodle" style="bottom: 300px; left: 50px;">🦴</div>
 
         <!-- ========================================
              📝 HEADER
@@ -261,45 +214,20 @@
         <!-- ========================================
              🎯 HERO SECTION
              ======================================== -->
-        <section class="text-center pl-0 md:pl-16 mb-12 reveal">
+        <section class="text-center pl-0 md:pl-16 mb-8 reveal">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 text-[#2d2d2d]">
                 Crie seu Livro de Colorir! 🎨
             </h1>
-            <p class="text-lg md:text-xl text-gray-600 mb-8 font-hand leading-relaxed max-w-2xl mx-auto">
+            <p class="text-lg md:text-xl text-gray-600 mb-6 font-hand leading-relaxed max-w-2xl mx-auto">
                 Envie as fotos do seu pet e receba um lindo livro de colorir estilo Doodle Goods em poucos minutos!
             </p>
-        </section>
-
-        <!-- ========================================
-             ✨ COMO FUNCIONA
-             ======================================== -->
-        <section class="pl-0 md:pl-16 mb-12 text-center">
-            <div class="grid md:grid-cols-3 gap-6 mb-8">
-                <div class="step-card transform rotate-1 reveal delay-100">
-                    <span class="text-4xl mb-3 block animate-float">📸</span>
-                    <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">1. Envie as Fotos</h3>
-                    <p class="text-gray-600 text-sm md:text-base leading-relaxed">Selecione as melhores fotos do seu pet. Quanto mais fotos, mais páginas no livro!</p>
-                </div>
-
-                <div class="step-card transform -rotate-1 mt-4 md:mt-0 bg-[#fff5ba] reveal delay-200">
-                    <span class="text-4xl mb-3 block animate-float delay-1000">🖍️</span>
-                    <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">2. IA Transforma</h3>
-                    <p class="text-gray-600 text-sm md:text-base leading-relaxed">Nossa inteligência artificial cria o traço grosso e limpo estilo Doodle Goods.</p>
-                </div>
-
-                <div class="step-card transform rotate-1 reveal delay-300">
-                    <span class="text-4xl mb-3 block animate-float delay-2000">💌</span>
-                    <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">3. Receba o PDF</h3>
-                    <p class="text-gray-600 text-sm md:text-base leading-relaxed">O PDF completo chega direto no seu e-mail pronto para imprimir!</p>
-                </div>
-            </div>
         </section>
 
         <!-- ========================================
              📤 UPLOAD SECTION
              ======================================== -->
         <section class="pl-0 md:pl-16 mb-8 reveal">
-            <div class="max-w-2xl mx-auto bg-white border-3 border-black rounded-xl p-6 md:p-8 transform rotate-1">
+            <div class="max-w-2xl mx-auto bg-white border-3 border-black rounded-xl p-6 md:p-8">
                 <h2 class="font-hand text-3xl md:text-4xl font-bold text-center mb-6">Envie as Fotos do Seu Pet! 🐾</h2>
                 
                 <form id="uploadForm" class="space-y-6">
@@ -372,32 +300,6 @@
             </div>
         </section>
 
-        <!-- ========================================
-             💡 DICAS
-             ======================================== -->
-        <section class="pl-0 md:pl-16 mb-8 reveal">
-            <div class="max-w-2xl mx-auto bg-[#fcf8e3] border-2 border-dashed border-yellow-400 rounded-xl p-6 md:p-8">
-                <h3 class="font-hand text-2xl md:text-3xl font-bold text-center mb-4">💡 Dicas para Melhores Resultados</h3>
-                <div class="grid md:grid-cols-2 gap-4 text-left">
-                    <div class="bg-white border-2 border-black rounded-lg p-4 transform rotate-1">
-                        <div class="text-2xl mb-2">📸</div>
-                        <p class="font-hand text-sm md:text-base text-gray-700">Use fotos com boa iluminação e o pet bem visível</p>
-                    </div>
-                    <div class="bg-white border-2 border-black rounded-lg p-4 transform -rotate-1">
-                        <div class="text-2xl mb-2">🎯</div>
-                        <p class="font-hand text-sm md:text-base text-gray-700">Fotos de frente ou perfil funcionam melhor</p>
-                    </div>
-                    <div class="bg-white border-2 border-black rounded-lg p-4 transform rotate-1">
-                        <div class="text-2xl mb-2">✨</div>
-                        <p class="font-hand text-sm md:text-base text-gray-700">Quanto mais fotos, mais páginas no livro!</p>
-                    </div>
-                    <div class="bg-white border-2 border-black rounded-lg p-4 transform -rotate-1">
-                        <div class="text-2xl mb-2">🖼️</div>
-                        <p class="font-hand text-sm md:text-base text-gray-700">Fotos em alta qualidade geram melhores resultados</p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <!-- ========================================
              📞 FOOTER
@@ -414,20 +316,32 @@
            🎯 SCRIPTS E INTERATIVIDADES
            ======================================== */
         
-        /* Scroll Reveal */
+        /* Scroll Reveal - Suave */
         function reveal() {
             var reveals = document.querySelectorAll(".reveal");
             for (var i = 0; i < reveals.length; i++) {
                 var windowHeight = window.innerHeight;
                 var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 150;
+                var elementVisible = 100;
                 if (elementTop < windowHeight - elementVisible) {
                     reveals[i].classList.add("active");
                 }
             }
         }
         
-        window.addEventListener("scroll", reveal);
+        // Throttle para melhor performance
+        let ticking = false;
+        function optimizedReveal() {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    reveal();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+        
+        window.addEventListener("scroll", optimizedReveal, { passive: true });
         reveal();
         
         /* Smooth Scroll para links âncora */

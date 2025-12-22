@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     # Worker Configuration
     WORKER_SLEEP_SECONDS: float = 2.0  # Delay entre gerações para evitar rate limit
 
+    # Backup/Storage Configuration
+    TEMP_DIR: str = "temp"  # Diretório para salvar backups dos arquivos gerados
+
     # Gemini Model Configuration
     GEMINI_IMAGE_MODEL: str = "gemini-2.5-flash-image"  # ou "gemini-3-pro-image-preview"
 
@@ -38,7 +41,10 @@ class Settings(BaseSettings):
         "https://seu-usuario.github.io,"
         "http://localhost:3000,"
         "http://localhost:8000,"
-        "http://127.0.0.1:8000"
+        "http://127.0.0.1:8000,"
+        "http://localhost:5500,"
+        "http://127.0.0.1:5500,"
+        "null"  # Permite file:// quando o HTML é aberto diretamente
     )
 
     def _parse_cors_origins(self, value: str | List[str]) -> List[str]:
@@ -54,7 +60,11 @@ class Settings(BaseSettings):
             except (json.JSONDecodeError, TypeError):
                 pass
             # Fall back to comma-separated values
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
+            origins = [origin.strip() for origin in value.split(",") if origin.strip()]
+            # In debug mode, allow all origins for development
+            if self.DEBUG and "*" not in origins:
+                origins.append("*")
+            return origins
         return []
 
     @property
