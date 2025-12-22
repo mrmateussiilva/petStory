@@ -177,19 +177,19 @@ class PDFService:
         pet_name: str,
         pet_date: str,
         pet_story: str,
-        art_image_path: str,
+        generated_art_paths: List[str],
         output_dir: str = ".",
-        original_image_path: Optional[str] = None,
+        original_image_paths: Optional[List[str]] = None,
     ) -> str:
-        """Create a digital kit PDF with 4 pages: cover, biography, coloring page, and sticker grid.
+        """Create a digital kit PDF with multiple pages: cover, biography, coloring pages, and sticker grid.
         
         Args:
             pet_name: Pet's name
             pet_date: Pet's date/birthday
             pet_story: Pet's story/biography text
-            art_image_path: Path to the generated art image (line art) - used for cover, coloring, and stickers
+            generated_art_paths: List of paths to generated art images (line art)
             output_dir: Directory to save the PDF
-            original_image_path: Path to original photo - used for biography page (fallback to art if not provided)
+            original_image_paths: List of paths to original photos - used for biography page
             
         Returns:
             Path to the created PDF file
@@ -202,14 +202,25 @@ class PDFService:
         clean_pet_date = self.clean_text(pet_date)
         clean_pet_story = self.clean_text(pet_story)
         
-        # Fallback: use art image if original is not available
-        biography_image_path = original_image_path if original_image_path and os.path.exists(original_image_path) else art_image_path
+        # Ensure we have at least one art
+        if not generated_art_paths or len(generated_art_paths) == 0:
+            raise ValueError("At least one generated art image is required")
+        
+        # Use first art for cover and biography fallback
+        first_art_path = generated_art_paths[0]
+        
+        # Use first original photo for biography, fallback to first art if not available
+        biography_image_path = first_art_path
+        if original_image_paths and len(original_image_paths) > 0:
+            first_original_path = original_image_paths[0]
+            if os.path.exists(first_original_path):
+                biography_image_path = first_original_path
         
         pdf = FPDF(orientation="P", unit="mm", format="A4")
         pdf.set_auto_page_break(auto=False)  # Disable auto page break for better control
         
         # ============================================
-        # PAGE 1: COVER - Uses ART IMAGE (Line Art)
+        # PAGE 1: COVER - Uses FIRST ART IMAGE (Line Art)
         # ============================================
         pdf.add_page()
         
@@ -220,9 +231,9 @@ class PDFService:
         title_text = f"Livro de Colorir do {clean_pet_name}"
         pdf.cell(0, 15, title_text, ln=1, align="C")
         
-        # Image centered below title - USE ART IMAGE
+        # Image centered below title - USE FIRST ART IMAGE
         try:
-            img = Image.open(art_image_path)
+            img = Image.open(first_art_path)
             if img.mode != "RGB":
                 img = img.convert("RGB")
             
@@ -346,50 +357,56 @@ class PDFService:
         )
         
         # ============================================
-        # PAGE 3: THE ART (A Arte) - Full page for coloring - Uses ART IMAGE
+        # PAGES 3+: COLORING PAGES (Páginas de Colorir) - One page per art
         # ============================================
-        pdf.add_page()
-        
-        try:
-            img = Image.open(art_image_path)
-            if img.mode != "RGB":
-                img = img.convert("RGB")
+        for idx, art_path in enumerate(generated_art_paths, 1):
+            pdf.add_page()
             
-            img_width, img_height = img.size
-            aspect_ratio = img_width / img_height
+            # Title for this coloring page
+            pdf.set_font("Helvetica", "B", 18)
+            pdf.set_y(15)
+            pdf.cell(0, 12, f"Desenho #{idx}", ln=1, align="C")
             
-            # Calculate dimensions to fill entire A4 page (full bleed)
-            # Use small margins to ensure full coverage
-            bleed_margin = 5
-            available_width = self.A4_WIDTH_MM - (2 * bleed_margin)
-            available_height = self.A4_HEIGHT_MM - (2 * bleed_margin)
-            
-            # Fill page maintaining aspect ratio
-            if aspect_ratio > (available_width / available_height):
-                # Image is wider
-                width = available_width
-                height = available_width / aspect_ratio
-                # Center vertically
-                x = bleed_margin
-                y = (self.A4_HEIGHT_MM - height) / 2
-            else:
-                # Image is taller
-                height = available_height
-                width = available_height * aspect_ratio
-                # Center horizontally
-                x = (self.A4_WIDTH_MM - width) / 2
-                y = bleed_margin
-            
-            temp_buffer = io.BytesIO()
-            img.save(temp_buffer, format="PNG")
-            temp_buffer.seek(0)
-            
-            pdf.image(temp_buffer, x=x, y=y, w=width, h=height)
-        except Exception as e:
-            logger.error(f"Error adding coloring page image: {e}")
+            try:
+                img = Image.open(art_path)
+                if img.mode != "RGB":
+                    img = img.convert("RGB")
+                
+                img_width, img_height = img.size
+                aspect_ratio = img_width / img_height
+                
+                # Calculate dimensions to fill entire A4 page (full bleed)
+                # Use small margins to ensure full coverage
+                bleed_margin = 5
+                available_width = self.A4_WIDTH_MM - (2 * bleed_margin)
+                available_height = self.A4_HEIGHT_MM - 40  # Leave space for title
+                
+                # Fill page maintaining aspect ratio
+                if aspect_ratio > (available_width / available_height):
+                    # Image is wider
+                    width = available_width
+                    height = available_width / aspect_ratio
+                    # Center vertically
+                    x = bleed_margin
+                    y = (self.A4_HEIGHT_MM - height) / 2
+                else:
+                    # Image is taller
+                    height = available_height
+                    width = available_height * aspect_ratio
+                    # Center horizontally
+                    x = (self.A4_WIDTH_MM - width) / 2
+                    y = 40
+                
+                temp_buffer = io.BytesIO()
+                img.save(temp_buffer, format="PNG")
+                temp_buffer.seek(0)
+                
+                pdf.image(temp_buffer, x=x, y=y, w=width, h=height)
+            except Exception as e:
+                logger.error(f"Error adding coloring page {idx} image: {e}")
         
         # ============================================
-        # PAGE 4: STICKERS (Adesivos) - Grid 3x3 - Uses ART IMAGE
+        # LAST PAGE: STICKERS (Adesivos) - Grid 3x3 - Uses generated arts
         # ============================================
         pdf.add_page()
         
@@ -398,32 +415,36 @@ class PDFService:
         pdf.set_y(15)
         pdf.cell(0, 12, "Adesivos", ln=1, align="C")
         
-        try:
-            img = Image.open(art_image_path)
-            if img.mode != "RGB":
-                img = img.convert("RGB")
-            
-            # Grid 3x3 configuration
-            sticker_size = 50
-            spacing = 10
-            grid_width = (3 * sticker_size) + (2 * spacing)
-            start_x = (self.A4_WIDTH_MM - grid_width) / 2
-            start_y = 40
-            
-            temp_buffer = io.BytesIO()
-            img.save(temp_buffer, format="PNG")
-            temp_buffer.seek(0)
-            
-            # Draw 3x3 grid (9 stickers total)
-            for row in range(3):
-                for col in range(3):
+        # Grid 3x3 configuration (9 stickers total)
+        sticker_size = 50
+        spacing = 10
+        grid_width = (3 * sticker_size) + (2 * spacing)
+        start_x = (self.A4_WIDTH_MM - grid_width) / 2
+        start_y = 40
+        
+        # Fill grid with arts (repeat if necessary to fill 9 slots)
+        art_index = 0
+        for row in range(3):
+            for col in range(3):
+                # Cycle through available arts
+                art_path = generated_art_paths[art_index % len(generated_art_paths)]
+                art_index += 1
+                
+                try:
+                    img = Image.open(art_path)
+                    if img.mode != "RGB":
+                        img = img.convert("RGB")
+                    
                     x = start_x + col * (sticker_size + spacing)
                     y = start_y + row * (sticker_size + spacing)
                     
+                    temp_buffer = io.BytesIO()
+                    img.save(temp_buffer, format="PNG")
                     temp_buffer.seek(0)
+                    
                     pdf.image(temp_buffer, x=x, y=y, w=sticker_size, h=sticker_size)
-        except Exception as e:
-            logger.error(f"Error adding sticker grid: {e}")
+                except Exception as e:
+                    logger.error(f"Error adding sticker {row * 3 + col + 1} from art {art_path}: {e}")
         
         # Save PDF
         os.makedirs(output_dir, exist_ok=True)

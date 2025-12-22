@@ -295,24 +295,25 @@
                     <!-- File Upload -->
                     <div>
                         <label for="petFoto" class="block font-hand font-bold text-lg mb-2 text-gray-700">
-                            Foto do Pet <span class="text-red-500">*</span>
+                            Fotos do Pet <span class="text-red-500">*</span>
                         </label>
                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-pink-400 transition cursor-pointer" id="dropZone">
                             <input 
                                 type="file" 
                                 id="petFoto" 
-                                name="foto" 
-                                accept="image/jpeg,image/jpg,image/png,image/webp"
+                                name="fotos" 
+                                accept="image/*"
+                                multiple
                                 required
                                 class="hidden"
                             >
                             <div id="dropZoneContent">
                                 <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
                                 <p class="font-hand text-lg text-gray-600 mb-2">
-                                    Clique aqui ou arraste a foto
+                                    Clique aqui ou arraste as fotos
                                 </p>
                                 <p class="text-sm text-gray-400">
-                                    Formatos: JPG, PNG, WebP (máx. 10MB)
+                                    Formatos: JPG, PNG, WebP (máx. 10MB cada, até 10 fotos)
                                 </p>
                             </div>
                         </div>
@@ -430,7 +431,7 @@
         const progressBar = document.getElementById('progressBar');
         const progressFill = document.getElementById('progressFill');
         
-        let selectedFile = null;
+        let selectedFiles = [];
         
         // Drop Zone Events
         dropZone.addEventListener('click', () => fileInput.click());
@@ -448,71 +449,136 @@
                 file.type.startsWith('image/')
             );
             if (files.length > 0) {
-                handleFile(files[0]);
+                handleFiles(files);
             }
         });
         
         // File Input Change
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
+                handleFiles(Array.from(e.target.files));
             }
         });
         
-        function handleFile(file) {
-            // Valida tamanho (10MB)
-            if (file.size > 10 * 1024 * 1024) {
-                showStatus('A foto excede o limite de 10MB. Por favor, escolha uma imagem menor.', 'error');
+        function handleFiles(files) {
+            // Limit to 10 files maximum
+            if (files.length > 10) {
+                showStatus('Você pode enviar no máximo 10 fotos. As primeiras 10 serão selecionadas.', 'error');
+                files = files.slice(0, 10);
+            }
+            
+            // Validate each file size (max 10MB each)
+            const validFiles = [];
+            for (const file of files) {
+                if (file.size > 10 * 1024 * 1024) {
+                    showStatus(`A foto "${file.name}" excede 10MB e será ignorada.`, 'error');
+                    continue;
+                }
+                validFiles.push(file);
+            }
+            
+            if (validFiles.length === 0) {
+                showStatus('Nenhuma foto válida selecionada.', 'error');
                 return;
             }
             
-            selectedFile = file;
-            fileList.innerHTML = '';
-            
-            const fileItem = document.createElement('div');
-            fileItem.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200';
-            fileItem.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-image text-pink-400"></i>
-                    <span class="font-hand text-sm">${file.name}</span>
-                    <span class="text-xs text-gray-400">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-                </div>
-                <button type="button" class="text-red-500 hover:text-red-700" onclick="removeFile()">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            fileList.appendChild(fileItem);
-            
+            selectedFiles = validFiles;
+            updateFileList();
             updateDropZoneContent();
         }
         
-        window.removeFile = function() {
-            selectedFile = null;
-            fileInput.value = '';
+        function updateFileList() {
             fileList.innerHTML = '';
+            
+            if (selectedFiles.length === 0) return;
+            
+            // Show thumbnails grid if multiple files, single preview if one
+            if (selectedFiles.length === 1) {
+                const file = selectedFiles[0];
+                const fileItem = document.createElement('div');
+                fileItem.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200';
+                fileItem.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-image text-pink-400"></i>
+                        <span class="font-hand text-sm">${file.name}</span>
+                        <span class="text-xs text-gray-400">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                    </div>
+                    <button type="button" class="text-red-500 hover:text-red-700" onclick="removeFile(0)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileList.appendChild(fileItem);
+            } else {
+                // Show count and grid of file names
+                const countDiv = document.createElement('div');
+                countDiv.className = 'text-center mb-3 font-hand text-lg text-gray-700 font-bold';
+                countDiv.textContent = `${selectedFiles.length} fotos selecionadas`;
+                fileList.appendChild(countDiv);
+                
+                // Grid of file items
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-2';
+                
+                selectedFiles.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'flex items-center justify-between bg-gray-50 p-2 rounded-lg border border-gray-200';
+                    fileItem.innerHTML = `
+                        <div class="flex items-center gap-2 flex-1 min-w-0">
+                            <i class="fas fa-image text-pink-400 flex-shrink-0"></i>
+                            <span class="font-hand text-xs truncate">${file.name}</span>
+                            <span class="text-xs text-gray-400 flex-shrink-0">(${(file.size / 1024 / 1024).toFixed(1)}MB)</span>
+                        </div>
+                        <button type="button" class="text-red-500 hover:text-red-700 flex-shrink-0 ml-2" onclick="removeFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    gridDiv.appendChild(fileItem);
+                });
+                
+                fileList.appendChild(gridDiv);
+            }
+        }
+        
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            // Update file input
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+            updateFileList();
             updateDropZoneContent();
         };
         
         function updateDropZoneContent() {
             const dropZoneContent = document.getElementById('dropZoneContent');
-            if (selectedFile) {
+            if (selectedFiles.length === 0) {
+                dropZoneContent.innerHTML = `
+                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                    <p class="font-hand text-lg text-gray-600 mb-2">
+                        Clique aqui ou arraste as fotos
+                    </p>
+                    <p class="text-sm text-gray-400">
+                        Formatos: JPG, PNG, WebP (máx. 10MB cada, até 10 fotos)
+                    </p>
+                `;
+            } else if (selectedFiles.length === 1) {
                 dropZoneContent.innerHTML = `
                     <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
                     <p class="font-hand text-lg text-gray-700 mb-2">
-                        Foto selecionada: ${selectedFile.name}
+                        Foto selecionada: ${selectedFiles[0].name}
                     </p>
                     <p class="text-sm text-gray-400">
-                        Clique para trocar a foto ou arraste uma nova
+                        Clique para adicionar mais ou arraste novas fotos
                     </p>
                 `;
             } else {
                 dropZoneContent.innerHTML = `
-                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
-                    <p class="font-hand text-lg text-gray-600 mb-2">
-                        Clique aqui ou arraste a foto
+                    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+                    <p class="font-hand text-lg text-gray-700 mb-2">
+                        ${selectedFiles.length} fotos selecionadas
                     </p>
                     <p class="text-sm text-gray-400">
-                        Formatos: JPG, PNG, WebP (máx. 10MB)
+                        Clique para adicionar mais ou arraste novas fotos
                     </p>
                 `;
             }
@@ -560,14 +626,15 @@
                 return;
             }
             
-            if (!selectedFile) {
-                showStatus('Por favor, selecione uma foto do pet.', 'error');
+            if (selectedFiles.length === 0) {
+                showStatus('Por favor, selecione pelo menos uma foto do pet.', 'error');
                 return;
             }
             
-            // Validate file size
-            if (selectedFile.size > 10 * 1024 * 1024) {
-                showStatus('A foto excede o limite de 10MB. Por favor, escolha uma imagem menor.', 'error');
+            // Validate all file sizes
+            const oversizedFiles = selectedFiles.filter(file => file.size > 10 * 1024 * 1024);
+            if (oversizedFiles.length > 0) {
+                showStatus(`Algumas fotos excedem 10MB: ${oversizedFiles.map(f => f.name).join(', ')}`, 'error');
                 return;
             }
             
@@ -587,7 +654,11 @@
                 formData.append('pet_date', petDate);
                 formData.append('pet_story', petStory);
                 formData.append('email', email);
-                formData.append('foto', selectedFile);
+                
+                // Append all photos with the same key 'fotos'
+                selectedFiles.forEach(file => {
+                    formData.append('fotos', file);
+                });
                 
                 // Send to backend
                 const response = await fetch(`${API_URL}/api/upload`, {
@@ -616,7 +687,7 @@
                     // Reset form after 8 seconds
                     setTimeout(() => {
                         form.reset();
-                        selectedFile = null;
+                        selectedFiles = [];
                         fileList.innerHTML = '';
                         updateDropZoneContent();
                         statusMessage.classList.add('hidden');
