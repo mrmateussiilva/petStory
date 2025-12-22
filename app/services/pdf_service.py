@@ -2,6 +2,7 @@
 
 import io
 import logging
+import re
 from typing import List, Optional
 
 from fpdf import FPDF
@@ -111,6 +112,41 @@ class PDFService:
             logger.info(f"PDF generated ({len(pdf_bytes)} bytes)")
             return pdf_bytes
     
+    def clean_text(self, text: str) -> str:
+        """Remove emojis and non-Latin characters that FPDF cannot handle.
+        
+        Args:
+            text: Input text that may contain emojis or special characters
+            
+        Returns:
+            Cleaned text with only Latin characters, numbers, and basic punctuation
+        """
+        if not text:
+            return ""
+        
+        # Remove emojis using regex
+        # This pattern matches most emoji ranges
+        emoji_pattern = re.compile(
+            "["
+            "\U0001F600-\U0001F64F"  # emoticons
+            "\U0001F300-\U0001F5FF"  # symbols & pictographs
+            "\U0001F680-\U0001F6FF"  # transport & map symbols
+            "\U0001F1E0-\U0001F1FF"  # flags
+            "\U00002702-\U000027B0"  # dingbats
+            "\U000024C2-\U0001F251"  # enclosed characters
+            "]+",
+            flags=re.UNICODE
+        )
+        
+        # Remove emojis
+        text = emoji_pattern.sub('', text)
+        
+        # Keep only ASCII printable characters plus common Latin characters
+        # This allows accented characters (á, é, í, ó, ú, ç, ã, etc.)
+        text = ''.join(char for char in text if ord(char) < 256)
+        
+        return text.strip()
+    
     def create_digital_kit(
         self,
         pet_name: str,
@@ -136,32 +172,39 @@ class PDFService:
         import os
         from datetime import datetime
         
+        # Clean text inputs to avoid FPDF encoding issues
+        clean_pet_name = self.clean_text(pet_name)
+        clean_pet_date = self.clean_text(pet_date)
+        clean_pet_story = self.clean_text(pet_story)
+        
         pdf = FPDF(orientation="P", unit="mm", format="A4")
-        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.set_auto_page_break(auto=False)  # Disable auto page break for better control
         
-        # Page 1: Cover with title, name and centered photo
+        # ============================================
+        # PAGE 1: COVER
+        # ============================================
         pdf.add_page()
-        pdf.set_font("Arial", "B", 24)
-        pdf.cell(0, 20, "Livro do Pet", ln=1, align="C")
-        pdf.ln(10)
         
-        pdf.set_font("Arial", "B", 18)
-        pdf.cell(0, 15, pet_name, ln=1, align="C")
-        pdf.ln(10)
+        # Title: "Livro de Colorir do [pet_name]"
+        pdf.set_font("Helvetica", "B", 32)
+        title_y = 60
+        pdf.set_y(title_y)
+        title_text = f"Livro de Colorir do {clean_pet_name}"
+        pdf.cell(0, 15, title_text, ln=1, align="C")
         
-        # Load and add photo (use original photo on cover if available, otherwise use art)
+        # Image centered below title
         cover_image_path = original_photo_path if original_photo_path else image_path
         try:
             img = Image.open(cover_image_path)
             if img.mode != "RGB":
                 img = img.convert("RGB")
             
-            # Calculate size to fit in center (max 120mm width, maintaining aspect)
             img_width, img_height = img.size
             aspect_ratio = img_width / img_height
             
-            max_width = 120
-            max_height = 100
+            # Image dimensions for cover (large but with margins)
+            max_width = 160
+            max_height = 140
             
             if aspect_ratio > (max_width / max_height):
                 width = max_width
@@ -170,11 +213,10 @@ class PDFService:
                 height = max_height
                 width = max_height * aspect_ratio
             
-            # Center image
+            # Center image horizontally and position below title
             x = (self.A4_WIDTH_MM - width) / 2
-            y = pdf.get_y() + 10
+            y = title_y + 25
             
-            # Save image to temp buffer
             temp_buffer = io.BytesIO()
             img.save(temp_buffer, format="PNG")
             temp_buffer.seek(0)
@@ -183,48 +225,117 @@ class PDFService:
         except Exception as e:
             logger.warning(f"Could not add image to cover: {e}")
         
-        # Page 2: Biography
+        # ============================================
+        # PAGE 2: THE STORY (A História)
+        # ============================================
         pdf.add_page()
-        pdf.set_font("Arial", "B", 20)
-        pdf.cell(0, 15, f"Quem é {pet_name}?", ln=1)
-        pdf.ln(5)
         
-        pdf.set_font("Arial", "", 12)
-        pdf.cell(0, 10, f"Data: {pet_date}", ln=1)
-        pdf.ln(5)
+        # Decorative border (rectangle around the page with margin)
+        border_margin = 15
+        pdf.set_line_width(2)
+        pdf.rect(
+            border_margin, 
+            border_margin, 
+            self.A4_WIDTH_MM - (2 * border_margin), 
+            self.A4_HEIGHT_MM - (2 * border_margin)
+        )
         
-        pdf.set_font("Arial", "", 11)
-        # Use multi_cell for text wrapping
-        pdf.multi_cell(0, 7, pet_story)
+        # Title: "Quem é [pet_name]?"
+        pdf.set_font("Helvetica", "B", 24)
+        title_y = border_margin + 20
+        pdf.set_y(title_y)
+        title_text = f"Quem é {clean_pet_name}?"
+        pdf.cell(0, 12, title_text, ln=1, align="C")
         
-        # Page 3: Large coloring page with generated art
+        # Subtitle: Date (italic, gray-like effect with smaller font)
+        if clean_pet_date:
+            pdf.set_font("Helvetica", "I", 14)
+            pdf.set_text_color(100, 100, 100)  # Gray color
+            pdf.set_y(pdf.get_y() + 5)
+            pdf.cell(0, 8, clean_pet_date, ln=1, align="C")
+            pdf.set_text_color(0, 0, 0)  # Reset to black
+        
+        # Body text: Story with generous margins (book-like layout)
+        text_margin = 25
+        pdf.set_font("Helvetica", "", 12)
+        pdf.set_xy(text_margin, pdf.get_y() + 15)
+        
+        # Calculate available width for text
+        text_width = self.A4_WIDTH_MM - (2 * text_margin)
+        
+        # Multi-cell with justified text for book-like appearance
+        pdf.set_font("Helvetica", "", 11)
+        pdf.multi_cell(
+            text_width, 
+            7, 
+            clean_pet_story, 
+            align="J"  # Justified text
+        )
+        
+        # Footer: Thumbnail image of the pet as "signature"
+        try:
+            img = Image.open(image_path)
+            if img.mode != "RGB":
+                img = img.convert("RGB")
+            
+            # Create thumbnail (30mm size)
+            thumbnail_size = 30
+            img_width, img_height = img.size
+            aspect_ratio = img_width / img_height
+            
+            if aspect_ratio > 1:
+                thumb_width = thumbnail_size
+                thumb_height = thumbnail_size / aspect_ratio
+            else:
+                thumb_height = thumbnail_size
+                thumb_width = thumbnail_size * aspect_ratio
+            
+            # Position thumbnail at bottom center with some margin
+            thumb_y = self.A4_HEIGHT_MM - border_margin - thumb_height - 5
+            thumb_x = (self.A4_WIDTH_MM - thumb_width) / 2
+            
+            temp_buffer = io.BytesIO()
+            img.save(temp_buffer, format="PNG")
+            temp_buffer.seek(0)
+            
+            pdf.image(temp_buffer, x=thumb_x, y=thumb_y, w=thumb_width, h=thumb_height)
+        except Exception as e:
+            logger.warning(f"Could not add thumbnail to biography page: {e}")
+        
+        # ============================================
+        # PAGE 3: THE ART (A Arte) - Full page for coloring
+        # ============================================
         pdf.add_page()
-        pdf.set_font("Arial", "B", 16)
-        pdf.cell(0, 15, "Página para Colorir", ln=1, align="C")
-        pdf.ln(5)
         
         try:
             img = Image.open(image_path)
             if img.mode != "RGB":
                 img = img.convert("RGB")
             
-            # Calculate size to fill most of the page (larger than cover)
             img_width, img_height = img.size
             aspect_ratio = img_width / img_height
             
-            available_width = self.A4_WIDTH_MM - (2 * self.MARGIN_MM)
-            available_height = self.A4_HEIGHT_MM - 60  # Leave space for title
+            # Calculate dimensions to fill entire A4 page (full bleed)
+            # Use small margins to ensure full coverage
+            bleed_margin = 5
+            available_width = self.A4_WIDTH_MM - (2 * bleed_margin)
+            available_height = self.A4_HEIGHT_MM - (2 * bleed_margin)
             
+            # Fill page maintaining aspect ratio
             if aspect_ratio > (available_width / available_height):
+                # Image is wider
                 width = available_width
                 height = available_width / aspect_ratio
+                # Center vertically
+                x = bleed_margin
+                y = (self.A4_HEIGHT_MM - height) / 2
             else:
+                # Image is taller
                 height = available_height
                 width = available_height * aspect_ratio
-            
-            # Center image
-            x = (self.A4_WIDTH_MM - width) / 2
-            y = pdf.get_y() + 5
+                # Center horizontally
+                x = (self.A4_WIDTH_MM - width) / 2
+                y = bleed_margin
             
             temp_buffer = io.BytesIO()
             img.save(temp_buffer, format="PNG")
@@ -234,29 +345,33 @@ class PDFService:
         except Exception as e:
             logger.error(f"Error adding coloring page image: {e}")
         
-        # Page 4: Sticker grid 3x3
+        # ============================================
+        # PAGE 4: STICKERS (Adesivos) - Grid 3x3
+        # ============================================
         pdf.add_page()
-        pdf.set_font("Arial", "B", 16)
-        pdf.cell(0, 15, "Adesivos", ln=1, align="C")
-        pdf.ln(5)
+        
+        # Title
+        pdf.set_font("Helvetica", "B", 18)
+        pdf.set_y(15)
+        pdf.cell(0, 12, "Adesivos", ln=1, align="C")
         
         try:
             img = Image.open(image_path)
             if img.mode != "RGB":
                 img = img.convert("RGB")
             
-            # Grid 3x3 = 9 stickers
-            # Each sticker should be about 50mm (with some spacing)
+            # Grid 3x3 configuration
             sticker_size = 50
             spacing = 10
-            start_x = (self.A4_WIDTH_MM - (3 * sticker_size + 2 * spacing)) / 2
-            start_y = pdf.get_y() + 5
+            grid_width = (3 * sticker_size) + (2 * spacing)
+            start_x = (self.A4_WIDTH_MM - grid_width) / 2
+            start_y = 40
             
             temp_buffer = io.BytesIO()
             img.save(temp_buffer, format="PNG")
             temp_buffer.seek(0)
             
-            # Draw 3x3 grid
+            # Draw 3x3 grid (9 stickers total)
             for row in range(3):
                 for col in range(3):
                     x = start_x + col * (sticker_size + spacing)
