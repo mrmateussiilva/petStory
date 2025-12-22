@@ -1,170 +1,143 @@
-"""Background worker for processing pet photos into coloring book PDFs."""
+"""Background worker for processing pet stories into digital kits."""
 
-import asyncio
 import logging
 import os
-import time
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
 
 from app.core.config import settings
-from app.interfaces.image_generator import ImageGenerator
 from app.services.email_service import EmailService
+from app.services.gemini_service import GeminiGenerator
 from app.services.pdf_service import PDFService
+from app.services.web_generator import WebGenerator
 from app.utils.slug import get_user_backup_dir
 
 logger = logging.getLogger(__name__)
 
-# Prompt para geração de imagens estilo Bobbie Goods
-COLORING_BOOK_PROMPT = (
-    "Line art coloring page style Bobbie Goods of a cute pet, "
-    "thick uniform lines, no shading, pure white background, "
-    "minimal details suitable for children coloring book"
-)
 
 
-
-async def process_pet_photos(
-    images: List[bytes],
+def process_pet_story(
+    nome_pet: str,
+    pet_date: str,
+    pet_story: str,
     email: str,
-    image_generator: ImageGenerator,
-    pdf_service: Optional[PDFService] = None,
-    email_service: Optional[EmailService] = None,
+    photo_path: str,
 ) -> dict:
-    """Process multiple pet photos into a coloring book PDF, save to backup folder and send via email.
+    """Orchestrate the complete pet story processing workflow.
     
     Args:
-        images: List of image bytes (pet photos)
-        email: User email address (used for backup folder organization and email recipient)
-        image_generator: Image generator service (injected dependency)
-        pdf_service: PDF service instance (optional, creates if None)
-        email_service: Email service instance (optional, creates if None)
+        nome_pet: Pet's name
+        pet_date: Pet's date/birthday
+        pet_story: Pet's story/biography
+        email: User email address
+        photo_path: Path to the uploaded pet photo
         
     Returns:
         Dictionary with processing results
     """
-    pdf_service = pdf_service or PDFService()
-    email_service = email_service or EmailService()
+    print(f"🚀 Iniciando processamento da história de {nome_pet}...")
     
-    generated_images = []
-    errors = []
-    
-    # Create backup directory for user
-    user_backup_dir = get_user_backup_dir(settings.TEMP_DIR, email)
-    Path(user_backup_dir).mkdir(parents=True, exist_ok=True)
-    logger.info(f"Backup directory: {user_backup_dir}")
-    
-    logger.info(f"Starting processing of {len(images)} images for {email}")
-    
-    # Process each image
-    for idx, image_bytes in enumerate(images, 1):
+    try:
+        # Initialize services
+        gemini_service = GeminiGenerator()
+        pdf_service = PDFService()
+        web_generator = WebGenerator()
+        email_service = EmailService()
+        
+        # Get user temp directory
+        user_temp_dir = os.path.dirname(photo_path)
+        
+        # Step 1: Generate art with Gemini
+        print(f"📸 Passo 1/4: Gerando arte com IA para {nome_pet}...")
         try:
-            logger.info(f"Processing image {idx}/{len(images)}")
-            
-            # Generate coloring book style image
-            generated_image = await image_generator.generate(
-                image_bytes, COLORING_BOOK_PROMPT
-            )
-            generated_images.append(generated_image)
-            
-            # Save generated image to backup
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            image_filename = f"{user_backup_dir}/image_{idx}_{timestamp}.png"
-            with open(image_filename, "wb") as f:
-                f.write(generated_image)
-            logger.info(f"Saved generated image to backup: {image_filename}")
-            
-            logger.info(f"Successfully generated image {idx}/{len(images)}")
-            
-            # Sleep between generations to avoid rate limits
-            if idx < len(images):  # Don't sleep after last image
-                await asyncio.sleep(settings.WORKER_SLEEP_SECONDS)
-                
+            art_path = gemini_service.generate_art(photo_path, output_dir=user_temp_dir)
+            print(f"✅ Arte gerada com sucesso: {art_path}")
         except Exception as e:
-            error_msg = f"Error processing image {idx}: {str(e)}"
-            logger.error(error_msg, exc_info=True)
-            errors.append({"image_index": idx, "error": str(e)})
-            # Continue processing other images
-    
-    if not generated_images:
-        error_msg = "No images were successfully generated"
-        logger.error(error_msg)
-        return {
-            "success": False,
-            "error": error_msg,
-            "errors": errors,
-            "images_processed": 0,
-            "images_total": len(images),
-        }
-    
-    # Create PDF from generated images
-    try:
-        logger.info(f"Creating PDF from {len(generated_images)} images")
-        pdf_bytes = pdf_service.create_pdf_from_images(generated_images)
+            print(f"❌ Erro ao gerar arte: {str(e)}")
+            raise
         
-        if not pdf_bytes:
-            raise ValueError("PDF generation returned empty bytes")
+        # Step 2: Create PDF with create_digital_kit
+        print(f"📄 Passo 2/4: Criando PDF do kit digital...")
+        try:
+            pdf_path = pdf_service.create_digital_kit(
+                pet_name=nome_pet,
+                pet_date=pet_date,
+                pet_story=pet_story,
+                image_path=art_path,
+                output_dir=user_temp_dir,
+                original_photo_path=photo_path,
+            )
+            print(f"✅ PDF criado com sucesso: {pdf_path}")
+        except Exception as e:
+            print(f"❌ Erro ao criar PDF: {str(e)}")
+            raise
         
-        # Save PDF to backup
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        pdf_filename = f"{user_backup_dir}/livro_pet_{timestamp}.pdf"
-        with open(pdf_filename, "wb") as f:
-            f.write(pdf_bytes)
-        logger.info(f"Saved PDF to backup: {pdf_filename}")
+        # Step 3: Generate web page HTML
+        print(f"🌐 Passo 3/4: Gerando página web de homenagem...")
+        try:
+            html_content = web_generator.generate_tribute_page(
+                pet_name=nome_pet,
+                pet_date=pet_date,
+                pet_story=pet_story,
+                art_image_path=art_path,
+            )
+            
+            # Save HTML file
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            html_path = os.path.join(user_temp_dir, f"homenagem_{timestamp}.html")
+            with open(html_path, "w", encoding="utf-8") as f:
+                f.write(html_content)
+            print(f"✅ Página web gerada: {html_path}")
+        except Exception as e:
+            print(f"❌ Erro ao gerar página web: {str(e)}")
+            raise
         
-        logger.info(f"PDF created successfully ({len(pdf_bytes)} bytes)")
+        # Step 4: Send email with PDF and HTML
+        print(f"📧 Passo 4/4: Enviando e-mail para {email}...")
+        try:
+            # Read PDF bytes
+            with open(pdf_path, "rb") as f:
+                pdf_bytes = f.read()
+            
+            # Send email with attachments
+            import asyncio
+            email_sent = asyncio.run(
+                email_service.send_pet_story_email(
+                    to_email=email,
+                    pet_name=nome_pet,
+                    pdf_bytes=pdf_bytes,
+                    html_content=html_content,
+                    pdf_filename=os.path.basename(pdf_path),
+                )
+            )
+            
+            if email_sent:
+                print(f"✅ E-mail enviado com sucesso!")
+            else:
+                print(f"⚠️ Falha ao enviar e-mail")
+        except Exception as e:
+            print(f"❌ Erro ao enviar e-mail: {str(e)}")
+            raise
         
-    except Exception as e:
-        error_msg = f"Error creating PDF: {str(e)}"
-        logger.error(error_msg, exc_info=True)
-        return {
-            "success": False,
-            "error": error_msg,
-            "errors": errors,
-            "images_processed": len(generated_images),
-            "images_total": len(images),
-        }
-    
-    # Send email with PDF
-    try:
-        logger.info(f"Sending PDF to {email}")
-        email_sent = await email_service.send_pdf(
-            to_email=email,
-            subject="Seu livro de colorir PetStory está pronto! 🎨",
-            pdf_bytes=pdf_bytes,
-        )
-        
-        if not email_sent:
-            raise ValueError("Email service returned False")
-        
-        logger.info(f"Successfully sent email to {email}")
-        
-    except Exception as e:
-        error_msg = f"Error sending email: {str(e)}"
-        logger.error(error_msg, exc_info=True)
-        # Even if email fails, return success since PDF was created and saved
+        print(f"🎉 Processamento completo para {nome_pet}!")
         return {
             "success": True,
-            "images_processed": len(generated_images),
-            "images_total": len(images),
-            "errors": errors,
+            "nome_pet": nome_pet,
             "email": email,
-            "pdf_path": pdf_filename,
-            "backup_dir": user_backup_dir,
-            "email_sent": False,
-            "email_error": str(e),
+            "art_path": art_path,
+            "pdf_path": pdf_path,
+            "html_path": html_path,
+            "email_sent": email_sent,
         }
-    
-    # Success!
-    return {
-        "success": True,
-        "images_processed": len(generated_images),
-        "images_total": len(images),
-        "errors": errors,
-        "email": email,
-        "pdf_path": pdf_filename,
-        "backup_dir": user_backup_dir,
-        "email_sent": True,
-    }
+        
+    except Exception as e:
+        error_msg = f"Erro no processamento: {str(e)}"
+        print(f"❌ {error_msg}")
+        logger.error(error_msg, exc_info=True)
+        return {
+            "success": False,
+            "error": error_msg,
+            "nome_pet": nome_pet,
+            "email": email,
+        }
 

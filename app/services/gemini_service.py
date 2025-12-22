@@ -3,18 +3,26 @@
 import base64
 import io
 import logging
+import os
+from datetime import datetime
 from typing import Optional
 
 import google.generativeai as genai
 from PIL import Image
 
 from app.core.config import settings
-from app.interfaces.image_generator import ImageGenerator
 
 logger = logging.getLogger(__name__)
 
+# System Prompt para estilo Bobbie Goods
+BOBBIE_GOODS_PROMPT = (
+    "Transform this pet photo into a cute, chubby 'Bobbie Goods' style cartoon character. "
+    "Thick mono-weight black outlines. Kawaii face (black dot eyes). Simplified anatomy. "
+    "Pure white background. No shading."
+)
 
-class GeminiGenerator(ImageGenerator):
+
+class GeminiGenerator:
     """Gemini Image Generation implementation of ImageGenerator.
     
     Uses the new Gemini image generation API (Nano Banana / Nano Banana Pro).
@@ -175,5 +183,58 @@ class GeminiGenerator(ImageGenerator):
             
         except Exception as e:
             logger.error(f"Error generating image with Gemini: {str(e)}", exc_info=True)
+            raise
+    
+    def generate_art(self, photo_path: str, output_dir: Optional[str] = None) -> str:
+        """Generate art from a pet photo file and save to disk.
+        
+        Args:
+            photo_path: Path to the input pet photo
+            output_dir: Directory to save the generated art. If None, saves in same dir as photo.
+            
+        Returns:
+            Path to the generated art image file
+            
+        Raises:
+            Exception: If generation fails
+        """
+        try:
+            # Read photo from file
+            with open(photo_path, "rb") as f:
+                photo_bytes = f.read()
+            
+            logger.info(f"Generating art from photo: {photo_path}")
+            
+            # Generate art using the async method (sync wrapper)
+            import asyncio
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+            
+            art_bytes = loop.run_until_complete(
+                self.generate(photo_bytes, BOBBIE_GOODS_PROMPT)
+            )
+            
+            # Determine output path
+            if output_dir is None:
+                output_dir = os.path.dirname(photo_path)
+            
+            os.makedirs(output_dir, exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_filename = f"arte_{timestamp}.png"
+            output_path = os.path.join(output_dir, output_filename)
+            
+            # Save generated art
+            with open(output_path, "wb") as f:
+                f.write(art_bytes)
+            
+            logger.info(f"Art saved to: {output_path}")
+            return output_path
+            
+        except Exception as e:
+            logger.error(f"Error generating art from {photo_path}: {str(e)}", exc_info=True)
             raise
 
