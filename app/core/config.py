@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     # Worker Configuration
     WORKER_SLEEP_SECONDS: float = 2.0  # Delay entre gerações para evitar rate limit
 
+    # Gemini Model Configuration
+    GEMINI_IMAGE_MODEL: str = "gemini-2.5-flash-image"  # ou "gemini-3-pro-image-preview"
+
     # CORS Configuration
     # Pode ser uma string JSON ou valores separados por vírgula
     CORS_ORIGINS: str = (
