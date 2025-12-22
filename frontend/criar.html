@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Livro de Colorir | PetStory</title>
+    <meta name="description" content="Crie seu livro de colorir personalizado do seu pet. Envie as fotos e receba o PDF em minutos!">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="keywords" content="criar livro de colorir, pet, personalizado, PDF, upload fotos">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Preconnect para Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========================================
+           📐 STYLEGUIDE - VARIÁVEIS E PADRÕES
+           ======================================== */
+        :root {
+            /* Cores */
+            --paper-white: #ffffff;
+            --desk-bg: #fdf6e3;
+            --ink-black: #2d2d2d;
+            --pastel-pink: #ffdae0;
+            --pastel-green: #d4eac8;
+            --pastel-blue: #cceeff;
+            --pastel-yellow: #fff5ba;
+            --pastel-purple: #e6dff0;
+            
+            /* Espaçamentos */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            
+            /* Sombras */
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 8px 8px 0px rgba(45, 45, 45, 0.08);
+            --shadow-sticker: 5px 5px 0px var(--ink-black);
+            
+            /* Bordas */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --border-width: 3px;
+        }
+
+        /* ========================================
+           🎨 BASE STYLES
+           ======================================== */
+        body { 
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--desk-bg);
+            color: var(--ink-black);
+            overflow-x: hidden;
+            background-image: radial-gradient(#d8d4c9 2px, transparent 2px);
+            background-size: 24px 24px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, .handwritten { 
+            font-family: 'Patrick Hand', cursive;
+            line-height: 1.2;
+        }
+
+        /* ========================================
+           ✨ ANIMAÇÕES
+           ======================================== */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+            60% { opacity: 1; transform: scale(1.05) translateY(-5px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .reveal {
+            opacity: 0;
+        }
+        
+        .reveal.active {
+            animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-float { 
+            animation: floatY 4s ease-in-out infinite; 
+        }
+
+        /* ========================================
+           📄 PAPEL PRINCIPAL
+           ======================================== */
+        .master-paper {
+            background-color: var(--paper-white);
+            max-width: 900px;
+            margin: 40px auto;
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            padding: var(--space-xl);
+            overflow: hidden;
+            background-image: linear-gradient(#f4f4f4 1px, transparent 1px);
+            background-size: 100% 40px;
+        }
+        
+        .binder-holes {
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            z-index: 10;
+        }
+        
+        .hole {
+            width: 25px;
+            height: 25px;
+            background-color: var(--desk-bg);
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* ========================================
+           🔘 BOTÕES ADESIVO
+           ======================================== */
+        .btn-sticker {
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: var(--radius-md);
+            font-family: 'Patrick Hand', cursive;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-sticker);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+        }
+        
+        .btn-sticker:hover { 
+            transform: translate(-2px, -2px) scale(1.05);
+            box-shadow: 8px 8px 0px var(--ink-black);
+        }
+        
+        .btn-sticker:active { 
+            transform: translate(3px, 3px) scale(0.95);
+            box-shadow: 2px 2px 0px var(--ink-black);
+        }
+        
+        .btn-pink { background-color: var(--pastel-pink); color: var(--ink-black); }
+        .btn-green { background-color: var(--pastel-green); color: var(--ink-black); }
+        .btn-blue { background-color: var(--pastel-blue); color: var(--ink-black); }
+
+        /* ========================================
+           🎴 CARDS
+           ======================================== */
+        .step-card {
+            background: white;
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-align: center;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+            position: relative;
+        }
+        
+        .step-card:hover { 
+            transform: translateY(-10px) rotate(2deg) !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        /* ========================================
+           🎨 DOODLES
+           ======================================== */
+        .doodle { 
+            position: absolute;
+            font-size: 28px;
+            opacity: 0.9;
+            z-index: 5;
+            pointer-events: none;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Acessibilidade */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="master-paper relative" id="paper-container">
+        
+        <!-- Furos do Caderno -->
+        <div class="binder-holes hidden md:flex">
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+        </div>
+
+        <!-- Doodles -->
+        <div class="doodle" style="top: 50px; right: 50px;">✨</div>
+        <div class="doodle" style="top: 150px; left: 80px;">🐾</div>
+        <div class="doodle" style="bottom: 100px; right: 100px;">🖍️</div>
+        <div class="doodle" style="bottom: 300px; left: 50px;">🦴</div>
+
+        <!-- ========================================
+             📝 HEADER
+             ======================================== -->
+        <header class="flex justify-between items-center mb-8 pl-0 md:pl-16 border-b-2 border-dashed border-gray-300 pb-6 reveal">
+            <a href="index.html" class="text-3xl md:text-4xl font-hand font-bold flex items-center gap-2 text-gray-800 hover:opacity-80 transition-opacity">
+                <i class="fas fa-paw text-pink-400" aria-hidden="true"></i> <span>PetStory</span>
+            </a>
+            <a href="index.html" class="font-hand text-lg md:text-xl underline decoration-wavy decoration-pink-400 hover:text-pink-500 text-gray-600 transition-colors">
+                ← Voltar
+            </a>
+        </header>
+
+        <!-- ========================================
+             🎯 HERO SECTION
+             ======================================== -->
+        <section class="text-center pl-0 md:pl-16 mb-12 reveal">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 text-[#2d2d2d]">
+                Crie seu Livro de Colorir! 🎨
+            </h1>
+            <p class="text-lg md:text-xl text-gray-600 mb-8 font-hand leading-relaxed max-w-2xl mx-auto">
+                Envie as fotos do seu pet e receba um lindo livro de colorir estilo Doodle Goods em poucos minutos!
+            </p>
+        </section>
+
+        <!-- ========================================
+             ✨ COMO FUNCIONA
+             ======================================== -->
+        <section class="pl-0 md:pl-16 mb-12 text-center">
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="step-card transform rotate-1 reveal delay-100">
+                    <span class="text-4xl mb-3 block animate-float">📸</span>
+                    <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">1. Envie as Fotos</h3>
+                    <p class="text-gray-600 text-sm md:text-base leading-relaxed">Selecione as melhores fotos do seu pet. Quanto mais fotos, mais páginas no livro!</p>
+                </div>
+
+                <div class="step-card transform -rotate-1 mt-4 md:mt-0 bg-[#fff5ba] reveal delay-200">
+                    <span class="text-4xl mb-3 block animate-float delay-1000">🖍️</span>
+                    <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">2. IA Transforma</h3>
+                    <p class="text-gray-600 text-sm md:text-base leading-relaxed">Nossa inteligência artificial cria o traço grosso e limpo estilo Doodle Goods.</p>
+                </div>
+
+                <div class="step-card transform rotate-1 reveal delay-300">
+                    <span class="text-4xl mb-3 block animate-float delay-2000">💌</span>
+                    <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">3. Receba o PDF</h3>
+                    <p class="text-gray-600 text-sm md:text-base leading-relaxed">O PDF completo chega direto no seu e-mail pronto para imprimir!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             📤 UPLOAD SECTION
+             ======================================== -->
+        <section class="pl-0 md:pl-16 mb-8 reveal">
+            <div class="max-w-2xl mx-auto bg-white border-3 border-black rounded-xl p-6 md:p-8 transform rotate-1">
+                <h2 class="font-hand text-3xl md:text-4xl font-bold text-center mb-6">Envie as Fotos do Seu Pet! 🐾</h2>
+                
+                <form id="uploadForm" class="space-y-6">
+                    <!-- Email Input -->
+                    <div>
+                        <label for="userEmail" class="block font-hand font-bold text-lg mb-2 text-gray-700">
+                            Seu E-mail <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="userEmail" 
+                            name="email" 
+                            required
+                            placeholder="seu-email@exemplo.com"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-hand text-lg focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 transition"
+                        >
+                        <p class="text-sm text-gray-500 mt-1 font-hand">Para onde enviaremos o PDF do seu livro</p>
+                    </div>
+                    
+                    <!-- File Upload -->
+                    <div>
+                        <label for="petPhotos" class="block font-hand font-bold text-lg mb-2 text-gray-700">
+                            Fotos do Pet <span class="text-red-500">*</span>
+                        </label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-pink-400 transition cursor-pointer" id="dropZone">
+                            <input 
+                                type="file" 
+                                id="petPhotos" 
+                                name="photos" 
+                                multiple 
+                                accept="image/jpeg,image/jpg,image/png,image/webp"
+                                required
+                                class="hidden"
+                            >
+                            <div id="dropZoneContent">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                                <p class="font-hand text-lg text-gray-600 mb-2">
+                                    Clique aqui ou arraste as fotos
+                                </p>
+                                <p class="text-sm text-gray-400">
+                                    Formatos: JPG, PNG, WebP (máx. 10MB por imagem)
+                                </p>
+                                <p class="text-xs text-gray-400 mt-2">
+                                    Você pode enviar até 20 fotos
+                                </p>
+                            </div>
+                        </div>
+                        <div id="fileList" class="mt-4 space-y-2"></div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="submitBtn"
+                        class="w-full btn-sticker btn-pink py-4 text-xl md:text-2xl hover:scale-105 transition shadow-lg font-bold"
+                    >
+                        Gerar Meu Livro de Colorir! 🎨
+                    </button>
+                    
+                    <!-- Progress/Status -->
+                    <div id="statusMessage" class="hidden text-center">
+                        <div id="statusContent" class="font-hand text-lg"></div>
+                        <div id="progressBar" class="mt-4 hidden">
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div id="progressFill" class="bg-pink-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ========================================
+             💡 DICAS
+             ======================================== -->
+        <section class="pl-0 md:pl-16 mb-8 reveal">
+            <div class="max-w-2xl mx-auto bg-[#fcf8e3] border-2 border-dashed border-yellow-400 rounded-xl p-6 md:p-8">
+                <h3 class="font-hand text-2xl md:text-3xl font-bold text-center mb-4">💡 Dicas para Melhores Resultados</h3>
+                <div class="grid md:grid-cols-2 gap-4 text-left">
+                    <div class="bg-white border-2 border-black rounded-lg p-4 transform rotate-1">
+                        <div class="text-2xl mb-2">📸</div>
+                        <p class="font-hand text-sm md:text-base text-gray-700">Use fotos com boa iluminação e o pet bem visível</p>
+                    </div>
+                    <div class="bg-white border-2 border-black rounded-lg p-4 transform -rotate-1">
+                        <div class="text-2xl mb-2">🎯</div>
+                        <p class="font-hand text-sm md:text-base text-gray-700">Fotos de frente ou perfil funcionam melhor</p>
+                    </div>
+                    <div class="bg-white border-2 border-black rounded-lg p-4 transform rotate-1">
+                        <div class="text-2xl mb-2">✨</div>
+                        <p class="font-hand text-sm md:text-base text-gray-700">Quanto mais fotos, mais páginas no livro!</p>
+                    </div>
+                    <div class="bg-white border-2 border-black rounded-lg p-4 transform -rotate-1">
+                        <div class="text-2xl mb-2">🖼️</div>
+                        <p class="font-hand text-sm md:text-base text-gray-700">Fotos em alta qualidade geram melhores resultados</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             📞 FOOTER
+             ======================================== -->
+        <footer class="text-center text-gray-400 font-hand text-base md:text-lg border-t border-dashed border-gray-300 pt-8 mt-8 pl-0 md:pl-16">
+            <p>Feito com ❤️, Café e Patinhas.</p>
+            <p class="text-sm mt-1">© 2025 PetStory</p>
+        </footer>
+
+    </main>
+
+    <script>
+        /* ========================================
+           🎯 SCRIPTS E INTERATIVIDADES
+           ======================================== */
+        
+        /* Scroll Reveal */
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        
+        window.addEventListener("scroll", reveal);
+        reveal();
+        
+        /* Smooth Scroll para links âncora */
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        /* ========================================
+           📤 UPLOAD FORM FUNCTIONALITY
+           ======================================== */
+        
+        // API Configuration
+        const isDevelopment = window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1' ||
+                             window.location.protocol === 'file:' ||
+                             !window.location.hostname;
+        
+        let API_URL;
+        if (isDevelopment) {
+            API_URL = 'http://localhost:8000';
+        } else {
+            API_URL = 'https://seu-backend.com';
+            console.warn('⚠️ Configure a URL do backend em produção!');
+        }
+        
+        console.log('🔗 API URL:', API_URL);
+        
+        const form = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('petPhotos');
+        const dropZone = document.getElementById('dropZone');
+        const fileList = document.getElementById('fileList');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const statusContent = document.getElementById('statusContent');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        
+        let selectedFiles = [];
+        
+        // Drop Zone Events
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-pink-400', 'bg-pink-50');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-pink-400', 'bg-pink-50');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-pink-400', 'bg-pink-50');
+            const files = Array.from(e.dataTransfer.files).filter(file => 
+                file.type.startsWith('image/')
+            );
+            handleFiles(files);
+        });
+        
+        // File Input Change
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(Array.from(e.target.files));
+        });
+        
+        function handleFiles(files) {
+            // Limita a 20 arquivos
+            if (files.length > 20) {
+                showStatus('Você pode enviar no máximo 20 fotos. As primeiras 20 serão selecionadas.', 'error');
+                files = files.slice(0, 20);
+            }
+            
+            selectedFiles = files;
+            fileList.innerHTML = '';
+            
+            if (files.length === 0) return;
+            
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200';
+                fileItem.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-image text-pink-400"></i>
+                        <span class="font-hand text-sm">${file.name}</span>
+                        <span class="text-xs text-gray-400">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                    </div>
+                    <button type="button" class="text-red-500 hover:text-red-700" onclick="removeFile(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+            
+            updateDropZoneContent();
+        }
+        
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            const newFiles = new DataTransfer();
+            selectedFiles.forEach(file => newFiles.items.add(file));
+            fileInput.files = newFiles.files;
+            handleFiles(selectedFiles);
+        };
+        
+        function updateDropZoneContent() {
+            const dropZoneContent = document.getElementById('dropZoneContent');
+            if (selectedFiles.length > 0) {
+                dropZoneContent.innerHTML = `
+                    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+                    <p class="font-hand text-lg text-gray-700 mb-2">
+                        ${selectedFiles.length} foto(s) selecionada(s)
+                    </p>
+                    <p class="text-sm text-gray-400">
+                        Clique para adicionar mais ou arraste novas fotos
+                    </p>
+                `;
+            } else {
+                dropZoneContent.innerHTML = `
+                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                    <p class="font-hand text-lg text-gray-600 mb-2">
+                        Clique aqui ou arraste as fotos
+                    </p>
+                    <p class="text-sm text-gray-400">
+                        Formatos: JPG, PNG, WebP (máx. 10MB por imagem)
+                    </p>
+                    <p class="text-xs text-gray-400 mt-2">
+                        Você pode enviar até 20 fotos
+                    </p>
+                `;
+            }
+        }
+        
+        // Form Submit
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('userEmail').value;
+            
+            if (!email || !email.includes('@')) {
+                showStatus('Por favor, insira um e-mail válido.', 'error');
+                return;
+            }
+            
+            if (selectedFiles.length === 0) {
+                showStatus('Por favor, selecione pelo menos uma foto.', 'error');
+                return;
+            }
+            
+            // Validate file sizes
+            const oversizedFiles = selectedFiles.filter(file => file.size > 10 * 1024 * 1024);
+            if (oversizedFiles.length > 0) {
+                showStatus(`Alguns arquivos excedem 10MB: ${oversizedFiles.map(f => f.name).join(', ')}`, 'error');
+                return;
+            }
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            
+            // Show progress
+            showStatus('Enviando fotos para processamento...', 'info');
+            progressBar.classList.remove('hidden');
+            progressFill.style.width = '20%';
+            
+            try {
+                // Create FormData
+                const formData = new FormData();
+                selectedFiles.forEach(file => {
+                    formData.append('files', file);
+                });
+                
+                // Send to backend
+                const response = await fetch(`${API_URL}/upload?email=${encodeURIComponent(email)}`, {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'cors',
+                    credentials: 'omit',
+                });
+                
+                progressFill.style.width = '60%';
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ detail: 'Erro desconhecido' }));
+                    throw new Error(errorData.detail || `Erro ${response.status}`);
+                }
+                
+                const data = await response.json();
+                progressFill.style.width = '100%';
+                
+                if (data.status === 'accepted') {
+                    showStatus(
+                        `✅ ${data.message}<br><small class="text-gray-500">Processando ${data.images_count} imagem(ns)...<br>Você receberá o PDF no e-mail em alguns minutos!</small>`,
+                        'success'
+                    );
+                    
+                    // Reset form after 5 seconds
+                    setTimeout(() => {
+                        form.reset();
+                        selectedFiles = [];
+                        fileList.innerHTML = '';
+                        updateDropZoneContent();
+                        statusMessage.classList.add('hidden');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Gerar Meu Livro de Colorir! 🎨';
+                    }, 8000);
+                } else {
+                    throw new Error(data.message || 'Erro ao processar');
+                }
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                showStatus(`❌ Erro: ${error.message}`, 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Gerar Meu Livro de Colorir! 🎨';
+            } finally {
+                progressBar.classList.add('hidden');
+                progressFill.style.width = '0%';
+            }
+        });
+        
+        function showStatus(message, type = 'info') {
+            statusMessage.classList.remove('hidden');
+            statusContent.innerHTML = message;
+            
+            // Remove previous type classes
+            statusContent.classList.remove('text-blue-600', 'text-green-600', 'text-red-600');
+            
+            // Add appropriate class
+            if (type === 'success') {
+                statusContent.classList.add('text-green-600');
+            } else if (type === 'error') {
+                statusContent.classList.add('text-red-600');
+            } else {
+                statusContent.classList.add('text-blue-600');
+            }
+        }
+    </script>
+</body>
+</html>
+
