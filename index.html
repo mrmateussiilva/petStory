@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetStory | Transforme seu Pet em Livro de Colorir | Doodle Goods Style</title>
+    <meta name="description" content="Transforme a foto do seu pet em um lindo livro de colorir estilo Doodle Goods. Baixe o PDF, imprima e relaxe pintando seu bichinho favorito!">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="keywords" content="livro de colorir, pet, cachorro, gato, doodle goods, colorir, PDF, arte digital, presente personalizado">
+    <meta name="author" content="PetStory">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://petstoryart.com/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://petstoryart.com/">
+    <meta property="og:title" content="PetStory | Transforme seu Pet em Livro de Colorir">
+    <meta property="og:description" content="Transforme a foto do seu pet em um lindo livro de colorir estilo Doodle Goods. Baixe o PDF, imprima e relaxe pintando seu bichinho favorito!">
+    <meta property="og:image" content="https://petstoryart.com/og-image.jpg">
+    <meta property="og:locale" content="pt_BR">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://petstoryart.com/">
+    <meta name="twitter:title" content="PetStory | Transforme seu Pet em Livro de Colorir">
+    <meta name="twitter:description" content="Transforme a foto do seu pet em um lindo livro de colorir estilo Doodle Goods. Baixe o PDF, imprima e relaxe pintando seu bichinho favorito!">
+    <meta name="twitter:image" content="https://petstoryart.com/og-image.jpg">
+    
+    <!-- Preconnect para Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "PetStory - Livro de Colorir Personalizado",
+      "description": "Transforme a foto do seu pet em um lindo livro de colorir estilo Doodle Goods",
+      "brand": {
+        "@type": "Brand",
+        "name": "PetStory"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "27.90",
+        "priceCurrency": "BRL",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========================================
+           📐 STYLEGUIDE - VARIÁVEIS E PADRÕES
+           ======================================== */
+        :root {
+            /* Cores */
+            --paper-white: #ffffff;
+            --desk-bg: #fdf6e3;
+            --ink-black: #2d2d2d;
+            --pastel-pink: #ffdae0;
+            --pastel-green: #d4eac8;
+            --pastel-blue: #cceeff;
+            --pastel-yellow: #fff5ba;
+            --pastel-purple: #e6dff0;
+            
+            /* Espaçamentos (múltiplos de 4px) */
+            --space-xs: 0.5rem;    /* 8px */
+            --space-sm: 1rem;      /* 16px */
+            --space-md: 1.5rem;    /* 24px */
+            --space-lg: 2rem;      /* 32px */
+            --space-xl: 3rem;      /* 48px */
+            --space-2xl: 4rem;     /* 64px */
+            --space-3xl: 5rem;     /* 80px */
+            
+            /* Sombras */
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 8px 8px 0px rgba(45, 45, 45, 0.08);
+            --shadow-lg: 15px 20px 30px rgba(0,0,0,0.15);
+            --shadow-sticker: 5px 5px 0px var(--ink-black);
+            
+            /* Bordas */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --border-width: 3px;
+        }
+
+        /* ========================================
+           🎨 BASE STYLES
+           ======================================== */
+        body { 
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--desk-bg);
+            color: var(--ink-black);
+            overflow-x: hidden;
+            background-image: radial-gradient(#d8d4c9 2px, transparent 2px);
+            background-size: 24px 24px;
+            padding-bottom: 100px;
+            line-height: 1.6;
+        }
+        
+        /* Acessibilidade - Reduzir animações se solicitado */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        h1, h2, h3, h4, .handwritten { 
+            font-family: 'Patrick Hand', cursive;
+            line-height: 1.2;
+        }
+
+        /* ========================================
+           ✨ ANIMAÇÕES E MICRO-INTERACTIONS
+           ======================================== */
+        
+        /* Pop-In Elástico */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+            60% { opacity: 1; transform: scale(1.05) translateY(-5px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .reveal {
+            opacity: 0;
+        }
+        
+        .reveal.active {
+            animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Fade In Suave */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Wiggle (Tremidinha) */
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+        
+        .hover-wiggle:hover {
+            animation: wiggle 0.4s ease-in-out infinite;
+        }
+
+        /* Marcador Mágico */
+        @keyframes drawLine {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        .marker-anim {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .marker-anim::after {
+            content: '';
+            position: absolute;
+            left: -5px;
+            bottom: 5px;
+            height: 15px;
+            width: 0;
+            background-color: var(--pastel-pink);
+            z-index: -1;
+            transform: rotate(-1deg);
+            border-radius: 4px;
+            opacity: 0.7;
+            animation: drawLine 1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
+        }
+
+        /* Flutuação */
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-float { 
+            animation: floatY 4s ease-in-out infinite; 
+        }
+        
+        .delay-1000 { animation-delay: 1s; }
+        .delay-2000 { animation-delay: 2s; }
+        .delay-3000 { animation-delay: 3s; }
+
+        /* Scale Hover */
+        @keyframes scalePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Slide In */
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .slide-in-left { animation: slideInLeft 0.6s ease-out forwards; }
+        .slide-in-right { animation: slideInRight 0.6s ease-out forwards; }
+
+        /* ========================================
+           📄 PAPEL PRINCIPAL (MASTER PAPER)
+           ======================================== */
+        .master-paper {
+            background-color: var(--paper-white);
+            max-width: 1000px;
+            margin: 40px auto;
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            padding: var(--space-xl);
+            overflow: hidden;
+            background-image: linear-gradient(#f4f4f4 1px, transparent 1px);
+            background-size: 100% 40px;
+        }
+        
+        .binder-holes {
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            z-index: 10;
+        }
+        
+        .hole {
+            width: 25px;
+            height: 25px;
+            background-color: var(--desk-bg);
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* ========================================
+           🔘 BOTÕES ADESIVO
+           ======================================== */
+        .btn-sticker {
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: var(--radius-md);
+            font-family: 'Patrick Hand', cursive;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-sticker);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+        }
+        
+        .btn-sticker:hover { 
+            transform: translate(-2px, -2px) scale(1.05);
+            box-shadow: 8px 8px 0px var(--ink-black);
+        }
+        
+        .btn-sticker:active { 
+            transform: translate(3px, 3px) scale(0.95);
+            box-shadow: 2px 2px 0px var(--ink-black);
+        }
+        
+        .btn-pink { background-color: var(--pastel-pink); color: var(--ink-black); }
+        .btn-green { background-color: var(--pastel-green); color: var(--ink-black); }
+        .btn-blue { background-color: var(--pastel-blue); color: var(--ink-black); }
+
+        /* ========================================
+           📸 POLAROID E SLIDER MELHORADO
+           ======================================== */
+        .polaroid-wrapper {
+            background: white;
+            padding: 15px 15px 60px 15px;
+            box-shadow: var(--shadow-lg);
+            transform: rotate(2deg);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            z-index: 20;
+        }
+        
+        .polaroid-wrapper:hover {
+            transform: rotate(-1deg) scale(1.03) translateY(-10px);
+            z-index: 30;
+            box-shadow: 20px 25px 40px rgba(0,0,0,0.2);
+        }
+
+        .washi-tape {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 130px;
+            height: 35px;
+            background-color: rgba(255, 182, 193, 0.85);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 40;
+            backdrop-filter: blur(2px);
+            mask-image: radial-gradient(circle at 2px 50%, transparent 2px, black 2.5px);
+            -webkit-mask-image: radial-gradient(circle at 2px 50%, transparent 2px, black 2.5px);
+            mask-size: 10px 100%;
+            -webkit-mask-size: 10px 100%;
+            mask-position: -5px;
+            -webkit-mask-position: -5px;
+        }
+
+        /* Slider Comparativo Melhorado */
+        .img-comp-container { 
+            position: relative;
+            height: 400px;
+            width: 100%;
+            overflow: hidden;
+            background: #f8f8f8;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><g fill="%23d4eac8" fill-opacity="0.4"><path d="M0 0h20v20H0zM20 20h20v20H20z"/></g></svg>');
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .img-comp-img { 
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .img-comp-overlay {
+            z-index: 2;
+            overflow: hidden;
+            position: absolute;
+        }
+        
+        .img-comp-img img { 
+            display: block;
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            max-width: none;
+            transition: filter 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .img-comp-slider {
+            position: absolute;
+            z-index: 10;
+            cursor: ew-resize;
+            cursor: grab;
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            transition: transform 0.2s, box-shadow 0.2s;
+            pointer-events: auto;
+        }
+        
+        .img-comp-slider:active {
+            cursor: grabbing;
+        }
+        
+        .img-comp-slider:hover {
+            transform: translateY(-50%) scale(1.15);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .img-comp-slider.dragging { 
+            transform: translateY(-50%) scale(1.2);
+        }
+        
+        /* Linha divisória */
+        .img-comp-divider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--ink-black);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .polaroid-caption {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.6rem;
+            color: #555;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* ========================================
+           🎴 CARDS E COMPONENTES
+           ======================================== */
+        .pricing-card {
+            background-color: #fff;
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            position: relative;
+            box-shadow: var(--shadow-md);
+            background-image: radial-gradient(var(--pastel-yellow) 20%, transparent 20%);
+            background-size: 20px 20px;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .pricing-card:hover { 
+            transform: rotate(1deg) scale(1.02);
+        }
+
+        .pricing-header {
+            background: var(--ink-black);
+            color: white;
+            padding: 8px 20px;
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.2rem;
+            border-radius: var(--radius-sm);
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+        }
+
+        .step-card {
+            background: white;
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-align: center;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+            position: relative;
+        }
+        
+        .step-card:hover { 
+            transform: translateY(-10px) rotate(2deg) !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+        
+        .step-icon { 
+            font-size: 3rem;
+            margin-bottom: var(--space-sm);
+            display: block;
+            animation: floatY 3s ease-in-out infinite;
+        }
+
+        /* Cards do Mural com Hover Melhorado */
+        .mural-card {
+            background: white;
+            padding: 12px 12px 50px 12px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mural-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .mural-card:hover::before {
+            left: 100%;
+        }
+        
+        .mural-card:hover {
+            transform: scale(1.12) rotate(0deg) !important;
+            z-index: 30;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        
+        .mural-card img {
+            transition: filter 0.3s ease;
+        }
+        
+        .mural-card:hover img {
+            filter: grayscale(0) contrast(1.1) brightness(1.05);
+        }
+
+        /* ========================================
+           🎨 DOODLES E ELEMENTOS DECORATIVOS
+           ======================================== */
+        .doodle { 
+            position: absolute;
+            font-size: 28px;
+            opacity: 0.9;
+            z-index: 5;
+            pointer-events: none;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* ========================================
+           📋 ANTES E DEPOIS EXPANDIDO
+           ======================================== */
+        .before-after-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+        
+        .before-after-item {
+            background: white;
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease;
+        }
+        
+        .before-after-item:hover {
+            transform: translateY(-8px) rotate(1deg);
+        }
+        
+        .before-after-label {
+            padding: var(--space-sm);
+            text-align: center;
+            font-family: 'Patrick Hand', cursive;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .before-after-label.antes {
+            background: var(--pastel-blue);
+        }
+        
+        .before-after-label.depois {
+            background: var(--pastel-green);
+        }
+
+        /* ========================================
+           💬 DEPOIMENTOS
+           ======================================== */
+        .testimonial-card {
+            background: white;
+            border: var(--border-width) solid var(--ink-black);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            position: relative;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: rotate(-1deg) scale(1.02);
+        }
+        
+        .testimonial-stars {
+            color: #fbbf24;
+            font-size: 1.2rem;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .testimonial-author {
+            margin-top: var(--space-sm);
+            font-family: 'Patrick Hand', cursive;
+            font-weight: bold;
+            color: var(--ink-black);
+        }
+
+        /* ========================================
+           📱 CTA STICKY MOBILE MELHORADO
+           ======================================== */
+        .cta-sticky {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.98);
+            border-top: var(--border-width) solid var(--ink-black);
+            padding: var(--space-sm);
+            z-index: 999;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-sm);
+        }
+        
+        @media (min-width: 768px) {
+            .cta-sticky {
+                display: none;
+            }
+        }
+
+        /* ========================================
+           📐 ESPAÇAMENTOS PADRONIZADOS
+           ======================================== */
+        .section-spacing {
+            margin-bottom: var(--space-3xl);
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: var(--space-xl);
+            text-align: center;
+        }
+        
+        @media (max-width: 640px) {
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* FAQ Acordeão */
+        details[open] summary ~ * { 
+            animation: sweep 0.3s ease-in-out;
+        }
+        
+        @keyframes sweep { 
+            from { 
+                opacity: 0;
+                margin-top: -10px;
+            }
+            to { 
+                opacity: 1;
+                margin-top: 0;
+            }
+        }
+        
+        details > summary { 
+            list-style: none;
+            cursor: pointer;
+        }
+        
+        details > summary::-webkit-details-marker { 
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================
+         🔔 FAIXA DE AVISO
+         ======================================== -->
+    <div class="bg-yellow-300 text-center py-2 border-b-2 border-yellow-500 border-dashed sticky top-0 z-50 shadow-sm font-hand text-lg">
+        ⭐ Oferta de Lançamento: <span class="bg-white px-2 rounded ml-1 font-bold">50% OFF</span> por tempo limitado!
+    </div>
+
+    <main class="master-paper relative" id="paper-container">
+        
+        <!-- Furos do Caderno -->
+        <div class="binder-holes hidden md:flex">
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+        </div>
+
+        <!-- Doodles com Parallax -->
+        <div class="doodle parallax" data-speed="2" style="top: 50px; right: 50px;">✨</div>
+        <div class="doodle parallax" data-speed="-2" style="top: 150px; left: 80px;">🐾</div>
+        <div class="doodle parallax" data-speed="1.5" style="bottom: 100px; right: 100px;">🖍️</div>
+        <div class="doodle parallax" data-speed="-1" style="bottom: 300px; left: 50px;">🦴</div>
+        <div class="doodle parallax" data-speed="1" style="top: 400px; right: 150px;">⭐</div>
+
+        <!-- ========================================
+             📝 HEADER
+             ======================================== -->
+        <header class="flex justify-between items-center mb-12 pl-0 md:pl-16 border-b-2 border-dashed border-gray-300 pb-6 reveal">
+            <div class="text-3xl md:text-4xl font-hand font-bold flex items-center gap-2 text-gray-800 hover-wiggle cursor-default">
+                <i class="fas fa-paw text-pink-400" aria-hidden="true"></i> <span>PetStory</span>
+            </div>
+            <a href="#pricing" class="font-hand text-lg md:text-xl underline decoration-wavy decoration-pink-400 hover:text-pink-500 text-gray-600 transition-colors">
+                Fazer meu pedido
+            </a>
+        </header>
+
+        <!-- ========================================
+             🎯 HERO SECTION (MELHORADO)
+             ======================================== -->
+        <section class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center pl-0 md:pl-16 mb-20 relative z-10 section-spacing">
+            
+            <div class="text-center lg:text-left reveal">
+                <div class="inline-block bg-black text-white px-4 py-2 rounded-lg font-hand transform -rotate-2 text-base md:text-lg mb-6 shadow-md animate-float">
+                    #1 Trend do TikTok 🎵
+                </div>
+                
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-[#2d2d2d]">
+                    Seu Pet virou <br>
+                    <span class="marker-anim">Livro de Colorir!</span>
+                </h1>
+                
+                <p class="text-lg md:text-xl text-gray-600 mb-8 font-hand leading-relaxed max-w-lg mx-auto lg:mx-0">
+                    Transforme a foto do seu bichinho em arte estilo <strong>"Doodle Goods"</strong> (traço grosso e fofo). Baixe o PDF, imprima e relaxe pintando.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
+                    <a href="#pricing" class="btn-sticker btn-green px-8 py-4 text-lg md:text-xl w-full sm:w-auto transform -rotate-1 hover-scale" aria-label="Ir para página de preços e criar seu livro de colorir">
+                        Quero criar o meu! 🎨
+                    </a>
+                    <a href="#como-funciona" class="btn-sticker btn-blue px-6 py-4 text-base md:text-lg w-full sm:w-auto transform rotate-1" aria-label="Saiba como funciona o processo de transformação">
+                        Como funciona? ✨
+                    </a>
+                </div>
+                
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 text-sm md:text-base">
+                    <div class="flex items-center gap-2 text-sm font-bold text-gray-700 bg-white inline-block px-4 py-2 rounded-lg border border-gray-200 shadow-sm transform rotate-1 hover-wiggle cursor-default">
+                    <div class="flex text-yellow-400"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <span>"Amei demais!" - Julia M.</span>
+                    </div>
+                    <div class="text-xs text-gray-500 font-hand">
+                        ✨ Entrega em 5-10 minutos
+                    </div>
+                </div>
+            </div>
+
+            <!-- Polaroid Interativa Melhorada -->
+            <div class="polaroid-wrapper reveal delay-1000">
+                <div class="washi-tape"></div>
+                
+                <div class="img-comp-container">
+                    <div class="img-comp-img">
+                        <!-- DEPOIS (Desenho) -->
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80&sat=-100&con=30&bri=30&blur=0" alt="Exemplo de transformação: cachorro transformado em desenho estilo Doodle Goods, livro de colorir preto e branco com traços grossos" loading="lazy" width="600" height="400" style="filter: contrast(1.5) brightness(1.3) grayscale(1);">
+                    </div>
+                    <div class="img-comp-img img-comp-overlay">
+                        <!-- ANTES (Foto) -->
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Foto original de um cachorro antes da transformação em desenho" loading="lazy" width="600" height="400">
+                    </div>
+                </div>
+                
+                <div class="polaroid-caption">
+                   <span class="text-gray-400">Foto</span>
+                   <span class="text-pink-400 font-bold text-sm transform -rotate-2">↔️ puxa ↔️</span>
+                   <span class="text-pink-400 font-bold">Arte</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Faixa Decorativa -->
+        <div class="w-full h-8 bg-[#cceeff] opacity-70 mb-16 transform -rotate-1 flex items-center justify-center overflow-hidden border-y-2 border-white shadow-sm reveal">
+            <span class="text-xs text-blue-800 font-bold tracking-widest uppercase">PetStory • PetStory • PetStory • PetStory • PetStory • PetStory</span>
+        </div>
+
+        <!-- ========================================
+             🎨 ANTES E DEPOIS EXPANDIDO
+             ======================================== -->
+        <section id="antes-depois" class="pl-0 md:pl-16 mb-20 section-spacing reveal">
+            <h2 class="section-title">
+                Veja a Transformação! 🎨
+            </h2>
+            
+            <div class="before-after-grid">
+                <div class="before-after-item fade-in">
+                    <div class="before-after-label antes">Antes 📸</div>
+                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400" alt="Foto original de um gato antes da transformação em desenho estilo livro de colorir" class="w-full h-64 object-cover" loading="lazy" width="400" height="256">
+                </div>
+                <div class="before-after-item fade-in delay-1000">
+                    <div class="before-after-label depois">Depois 🖍️</div>
+                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400" alt="Gato transformado em desenho estilo Doodle Goods, livro de colorir preto e branco" class="w-full h-64 object-cover" loading="lazy" width="400" height="256" style="filter: contrast(1.5) brightness(1.3) grayscale(1);">
+                </div>
+                <div class="before-after-item fade-in delay-2000">
+                    <div class="before-after-label antes">Antes 📸</div>
+                    <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400" alt="Foto original de um cachorro antes da transformação em desenho estilo livro de colorir" class="w-full h-64 object-cover" loading="lazy" width="400" height="256">
+                </div>
+                <div class="before-after-item fade-in delay-3000">
+                    <div class="before-after-label depois">Depois 🖍️</div>
+                    <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400" alt="Cachorro transformado em desenho estilo Doodle Goods, livro de colorir preto e branco" class="w-full h-64 object-cover" loading="lazy" width="400" height="256" style="filter: contrast(1.5) brightness(1.3) grayscale(1);">
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             ✨ COMO FUNCIONA A MÁGICA (REFINADO)
+             ======================================== -->
+        <section id="como-funciona" class="pl-0 md:pl-16 mb-20 text-center section-spacing">
+            <h2 class="section-title reveal">Como funciona a mágica? ✨</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6 md:gap-8">
+                <div class="step-card transform rotate-1 reveal delay-100">
+                    <span class="step-icon">📸</span>
+                    <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">1. Mande a Foto</h3>
+                    <p class="text-gray-600 text-sm md:text-base leading-relaxed">Pode ser do celular mesmo. Nossa IA ajusta a iluminação e melhora a qualidade automaticamente.</p>
+                </div>
+
+                <div class="step-card transform -rotate-1 mt-4 md:mt-0 bg-[#fff5ba] reveal delay-200">
+                    <span class="step-icon">🖍️</span>
+                    <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">2. IA Desenha</h3>
+                    <p class="text-gray-600 text-sm md:text-base leading-relaxed">Nossa inteligência artificial cria o traço grosso e limpo estilo Doodle Goods em apenas 5 minutos.</p>
+                </div>
+
+                <div class="step-card transform rotate-1 reveal delay-300">
+                    <span class="step-icon">💌</span>
+                    <h3 class="font-hand font-bold text-xl md:text-2xl mb-3">3. Você Recebe</h3>
+                    <p class="text-gray-600 text-sm md:text-base leading-relaxed">O PDF completo e todos os bônus chegam direto no seu e-mail pronto para imprimir.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             💬 DEPOIMENTOS REAIS
+             ======================================== -->
+        <section id="depoimentos" class="pl-0 md:pl-16 mb-20 section-spacing reveal">
+            <h2 class="section-title">O que nossos clientes dizem 💕</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="testimonial-card transform rotate-1 fade-in">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="text-gray-700 font-hand text-lg leading-relaxed">
+                        "Meu gato ficou PERFEITO! A qualidade do traço é incrível. Já imprimi 3 vezes porque todo mundo quer colorir!"
+                    </p>
+                    <div class="testimonial-author">- Ana Paula, São Paulo</div>
+                </div>
+                
+                <div class="testimonial-card transform -rotate-1 fade-in delay-1000">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="text-gray-700 font-hand text-lg leading-relaxed">
+                        "Presenteei minha mãe e ela chorou de emoção. O livro ficou lindo e ela já está no segundo!"
+                    </p>
+                    <div class="testimonial-author">- Rafael, Belo Horizonte</div>
+                </div>
+                
+                <div class="testimonial-card transform rotate-1 fade-in delay-2000">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="text-gray-700 font-hand text-lg leading-relaxed">
+                        "Super rápido! Em 10 minutos já tinha o PDF. Minha cachorrinha virou obra de arte! 🐕"
+                    </p>
+                    <div class="testimonial-author">- Mariana, Rio de Janeiro</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             🎁 O QUE VOCÊ RECEBE
+             ======================================== -->
+        <section id="o-que-recebe" class="pl-0 md:pl-16 mb-20 section-spacing reveal">
+            <h2 class="section-title">O que você recebe no Kit Completo 🎁</h2>
+            
+            <div class="max-w-3xl mx-auto bg-[#fcf8e3] border-2 border-dashed border-yellow-400 rounded-xl p-6 md:p-8 relative">
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-3xl animate-float">📌</div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white border-2 border-black rounded-lg p-6 transform rotate-1 hover:scale-105 transition-transform">
+                        <div class="text-4xl mb-3">📚</div>
+                        <h3 class="font-hand font-bold text-xl mb-2">Livro de Colorir PDF</h3>
+                        <p class="text-gray-600 text-sm">Formato A4, pronto para imprimir. Alta qualidade e traço perfeito.</p>
+                    </div>
+                    
+                    <div class="bg-white border-2 border-black rounded-lg p-6 transform -rotate-1 hover:scale-105 transition-transform">
+                        <div class="text-4xl mb-3">🎨</div>
+                        <h3 class="font-hand font-bold text-xl mb-2">Pack de Adesivos</h3>
+                        <p class="text-gray-600 text-sm">12 adesivos digitais do seu pet para usar onde quiser!</p>
+                    </div>
+                    
+                    <div class="bg-white border-2 border-black rounded-lg p-6 transform rotate-1 hover:scale-105 transition-transform">
+                        <div class="text-4xl mb-3">📱</div>
+                        <h3 class="font-hand font-bold text-xl mb-2">Wallpaper para Celular</h3>
+                        <p class="text-gray-600 text-sm">Versão otimizada para usar de papel de parede no seu celular.</p>
+                    </div>
+                    
+                    <div class="bg-white border-2 border-pink-300 rounded-lg p-6 transform -rotate-1 hover:scale-105 transition-transform bg-pink-50">
+                        <div class="text-4xl mb-3">🎁</div>
+                        <h3 class="font-hand font-bold text-xl mb-2">Bônus: Site Homenagem</h3>
+                        <p class="text-gray-600 text-sm">Uma página especial só do seu pet para compartilhar com quem ama!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             ❓ POR QUE FUNCIONA TÃO BEM
+             ======================================== -->
+        <section id="por-que-funciona" class="pl-0 md:pl-16 mb-20 section-spacing reveal">
+            <h2 class="section-title">Por que funciona tão bem? 🎯</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white border-3 border-black rounded-lg p-6 transform rotate-1">
+                    <div class="text-3xl mb-4">🤖</div>
+                    <h3 class="font-hand font-bold text-xl mb-3">IA de Última Geração</h3>
+                    <p class="text-gray-600 leading-relaxed">Usamos tecnologia avançada para criar traços perfeitos que preservam a personalidade do seu pet.</p>
+                </div>
+                
+                <div class="bg-white border-3 border-black rounded-lg p-6 transform -rotate-1">
+                    <div class="text-3xl mb-4">⚡</div>
+                    <h3 class="font-hand font-bold text-xl mb-3">Super Rápido</h3>
+                    <p class="text-gray-600 leading-relaxed">Em 5 a 10 minutos você já tem tudo pronto. Sem espera, sem complicação!</p>
+                </div>
+                
+                <div class="bg-white border-3 border-black rounded-lg p-6 transform rotate-1">
+                    <div class="text-3xl mb-4">🎨</div>
+                    <h3 class="font-hand font-bold text-xl mb-3">Estilo Único</h3>
+                    <p class="text-gray-600 leading-relaxed">Traço grosso e fofo estilo "Doodle Goods" que está bombando nas redes sociais.</p>
+                </div>
+                
+                <div class="bg-white border-3 border-black rounded-lg p-6 transform -rotate-1">
+                    <div class="text-3xl mb-4">💝</div>
+                    <h3 class="font-hand font-bold text-xl mb-3">Presente Perfeito</h3>
+                    <p class="text-gray-600 leading-relaxed">Presente único e personalizado que emociona quem recebe. Perfeito para qualquer ocasião!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             🖼️ GALERIA - MURAL DA COMUNIDADE
+             ======================================== -->
+        <section class="pl-0 md:pl-16 mb-20 reveal">
+            <div class="bg-[#fcf8e3] border-2 border-dashed border-yellow-400 rounded-xl p-6 md:p-8 relative">
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-3xl text-red-500 animate-float">📌</div>
+                
+                <h2 class="text-2xl md:text-3xl font-hand font-bold text-center mb-8 text-yellow-900">Mural da Comunidade</h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <div class="mural-card transform rotate-2 reveal delay-100">
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400" alt="Gato chamado Miau transformado em desenho estilo livro de colorir" class="w-full aspect-square object-cover grayscale border border-gray-100" loading="lazy" width="400" height="400">
+                        <p class="font-hand text-center mt-2 text-lg md:text-xl font-bold text-gray-600">Miau</p>
+                    </div>
+                    <div class="mural-card transform -rotate-1 reveal delay-200">
+                        <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400" alt="Cachorro chamado Thor transformado em desenho estilo livro de colorir" class="w-full aspect-square object-cover grayscale border border-gray-100" loading="lazy" width="400" height="400">
+                        <p class="font-hand text-center mt-2 text-lg md:text-xl font-bold text-gray-600">Thor</p>
+                    </div>
+                    <div class="mural-card transform rotate-3 reveal delay-300">
+                        <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=400" alt="Cachorro chamado Luna transformado em desenho estilo livro de colorir" class="w-full aspect-square object-cover grayscale border border-gray-100" loading="lazy" width="400" height="400">
+                        <p class="font-hand text-center mt-2 text-lg md:text-xl font-bold text-gray-600">Luna</p>
+                    </div>
+                    <div class="mural-card transform -rotate-2 reveal delay-400">
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400" alt="Cachorro chamado Max transformado em desenho estilo livro de colorir" class="w-full aspect-square object-cover grayscale border border-gray-100" loading="lazy" width="400" height="400">
+                        <p class="font-hand text-center mt-2 text-lg md:text-xl font-bold text-gray-600">Max</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             💰 OFERTA E PRICING
+             ======================================== -->
+        <section id="pricing" class="pl-0 md:pl-16 mb-20 reveal">
+            <div class="max-w-md mx-auto pricing-card text-center transform rotate-1">
+                <div class="pricing-header">OFERTA ESPECIAL</div>
+                
+                <h3 class="font-hand text-3xl md:text-4xl font-bold mb-2 text-gray-800">Kit Digital Completo</h3>
+                <p class="text-sm text-gray-500 mb-6 font-hand text-base md:text-lg">Entrega Imediata no E-mail</p>
+
+                <div class="bg-white/80 border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-6 text-left mb-6">
+                    <ul class="space-y-3 font-bold text-gray-700 text-sm md:text-base">
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Livro de Colorir (PDF A4)</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Pack de Adesivos Digitais</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Wallpaper p/ Celular</li>
+                        <li class="flex items-center gap-3 bg-pink-50 p-2 -ml-2 rounded border border-pink-100"><i class="fas fa-gift text-pink-500"></i> Bônus: <strong>Site Homenagem</strong></li>
+                    </ul>
+                </div>
+
+                <div class="mb-6">
+                    <p class="text-gray-400 line-through font-hand text-lg md:text-xl decoration-red-500 decoration-2">De R$ 97,90</p>
+                    <div class="text-5xl md:text-6xl font-hand font-bold text-[#2d2d2d] my-1">R$ 27,90</div>
+                    <p class="text-xs text-gray-400">Pagamento único • PIX ou Cartão</p>
+                </div>
+
+                <a href="#checkout" class="btn-sticker btn-pink w-full py-4 text-xl md:text-2xl hover:scale-105 transition shadow-lg" aria-label="Comprar kit completo de livro de colorir personalizado">
+                    QUERO MEU KIT! 🐾
+                </a>
+            </div>
+        </section>
+
+        <!-- ========================================
+             🎁 PRESENTEIE ALGUÉM
+             ======================================== -->
+        <section id="presenteie" class="pl-0 md:pl-16 mb-20 section-spacing reveal">
+            <div class="max-w-3xl mx-auto bg-gradient-to-br from-pink-100 to-purple-100 border-3 border-black rounded-xl p-6 md:p-8 text-center transform rotate-1">
+                <div class="text-5xl mb-4 animate-float">🎁</div>
+                <h2 class="font-hand text-3xl md:text-4xl font-bold mb-4">Presenteie Alguém Especial!</h2>
+                <p class="text-gray-700 text-lg md:text-xl mb-6 font-hand leading-relaxed">
+                    Que tal surpreender quem você ama com um presente único e personalizado? Perfeito para aniversários, Dia das Mães, Natal ou qualquer momento especial!
+                </p>
+                <a href="#pricing" class="btn-sticker btn-pink px-8 py-4 text-xl hover-scale inline-block" aria-label="Criar presente personalizado de livro de colorir">
+                    Fazer um Presente 🎀
+                </a>
+            </div>
+        </section>
+
+        <!-- ========================================
+             ❓ FAQ (PERGUNTAS FREQUENTES)
+             ======================================== -->
+        <section class="pl-0 md:pl-16 mb-20 reveal">
+            <h2 class="section-title">Dúvidas Frequentes <span class="text-3xl">🤔</span></h2>
+            
+            <div class="max-w-2xl mx-auto space-y-4">
+                <details class="group step-card text-left p-0 overflow-hidden transform rotate-1 cursor-pointer">
+                    <summary class="flex justify-between items-center p-4 md:p-6 font-bold text-base md:text-lg list-none">
+                        <span>🐶 Serve para qualquer animal?</span>
+                        <span class="transition-transform group-open:rotate-180 text-2xl" aria-hidden="true">⌄</span>
+                    </summary>
+                    <div class="px-4 md:px-6 pb-4 md:pb-6 text-gray-600 font-hand text-base md:text-lg border-t-2 border-dashed border-gray-200 pt-4">
+                        Sim! Cães, gatos, coelhos, pássaros, hamsters... Nossa IA é treinada para reconhecer e desenhar qualquer pet com muito carinho.
+                    </div>
+                </details>
+
+                <details class="group step-card text-left p-0 overflow-hidden transform -rotate-1 cursor-pointer">
+                    <summary class="flex justify-between items-center p-4 md:p-6 font-bold text-base md:text-lg list-none">
+                        <span>⏱️ Quanto tempo demora?</span>
+                        <span class="transition-transform group-open:rotate-180 text-2xl" aria-hidden="true">⌄</span>
+                    </summary>
+                    <div class="px-4 md:px-6 pb-4 md:pb-6 text-gray-600 font-hand text-base md:text-lg border-t-2 border-dashed border-gray-200 pt-4">
+                        É super rápido! Após o pagamento, você envia a foto e em cerca de 5 a 10 minutos recebe o kit completo no seu e-mail.
+                    </div>
+                </details>
+
+                <details class="group step-card text-left p-0 overflow-hidden transform rotate-1 cursor-pointer">
+                    <summary class="flex justify-between items-center p-4 md:p-6 font-bold text-base md:text-lg list-none">
+                        <span>📦 Recebo algo em casa?</span>
+                        <span class="transition-transform group-open:rotate-180 text-2xl" aria-hidden="true">⌄</span>
+                    </summary>
+                    <div class="px-4 md:px-6 pb-4 md:pb-6 text-gray-600 font-hand text-base md:text-lg border-t-2 border-dashed border-gray-200 pt-4">
+                        Não, o produto é <strong>100% Digital</strong>. Isso garante que você não pague frete e possa imprimir quantas vezes quiser (em papel, caneca, camiseta, etc).
+                    </div>
+                </details>
+                
+                <details class="group step-card text-left p-0 overflow-hidden transform -rotate-1 cursor-pointer">
+                    <summary class="flex justify-between items-center p-4 md:p-6 font-bold text-base md:text-lg list-none">
+                        <span>🎨 Como devo imprimir?</span>
+                        <span class="transition-transform group-open:rotate-180 text-2xl" aria-hidden="true">⌄</span>
+                    </summary>
+                    <div class="px-4 md:px-6 pb-4 md:pb-6 text-gray-600 font-hand text-base md:text-lg border-t-2 border-dashed border-gray-200 pt-4">
+                        Recomendamos imprimir em papel A4 comum ou papel com gramatura maior (120g ou 180g) se for usar canetinhas fortes ou aquarela!
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- ========================================
+             📞 FOOTER
+             ======================================== -->
+        <footer class="text-center text-gray-400 font-hand text-base md:text-lg border-t border-dashed border-gray-300 pt-8 mt-12">
+            <p>Feito com ❤️, Café e Patinhas.</p>
+            <p class="text-sm mt-1">© 2025 PetStory</p>
+        </footer>
+
+    </main>
+
+    <!-- ========================================
+         📱 CTA STICKY MOBILE MELHORADO
+         ======================================== -->
+    <div class="cta-sticky">
+        <div class="flex flex-col pl-2">
+            <span class="text-[10px] text-pink-500 font-bold line-through font-hand">R$ 97,90</span>
+            <span class="text-2xl md:text-3xl font-hand font-bold text-gray-900 leading-none">R$ 27,90</span>
+        </div>
+        <a href="#pricing" class="flex-1 btn-sticker btn-green py-3 text-base md:text-xl font-bold text-center shadow-none">
+            Quero Agora! 🎨
+        </a>
+    </div>
+
+    <script>
+        /* ========================================
+           🎯 SCRIPTS E INTERATIVIDADES
+           ======================================== */
+        
+        /* Slider Comparativo - Versão Final Funcional */
+        (function() {
+            var activeContainer = null;
+            var activeSlider = null;
+            
+        function initComparisons() {
+                var containers = document.querySelectorAll(".img-comp-container");
+                
+                containers.forEach(function(container) {
+                    if (container.dataset.sliderReady === 'true') return;
+                    
+                    var overlay = container.querySelector('.img-comp-overlay');
+                    if (!overlay) return;
+                    
+                    var overlayImg = overlay.querySelector('img');
+                    if (!overlayImg) return;
+                    
+                    var baseImgContainer = container.querySelector('.img-comp-img:not(.img-comp-overlay)');
+                    var baseImg = baseImgContainer ? baseImgContainer.querySelector('img') : null;
+                    if (!baseImg) return;
+                    
+                    // Espera container e imagens carregarem
+                    function setup() {
+                        var w = container.offsetWidth;
+                        if (w === 0) {
+                            setTimeout(setup, 200);
+                            return;
+                        }
+                        
+                        container.dataset.sliderReady = 'true';
+                        
+                        // Configura overlay
+                        overlay.style.width = (w / 2) + "px";
+                        overlayImg.style.width = w + "px";
+                        overlayImg.style.height = "100%";
+                        
+                        // Cria slider se não existir
+                        var slider = container.querySelector('.img-comp-slider');
+                        if (!slider) {
+                            slider = document.createElement("div");
+                            slider.className = "img-comp-slider";
+                slider.innerHTML = "<i class='fas fa-arrows-alt-h text-gray-800' aria-label='Arraste para comparar antes e depois'></i>";
+                            container.appendChild(slider);
+                        }
+                        
+                        // Cria divider se não existir
+                        var divider = container.querySelector('.img-comp-divider');
+                        if (!divider) {
+                            divider = document.createElement("div");
+                            divider.className = "img-comp-divider";
+                            container.appendChild(divider);
+                        }
+                        
+                        // Função para atualizar posição
+                        function moveSlider(x) {
+                            x = Math.max(0, Math.min(container.offsetWidth, x));
+                            overlay.style.width = x + "px";
+                            if (slider) {
+                                slider.style.left = (x - 25) + "px";
+                            }
+                            if (divider) {
+                                divider.style.left = x + "px";
+                            }
+                        }
+                        
+                        // Posição inicial
+                        moveSlider(w / 2);
+                        
+                        // Eventos do slider
+                        var dragging = false;
+                        
+                        function startDrag(e) {
+                            dragging = true;
+                            activeContainer = container;
+                            activeSlider = slider;
+                            slider.classList.add('dragging');
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
+                        
+                        function endDrag() {
+                            dragging = false;
+                            if (activeSlider) {
+                                activeSlider.classList.remove('dragging');
+                            }
+                            activeContainer = null;
+                            activeSlider = null;
+                        }
+                        
+                        function drag(e) {
+                            if (!dragging || activeContainer !== container) return;
+                            e.preventDefault();
+                            var rect = container.getBoundingClientRect();
+                            var clientX = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+                            var x = clientX - rect.left;
+                            moveSlider(x);
+                        }
+                        
+                        // Remove listeners antigos
+                        var newSlider = slider.cloneNode(true);
+                        slider.parentNode.replaceChild(newSlider, slider);
+                        slider = newSlider;
+                        
+                        slider.addEventListener('mousedown', startDrag);
+                        slider.addEventListener('touchstart', startDrag, {passive: false});
+                        
+                        document.addEventListener('mousemove', drag);
+                        document.addEventListener('touchmove', drag, {passive: false});
+                        document.addEventListener('mouseup', endDrag);
+                        document.addEventListener('touchend', endDrag);
+                        
+                        // Click no container
+                        container.addEventListener('click', function(e) {
+                            if (e.target === slider || slider.contains(e.target)) return;
+                            if (dragging) return;
+                            var rect = container.getBoundingClientRect();
+                            var clientX = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+                            var x = clientX - rect.left;
+                            moveSlider(x);
+                        });
+                    }
+                    
+                    // Aguarda ambas imagens carregarem
+                    function checkImages() {
+                        var imagesLoaded = 0;
+                        var totalImages = 2;
+                        
+                        function trySetup() {
+                            imagesLoaded++;
+                            if (imagesLoaded >= totalImages) {
+                                setTimeout(setup, 100);
+                            }
+                        }
+                        
+                        if (baseImg.complete) {
+                            trySetup();
+                        } else {
+                            baseImg.addEventListener('load', trySetup, {once: true});
+                            baseImg.addEventListener('error', trySetup, {once: true});
+                        }
+                        
+                        if (overlayImg.complete) {
+                            trySetup();
+                        } else {
+                            overlayImg.addEventListener('load', trySetup, {once: true});
+                            overlayImg.addEventListener('error', trySetup, {once: true});
+                        }
+                    }
+                    
+                    checkImages();
+                });
+            }
+            
+            // Inicializa
+            function startInit() {
+                initComparisons();
+                setTimeout(initComparisons, 500);
+                setTimeout(initComparisons, 1500);
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', startInit);
+            } else {
+                startInit();
+            }
+            
+            window.addEventListener('load', function() {
+                setTimeout(initComparisons, 500);
+            });
+            
+            // Expor função globalmente para debug
+            window.initComparisons = initComparisons;
+        })();
+        
+        /* Scroll Reveal Melhorado */
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+            
+            // Fade in para elementos com essa classe
+            var fadeIns = document.querySelectorAll(".fade-in");
+            for (var i = 0; i < fadeIns.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = fadeIns[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    fadeIns[i].style.opacity = "1";
+                    fadeIns[i].style.transform = "translateY(0)";
+                }
+            }
+        }
+        
+        window.addEventListener("scroll", reveal);
+        reveal();
+        
+        /* Parallax Effect para os Doodles */
+        document.addEventListener("mousemove", (e) => {
+            const doodles = document.querySelectorAll(".parallax");
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            doodles.forEach(doodle => {
+                const speed = doodle.getAttribute("data-speed");
+                const xOffset = (window.innerWidth - x * 100 * speed) / 100;
+                const yOffset = (window.innerHeight - y * 100 * speed) / 100;
+                
+                doodle.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            });
+        });
+        
+        /* Smooth Scroll para links âncora */
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        /* Melhorar performance do scroll */
+        let ticking = false;
+        const optimizedReveal = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    reveal();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+        
+        window.addEventListener('scroll', optimizedReveal, { passive: true });
+    </script>
+</body>
+</html>
