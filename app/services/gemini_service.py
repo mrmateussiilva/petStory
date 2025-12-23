@@ -15,10 +15,53 @@ from app.core.config import settings
 logger = logging.getLogger(__name__)
 
 # System Prompt para estilo Bobbie Goods
+# BOBBIE_GOODS_PROMPT = (
+#     "Create a vector-style coloring book page of this pet, reimagined as a 'Bobbie Goods' character. "
+#     "Do NOT trace the photo realistically. Instead, caricature the pet to look extra chubby and soft. "
+#     "MANDATORY STYLE RULES: "
+#     "1. BODY SHAPE: Make the pet look round, squishy, and potato-shaped. Shorten the legs to be cute and stubby. "
+#     "2. FACE: Ignore realistic eyes. Use widely spaced, small black dots for eyes (kawaii style). Small, simple nose. "
+#     "3. LINE WORK: Use extremely thick, mono-weight, bold black lines (like a thick Sharpie marker). "
+#     "4. PAWS: Simplify paws into rounded 'nubs' or simple shapes. No realistic claws or toes. "
+#     "5. DECORATION: Add small floating sparkles, stars, or hearts around the pet to fill empty space. "
+#     "6. TECH SPECS: Pure white background. STRICTLY NO SHADING, NO GRAYSCALE, NO TEXTURE."
+# )
+
 BOBBIE_GOODS_PROMPT = (
-    "Transform this pet photo into a cute, chubby 'Bobbie Goods' style cartoon character. "
-    "Thick mono-weight black outlines. Kawaii face (black dot eyes). Simplified anatomy. "
-    "Pure white background. No shading."
+    "Convert this pet photo into a clean, realistic line art illustration suitable for a coloring book.\n\n"
+
+    "CORE GOAL:\n"
+    "- Preserve the pet's REAL appearance, proportions, and expression.\n"
+    "- The pet must remain clearly recognizable to its owner.\n\n"
+
+    "STYLE RULES:\n"
+    "- Create a black-and-white outline drawing (line art).\n"
+    "- Follow the natural contours of the pet from the photo.\n"
+    "- Use smooth, confident, continuous black lines.\n\n"
+
+    "LINE WORK:\n"
+    "- Medium-to-thick clean outlines.\n"
+    "- No sketchy lines.\n"
+    "- No cross-hatching.\n"
+    "- No shading, no gradients, no gray tones.\n\n"
+
+    "DETAIL CONTROL:\n"
+    "- Simplify fur into clean contour shapes.\n"
+    "- Keep facial features accurate but simplified.\n"
+    "- Eyes, nose, and mouth should reflect the real pet.\n\n"
+
+    "COLORING BOOK REQUIREMENTS:\n"
+    "- Pure white background.\n"
+    "- Black lines only.\n"
+    "- Large enclosed areas suitable for coloring.\n\n"
+
+    "COMPOSITION:\n"
+    "- Center the pet.\n"
+    "- Remove background elements completely.\n\n"
+
+    "FINAL OUTPUT:\n"
+    "- Clean, printable coloring book page.\n"
+    "- No artistic style exaggeration.\n"
 )
 
 
