@@ -1,27 +1,34 @@
-"""Simple in-memory storage for payment status (for MVP).
-In production, this should be replaced with a database."""
+"""Payment storage using SQLModel database."""
 
 import logging
 from typing import Dict, Optional
 from datetime import datetime, timedelta
+from contextlib import contextmanager
+
+from sqlmodel import Session, select
+
+from app.core.database import engine
+from app.models.payment import Payment
 
 logger = logging.getLogger(__name__)
 
 
 class PaymentStorage:
-    """Simple in-memory storage for payment status.
+    """Database-backed payment storage using SQLModel.
     
-    This is a temporary solution for MVP. In production, use a database.
+    Persists payment information to database for production use.
     """
 
     def __init__(self):
         """Initialize payment storage."""
-        # Format: {payment_id: {"status": "approved", "email": "...", "pet_name": "...", "timestamp": ...}}
-        self._payments: Dict[str, Dict] = {}
-        # Format: {external_reference: payment_id}
-        self._references: Dict[str, str] = {}
         # Cleanup old entries periodically (older than 7 days)
         self._cleanup_threshold = timedelta(days=7)
+
+    @contextmanager
+    def _get_session(self):
+        """Get a database session context manager."""
+        with Session(engine) as session:
+            yield session
 
     def save_payment(
         self,
@@ -40,17 +47,34 @@ class PaymentStorage:
             pet_name: Pet name (optional)
             external_reference: External reference from Mercado Pago
         """
-        self._payments[payment_id] = {
-            "status": status,
-            "email": email,
-            "pet_name": pet_name,
-            "timestamp": datetime.now(),
-        }
-        
-        if external_reference:
-            self._references[external_reference] = payment_id
-        
-        logger.info(f"Saved payment {payment_id} with status {status} for {email}")
+        with self._get_session() as session:
+            # Check if payment already exists
+            existing = session.exec(
+                select(Payment).where(Payment.payment_id == payment_id)
+            ).first()
+            
+            if existing:
+                # Update existing payment
+                existing.status = status
+                existing.email = email
+                existing.pet_name = pet_name
+                existing.external_reference = external_reference
+                existing.updated_at = datetime.now()
+                session.add(existing)
+                logger.info(f"Updated payment {payment_id} with status {status}")
+            else:
+                # Create new payment
+                payment = Payment(
+                    payment_id=payment_id,
+                    status=status,
+                    email=email,
+                    pet_name=pet_name,
+                    external_reference=external_reference,
+                )
+                session.add(payment)
+                logger.info(f"Saved new payment {payment_id} with status {status} for {email}")
+            
+            session.commit()
 
     def get_payment(self, payment_id: str) -> Optional[Dict]:
         """Get payment information.
@@ -61,7 +85,20 @@ class PaymentStorage:
         Returns:
             Payment information dictionary or None
         """
-        return self._payments.get(payment_id)
+        with self._get_session() as session:
+            payment = session.exec(
+                select(Payment).where(Payment.payment_id == payment_id)
+            ).first()
+            
+            if payment:
+                return {
+                    "status": payment.status,
+                    "email": payment.email,
+                    "pet_name": payment.pet_name,
+                    "timestamp": payment.created_at,
+                    "external_reference": payment.external_reference,
+                }
+            return None
 
     def get_payment_by_reference(self, external_reference: str) -> Optional[Dict]:
         """Get payment by external reference.
@@ -72,10 +109,20 @@ class PaymentStorage:
         Returns:
             Payment information dictionary or None
         """
-        payment_id = self._references.get(external_reference)
-        if payment_id:
-            return self.get_payment(payment_id)
-        return None
+        with self._get_session() as session:
+            payment = session.exec(
+                select(Payment).where(Payment.external_reference == external_reference)
+            ).first()
+            
+            if payment:
+                return {
+                    "status": payment.status,
+                    "email": payment.email,
+                    "pet_name": payment.pet_name,
+                    "timestamp": payment.created_at,
+                    "external_reference": payment.external_reference,
+                }
+            return None
 
     def is_payment_approved(self, payment_id: str) -> bool:
         """Check if payment is approved.
@@ -101,38 +148,38 @@ class PaymentStorage:
         Returns:
             True if user has an approved payment for this pet, False otherwise
         """
-        # Check if there's any approved payment for this email and pet
-        for payment_id, payment_data in self._payments.items():
-            if (
-                payment_data["email"] == email
-                and payment_data.get("pet_name") == pet_name
-                and payment_data["status"] == "approved"
-            ):
-                # Check if payment is not too old (within 24 hours)
-                age = datetime.now() - payment_data["timestamp"]
-                if age < timedelta(hours=24):
-                    return True
-        return False
+        with self._get_session() as session:
+            # Find approved payment for this email and pet within last 24 hours
+            cutoff_time = datetime.now() - timedelta(hours=24)
+            
+            payment = session.exec(
+                select(Payment)
+                .where(Payment.email == email)
+                .where(Payment.pet_name == pet_name)
+                .where(Payment.status == "approved")
+                .where(Payment.created_at >= cutoff_time)
+            ).first()
+            
+            return payment is not None
 
     def cleanup_old_payments(self) -> None:
         """Remove payments older than cleanup threshold."""
-        now = datetime.now()
-        to_remove = []
-        
-        for payment_id, payment_data in self._payments.items():
-            age = now - payment_data["timestamp"]
-            if age > self._cleanup_threshold:
-                to_remove.append(payment_id)
-        
-        for payment_id in to_remove:
-            del self._payments[payment_id]
-            # Also remove from references
-            self._references = {
-                ref: pid for ref, pid in self._references.items() if pid != payment_id
-            }
-        
-        if to_remove:
-            logger.info(f"Cleaned up {len(to_remove)} old payment records")
+        with self._get_session() as session:
+            cutoff_time = datetime.now() - self._cleanup_threshold
+            
+            old_payments = session.exec(
+                select(Payment).where(Payment.created_at < cutoff_time)
+            ).all()
+            
+            count = 0
+            for payment in old_payments:
+                session.delete(payment)
+                count += 1
+            
+            session.commit()
+            
+            if count > 0:
+                logger.info(f"Cleaned up {count} old payment records")
 
 
 # Global instance

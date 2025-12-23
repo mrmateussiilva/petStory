@@ -20,6 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 
 from app.core.config import settings
+from app.core.database import init_db
 from app.services.email_service import EmailService
 from app.services.gemini_service import GeminiGenerator
 from app.services.payment_service import PaymentService
@@ -43,6 +44,15 @@ payment_service: PaymentService = None
 async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     global gemini_service, email_service, payment_service
+    
+    # Initialize database first
+    logger.info("Initializing database...")
+    try:
+        init_db()
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Error initializing database: {e}", exc_info=True)
+        raise
     
     # Initialize services on startup
     logger.info("Initializing services...")

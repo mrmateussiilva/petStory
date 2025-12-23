@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     # Backup/Storage Configuration
     TEMP_DIR: str = "temp"  # Diretório para salvar backups dos arquivos gerados
 
+    # Database Configuration
+    DATABASE_URL: str = "sqlite:///./petstory.db"  # SQLite padrão, pode usar PostgreSQL em produção
+
     # Gemini Model Configuration
     GEMINI_IMAGE_MODEL: str = "gemini-2.5-flash-image"  # ou "gemini-3-pro-image-preview"
 
