@@ -78,6 +78,9 @@ class PaymentService:
             logger.info(f"Creating payment preference for {email} - {pet_name}")
             preference_response = self.sdk.preference().create(preference_data)
             
+            logger.debug(f"Mercado Pago response status: {preference_response.get('status')}")
+            logger.debug(f"Mercado Pago response: {preference_response}")
+            
             if preference_response["status"] == 201:
                 preference = preference_response["response"]
                 logger.info(f"Payment preference created: {preference.get('id')}")
@@ -89,7 +92,12 @@ class PaymentService:
                 }
             else:
                 error_msg = preference_response.get("message", "Unknown error")
+                error_cause = preference_response.get("cause", [])
+                if error_cause:
+                    error_details = "; ".join([f"{c.get('code', '')}: {c.get('description', '')}" for c in error_cause])
+                    error_msg = f"{error_msg} - {error_details}"
                 logger.error(f"Failed to create payment preference: {error_msg}")
+                logger.error(f"Full response: {preference_response}")
                 raise Exception(f"Failed to create payment preference: {error_msg}")
                 
         except Exception as e:

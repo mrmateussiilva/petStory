@@ -113,6 +113,38 @@ async def health():
     return {"status": "healthy"}
 
 
+@app.get("/api/pricing")
+async def get_pricing():
+    """Get current pricing and promotion information.
+    
+    Returns:
+        JSON response with pricing details
+    """
+    # Calculate discount percentage if promotion is enabled
+    if settings.PROMOTION_ENABLED:
+        discount_percent = settings.PROMOTION_DISCOUNT_PERCENT
+        original_price = settings.PRODUCT_ORIGINAL_PRICE
+        promotional_price = settings.PRODUCT_PROMOTIONAL_PRICE
+        promotion_name = settings.PROMOTION_NAME
+    else:
+        # If no promotion, use the payment price as both original and promotional
+        original_price = settings.MERCADOPAGO_PRODUCT_PRICE
+        promotional_price = settings.MERCADOPAGO_PRODUCT_PRICE
+        discount_percent = 0
+        promotion_name = None
+    
+    return {
+        "original_price": original_price,
+        "promotional_price": promotional_price,
+        "current_price": promotional_price,  # Alias for easier frontend usage
+        "discount_percent": discount_percent,
+        "promotion_enabled": settings.PROMOTION_ENABLED,
+        "promotion_name": promotion_name,
+        "currency": "BRL",
+        "currency_symbol": "R$"
+    }
+
+
 @app.post("/api/payment/create")
 async def create_payment(
     email: str = Form(...),

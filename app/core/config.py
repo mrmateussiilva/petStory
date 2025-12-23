@@ -39,8 +39,15 @@ class Settings(BaseSettings):
     # Mercado Pago Configuration
     MERCADOPAGO_ACCESS_TOKEN: str = ""  # Access token do Mercado Pago
     MERCADOPAGO_PUBLIC_KEY: str = ""  # Public key (opcional, para frontend)
-    MERCADOPAGO_PRODUCT_PRICE: float = 47.0  # Preço do produto em reais
+    MERCADOPAGO_PRODUCT_PRICE: float = 47.0  # Preço do produto em reais (preço promocional)
     MERCADOPAGO_WEBHOOK_SECRET: str = ""  # Secret para validar webhooks (opcional)
+
+    # Pricing Configuration
+    PRODUCT_ORIGINAL_PRICE: float = 94.0  # Preço original (antes da promoção)
+    PRODUCT_PROMOTIONAL_PRICE: float = 47.0  # Preço promocional atual (oferta de Natal)
+    PROMOTION_DISCOUNT_PERCENT: int = 50  # Percentual de desconto (50% OFF)
+    PROMOTION_ENABLED: bool = True  # Se a promoção está ativa
+    PROMOTION_NAME: str = "Oferta de Natal"  # Nome da promoção
 
     # CORS Configuration
     # Pode ser uma string JSON ou valores separados por vírgula

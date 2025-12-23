@@ -310,3 +310,83 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+/* ========================================
+   💰 CARREGAR PREÇOS DO BACKEND
+   ======================================== */
+// Função para buscar e atualizar preços do backend
+async function loadPricing() {
+    try {
+        // Detecta a URL da API baseado no ambiente
+        const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8000' 
+            : window.location.origin; // Usa a mesma origem em produção
+        
+        const response = await fetch(`${apiUrl}/api/pricing`);
+        
+        if (!response.ok) {
+            console.warn('Não foi possível carregar preços do servidor, usando valores padrão');
+            return;
+        }
+        
+        const pricing = await response.json();
+        
+        // Formatar preços
+        const formatPrice = (price) => {
+            return price.toFixed(2).replace('.', ',');
+        };
+        
+        // Atualizar preços na página
+        const originalPriceElements = document.querySelectorAll('[data-price="original"]');
+        const promotionalPriceElements = document.querySelectorAll('[data-price="promotional"]');
+        const discountElements = document.querySelectorAll('[data-discount]');
+        const promotionNameElements = document.querySelectorAll('[data-promotion-name]');
+        
+        // Atualizar preço original (riscado)
+        originalPriceElements.forEach(el => {
+            el.textContent = `De R$ ${formatPrice(pricing.original_price)}`;
+        });
+        
+        // Atualizar preço promocional
+        promotionalPriceElements.forEach(el => {
+            el.textContent = `R$ ${formatPrice(pricing.promotional_price)}`;
+        });
+        
+        // Atualizar desconto
+        discountElements.forEach(el => {
+            if (pricing.promotion_enabled && pricing.discount_percent > 0) {
+                el.textContent = `${pricing.discount_percent}% OFF`;
+            } else {
+                el.style.display = 'none';
+            }
+        });
+        
+        // Atualizar nome da promoção
+        promotionNameElements.forEach(el => {
+            if (pricing.promotion_name) {
+                el.textContent = pricing.promotion_name;
+            }
+        });
+        
+        // Atualizar Schema.org JSON-LD
+        const schemaScript = document.querySelector('script[type="application/ld+json"]');
+        if (schemaScript) {
+            try {
+                const schema = JSON.parse(schemaScript.textContent);
+                if (schema.offers) {
+                    schema.offers.price = pricing.promotional_price.toString();
+                }
+                schemaScript.textContent = JSON.stringify(schema);
+            } catch (e) {
+                console.warn('Erro ao atualizar Schema.org:', e);
+            }
+        }
+        
+    } catch (error) {
+        console.error('Erro ao carregar preços:', error);
+        // Em caso de erro, mantém os valores padrão do HTML
+    }
+}
+
+// Carregar preços quando a página carregar
+document.addEventListener('DOMContentLoaded', loadPricing);
+

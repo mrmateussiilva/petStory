@@ -47,7 +47,7 @@
       },
       "offers": {
         "@type": "Offer",
-        "price": "27.90",
+        "price": "47.00",
         "priceCurrency": "BRL",
         "availability": "https://schema.org/InStock"
       }
@@ -64,7 +64,7 @@
          🔔 FAIXA DE AVISO
          ======================================== -->
     <div class="bg-yellow-300 text-center py-2 border-b-2 border-yellow-500 border-dashed sticky top-0 z-50 shadow-sm font-hand text-lg">
-        ⭐ Oferta de Lançamento: <span class="bg-white px-2 rounded ml-1 font-bold">50% OFF</span> por tempo limitado!
+        ⭐ <span data-promotion-name>Oferta de Natal</span>: <span class="bg-white px-2 rounded ml-1 font-bold" data-discount>50% OFF</span> por tempo limitado!
     </div>
 
     <main class="master-paper relative" id="paper-container">
@@ -317,8 +317,8 @@
                 </div>
 
                 <div class="mb-6">
-                    <p class="text-gray-400 line-through font-hand text-lg md:text-xl decoration-red-500 decoration-2">De R$ 97,90</p>
-                    <div class="text-5xl md:text-6xl font-hand font-bold text-[#2d2d2d] my-1">R$ 27,90</div>
+                    <p class="text-gray-400 line-through font-hand text-lg md:text-xl decoration-red-500 decoration-2" data-price="original">De R$ 94,00</p>
+                    <div class="text-5xl md:text-6xl font-hand font-bold text-[#2d2d2d] my-1" data-price="promotional">R$ 47,00</div>
                     <p class="text-xs text-gray-400">Pagamento único • PIX ou Cartão</p>
                 </div>
 
@@ -424,8 +424,8 @@
          ======================================== -->
     <div class="cta-sticky">
         <div class="flex flex-col pl-2">
-            <span class="text-[10px] text-pink-500 font-bold line-through font-hand">R$ 97,90</span>
-            <span class="text-2xl md:text-3xl font-hand font-bold text-gray-900 leading-none">R$ 27,90</span>
+            <span class="text-[10px] text-pink-500 font-bold line-through font-hand" data-price="original">R$ 94,00</span>
+            <span class="text-2xl md:text-3xl font-hand font-bold text-gray-900 leading-none" data-price="promotional">R$ 47,00</span>
         </div>
         <a href="criar.html" class="flex-1 btn-sticker btn-green py-3 text-base md:text-xl font-bold text-center shadow-none">
             Quero Agora! 🎨
