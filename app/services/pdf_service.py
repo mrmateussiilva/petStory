@@ -2,7 +2,9 @@
 
 import io
 import logging
+import os
 import re
+from pathlib import Path
 from typing import List, Optional
 
 from fpdf import FPDF
@@ -21,7 +23,50 @@ class PDFService:
 
     def __init__(self):
         """Initialize PDF service."""
-        pass
+        # Get path to fonts directory
+        self.fonts_dir = Path(__file__).parent.parent.parent / "fonts"
+        self.custom_font_path = self.fonts_dir / "PatrickHand-Regular.ttf"
+        self.font_name = "PatrickHand"
+    
+    def _add_custom_font(self, pdf: FPDF) -> None:
+        """Add custom font to PDF if available.
+        
+        Args:
+            pdf: FPDF instance to add font to
+        """
+        try:
+            if self.custom_font_path.exists():
+                # Add font to FPDF (True = use font file, False = don't embed subset)
+                pdf.add_font(
+                    self.font_name,
+                    "",
+                    str(self.custom_font_path),
+                    uni=True
+                )
+                logger.info(f"Custom font loaded: {self.font_name}")
+            else:
+                logger.warning(f"Custom font not found at {self.custom_font_path}, using default")
+        except Exception as e:
+            logger.warning(f"Could not load custom font: {e}, using default")
+    
+    def _set_font(self, pdf: FPDF, style: str = "", size: int = 12) -> None:
+        """Set font with fallback to Helvetica if custom font not available.
+        
+        Args:
+            pdf: FPDF instance
+            style: Font style ("", "B", "I", "BI")
+            size: Font size
+        """
+        try:
+            # Try to use custom font
+            if self.custom_font_path.exists():
+                pdf.set_font(self.font_name, style, size)
+            else:
+                # Fallback to Helvetica
+                pdf.set_font("Helvetica", style, size)
+        except Exception as e:
+            logger.warning(f"Could not set custom font: {e}, using Helvetica")
+            pdf.set_font("Helvetica", style, size)
 
     def create_pdf_from_images(
         self, images: List[bytes], output_path: Optional[str] = None
@@ -221,13 +266,16 @@ class PDFService:
         pdf = FPDF(orientation="P", unit="mm", format="A4")
         pdf.set_auto_page_break(auto=False)  # Disable auto page break for better control
         
+        # Add custom font
+        self._add_custom_font(pdf)
+        
         # ============================================
         # PAGE 1: COVER - Uses FIRST ART IMAGE (Line Art)
         # ============================================
         pdf.add_page()
         
         # Title: "Livro de Colorir do [pet_name]"
-        pdf.set_font("Helvetica", "B", 32)
+        self._set_font(pdf, "B", 32)
         title_y = 60
         pdf.set_y(title_y)
         title_text = f"Livro de Colorir do {clean_pet_name}"
@@ -281,7 +329,7 @@ class PDFService:
         )
         
         # Title: "Quem é [pet_name]?"
-        pdf.set_font("Helvetica", "B", 24)
+        self._set_font(pdf, "B", 24)
         title_y = border_margin + 20
         pdf.set_y(title_y)
         title_text = f"Quem é {clean_pet_name}?"
@@ -289,7 +337,7 @@ class PDFService:
         
         # Subtitle: Date (italic, gray-like effect with smaller font)
         if clean_pet_date:
-            pdf.set_font("Helvetica", "I", 14)
+            self._set_font(pdf, "I", 14)
             pdf.set_text_color(100, 100, 100)  # Gray color
             pdf.set_y(pdf.get_y() + 5)
             pdf.cell(0, 8, clean_pet_date, ln=1, align="C")
@@ -343,14 +391,14 @@ class PDFService:
         
         # Body text: Story with generous margins (book-like layout)
         text_margin = 25
-        pdf.set_font("Helvetica", "", 12)
+        self._set_font(pdf, "", 12)
         pdf.set_xy(text_margin, text_start_y)
         
         # Calculate available width for text
         text_width = self.A4_WIDTH_MM - (2 * text_margin)
         
         # Multi-cell with justified text for book-like appearance
-        pdf.set_font("Helvetica", "", 11)
+        self._set_font(pdf, "", 11)
         pdf.multi_cell(
             text_width, 
             7, 
@@ -365,7 +413,7 @@ class PDFService:
             pdf.add_page()
             
             # Title for this coloring page
-            pdf.set_font("Helvetica", "B", 18)
+            self._set_font(pdf, "B", 18)
             pdf.set_y(15)
             pdf.cell(0, 12, f"Desenho #{idx}", ln=1, align="C")
             
@@ -413,7 +461,7 @@ class PDFService:
         pdf.add_page()
         
         # Title
-        pdf.set_font("Helvetica", "B", 18)
+        self._set_font(pdf, "B", 18)
         pdf.set_y(15)
         pdf.cell(0, 12, "Adesivos", ln=1, align="C")
         
@@ -440,14 +488,35 @@ class PDFService:
                     if img.mode != "RGB":
                         img = img.convert("RGB")
                     
-                    x = start_x + col * (sticker_size + spacing)
-                    y = start_y + row * (sticker_size + spacing)
+                    # Get image dimensions and aspect ratio
+                    img_width, img_height = img.size
+                    aspect_ratio = img_width / img_height
+                    
+                    # Calculate dimensions maintaining aspect ratio
+                    # Fit within sticker_size x sticker_size square
+                    if aspect_ratio > 1:
+                        # Image is wider than tall
+                        width = sticker_size
+                        height = sticker_size / aspect_ratio
+                    else:
+                        # Image is taller than wide or square
+                        height = sticker_size
+                        width = sticker_size * aspect_ratio
+                    
+                    # Center the sticker within its grid cell
+                    cell_x = start_x + col * (sticker_size + spacing)
+                    cell_y = start_y + row * (sticker_size + spacing)
+                    
+                    # Center image within cell
+                    x = cell_x + (sticker_size - width) / 2
+                    y = cell_y + (sticker_size - height) / 2
                     
                     temp_buffer = io.BytesIO()
                     img.save(temp_buffer, format="PNG")
                     temp_buffer.seek(0)
                     
-                    pdf.image(temp_buffer, x=x, y=y, w=sticker_size, h=sticker_size)
+                    # Add image maintaining aspect ratio
+                    pdf.image(temp_buffer, x=x, y=y, w=width, h=height)
                 except Exception as e:
                     logger.error(f"Error adding sticker {row * 3 + col + 1} from {sticker_path}: {e}")
         
