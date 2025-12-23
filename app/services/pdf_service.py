@@ -226,6 +226,7 @@ class PDFService:
         output_dir: str = ".",
         original_image_paths: Optional[List[str]] = None,
         sticker_paths: Optional[List[str]] = None,
+        story_text: Optional[str] = None,
     ) -> str:
         """Create a digital kit PDF with multiple pages: cover, biography, coloring pages, and sticker grid.
         
@@ -237,6 +238,7 @@ class PDFService:
             output_dir: Directory to save the PDF
             original_image_paths: List of paths to original photos - used for biography page
             sticker_paths: List of paths to sticker images. If None, uses generated_art_paths as fallback
+            story_text: Optional generated story text to be divided across coloring pages
             
         Returns:
             Path to the created PDF file
@@ -248,6 +250,27 @@ class PDFService:
         clean_pet_name = self.clean_text(pet_name)
         clean_pet_date = self.clean_text(pet_date)
         clean_pet_story = self.clean_text(pet_story)
+        
+        # Parse and divide story text into parts (one per coloring page)
+        story_parts = []
+        if story_text:
+            # Split by "---" separator
+            parts = story_text.split("---")
+            # Clean each part and remove empty lines
+            for part in parts:
+                # Remove "Parte X:" prefix if present
+                cleaned_part = re.sub(r'^Parte\s+\d+:\s*', '', part.strip(), flags=re.IGNORECASE)
+                # Remove extra whitespace and newlines
+                cleaned_part = ' '.join(cleaned_part.split())
+                if cleaned_part:
+                    story_parts.append(self.clean_text(cleaned_part))
+            
+            # If we don't have enough parts, pad with empty strings
+            while len(story_parts) < len(generated_art_paths):
+                story_parts.append("")
+            
+            # If we have too many parts, truncate
+            story_parts = story_parts[:len(generated_art_paths)]
         
         # Ensure we have at least one art
         if not generated_art_paths or len(generated_art_paths) == 0:
@@ -412,10 +435,35 @@ class PDFService:
         for idx, art_path in enumerate(generated_art_paths, 1):
             pdf.add_page()
             
+            # Get story part for this page (if available)
+            story_part = ""
+            if story_parts and idx - 1 < len(story_parts):
+                story_part = story_parts[idx - 1]
+            
             # Title for this coloring page
             self._set_font(pdf, "B", 18)
             pdf.set_y(15)
             pdf.cell(0, 12, f"Desenho #{idx}", ln=1, align="C")
+            
+            # Add story text at the top if available
+            if story_part:
+                self._set_font(pdf, "", 11)
+                pdf.set_y(pdf.get_y() + 5)
+                # Calculate available width for text
+                text_margin = 20
+                text_width = self.A4_WIDTH_MM - (2 * text_margin)
+                # Add story text with justified alignment
+                pdf.set_x(text_margin)
+                pdf.multi_cell(
+                    text_width,
+                    6,
+                    story_part,
+                    align="J"  # Justified text
+                )
+                # Update Y position after text
+                story_height = pdf.get_y()
+            else:
+                story_height = 40
             
             try:
                 img = Image.open(art_path)
@@ -425,11 +473,12 @@ class PDFService:
                 img_width, img_height = img.size
                 aspect_ratio = img_width / img_height
                 
-                # Calculate dimensions to fill entire A4 page (full bleed)
+                # Calculate dimensions to fill available space
                 # Use small margins to ensure full coverage
                 bleed_margin = 5
                 available_width = self.A4_WIDTH_MM - (2 * bleed_margin)
-                available_height = self.A4_HEIGHT_MM - 40  # Leave space for title
+                # Leave space for title and story text
+                available_height = self.A4_HEIGHT_MM - story_height - 10
                 
                 # Fill page maintaining aspect ratio
                 if aspect_ratio > (available_width / available_height):
@@ -438,14 +487,14 @@ class PDFService:
                     height = available_width / aspect_ratio
                     # Center vertically
                     x = bleed_margin
-                    y = (self.A4_HEIGHT_MM - height) / 2
+                    y = story_height + 5
                 else:
                     # Image is taller
                     height = available_height
                     width = available_height * aspect_ratio
                     # Center horizontally
                     x = (self.A4_WIDTH_MM - width) / 2
-                    y = 40
+                    y = story_height + 5
                 
                 temp_buffer = io.BytesIO()
                 img.save(temp_buffer, format="PNG")

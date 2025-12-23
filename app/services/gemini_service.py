@@ -377,4 +377,92 @@ class GeminiGenerator:
         except Exception as e:
             logger.error(f"Error generating sticker from {photo_path}: {str(e)}", exc_info=True)
             raise
+    
+    def generate_story(
+        self,
+        pet_name: str,
+        pet_date: str,
+        momentos_marcantes: str,
+        num_pages: int,
+    ) -> str:
+        """Generate a short story based on pet's memorable moments and special date.
+        
+        Args:
+            pet_name: Pet's name
+            pet_date: Pet's special date (birthday or special date)
+            momentos_marcantes: Memorable moments/biography of the pet
+            num_pages: Number of coloring pages (to divide the story)
+            
+        Returns:
+            Generated story text
+        """
+        try:
+            import asyncio
+            
+            # Create prompt for story generation
+            story_prompt = f"""Crie uma historinha curta e encantadora para um livro de colorir sobre {pet_name}.
+
+INFORMAÇÕES DO PET:
+- Nome: {pet_name}
+- Data Especial: {pet_date}
+- Momentos Marcantes: {momentos_marcantes}
+
+REQUISITOS:
+1. A historinha deve ser dividida em {num_pages} partes pequenas (uma para cada página do livro)
+2. Cada parte deve ter entre 2 e 4 frases curtas e simples
+3. Use linguagem carinhosa e adequada para crianças
+4. Mencione a data especial ({pet_date}) de forma natural na historinha
+5. Incorpore os momentos marcantes mencionados
+6. A historinha deve ser contínua, como um conto que se desenvolve página por página
+7. Use parágrafos separados por "---" para indicar cada parte/página
+
+FORMATO DE SAÍDA:
+Parte 1: [texto da primeira página]
+---
+Parte 2: [texto da segunda página]
+---
+...
+Parte {num_pages}: [texto da última página]
+
+IMPORTANTE: Não use emojis, apenas texto puro. Cada parte deve ser independente mas fazer sentido no contexto geral da historinha."""
+
+            logger.info(f"Generating story for {pet_name} with {num_pages} pages")
+            
+            # Use text generation model (not image generation)
+            # Try to get event loop
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+            
+            # Generate story using Gemini text model
+            # Use the same model but for text generation
+            response = self.model.generate_content(story_prompt)
+            
+            if not response.candidates or not response.candidates[0].content.parts:
+                raise ValueError("No story generated in response")
+            
+            # Extract text from response
+            story_text = ""
+            for part in response.candidates[0].content.parts:
+                if hasattr(part, 'text') and part.text:
+                    story_text += part.text
+            
+            if not story_text:
+                raise ValueError("No text found in story response")
+            
+            logger.info(f"Story generated successfully for {pet_name} ({len(story_text)} characters)")
+            return story_text.strip()
+            
+        except Exception as e:
+            logger.error(f"Error generating story for {pet_name}: {str(e)}", exc_info=True)
+            # Return a simple fallback story
+            fallback_story = f"Esta é a história de {pet_name}.\n\n"
+            for i in range(num_pages):
+                fallback_story += f"Parte {i+1}: {pet_name} é um pet muito especial. Na data {pet_date}, aconteceram momentos incríveis!\n\n"
+                if i < num_pages - 1:
+                    fallback_story += "---\n\n"
+            logger.warning(f"Using fallback story for {pet_name}")
+            return fallback_story
 

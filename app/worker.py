@@ -125,6 +125,22 @@ def process_pet_story(
         
         print(f"✅ {len(generated_stickers)} adesivo(s) gerado(s) com sucesso!")
         
+        # Step 1.75: Generate story based on momentos marcantes and special date
+        print(f"📖 Passo 1.75/4: Gerando historinha para o livro...")
+        story_text = ""
+        try:
+            story_text = gemini_service.generate_story(
+                pet_name=nome_pet,
+                pet_date=pet_date,
+                momentos_marcantes=pet_story,
+                num_pages=len(generated_arts),
+            )
+            print(f"✅ Historinha gerada com sucesso!")
+        except Exception as e:
+            print(f"⚠️ Erro ao gerar historinha: {str(e)} - continuando sem historinha")
+            logger.warning(f"Error generating story: {e}", exc_info=True)
+            # Continue without story - PDF will be created without story parts
+        
         # Step 2: Create PDF with create_digital_kit
         print(f"📄 Passo 2/4: Criando PDF do kit digital...")
         try:
@@ -136,6 +152,7 @@ def process_pet_story(
                 generated_art_paths=generated_arts,
                 sticker_paths=generated_stickers,  # Pass stickers separately
                 output_dir=user_temp_dir,
+                story_text=story_text,  # Pass generated story
             )
             print(f"✅ PDF criado com sucesso: {pdf_path}")
         except Exception as e:
