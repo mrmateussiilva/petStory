@@ -354,25 +354,27 @@ async def upload_pet_story(
         raise HTTPException(status_code=400, detail="História do pet é obrigatória")
     
     # Verify payment if payment service is enabled
-    if payment_service:
-        payment_verified = False
-        
-        # If payment_id is provided, verify it
-        if payment_id:
-            if payment_service.is_payment_approved(payment_id):
-                payment_verified = True
-                logger.info(f"Payment {payment_id} verified for {email}")
-        else:
-            # Check if user has any approved payment for this pet
-            if payment_storage.can_upload(email, nome_pet):
-                payment_verified = True
-                logger.info(f"Payment verified from storage for {email} - {nome_pet}")
-        
-        if not payment_verified:
-            raise HTTPException(
-                status_code=402,
-                detail="Pagamento não verificado. Por favor, complete o pagamento primeiro.",
-            )
+    # TEMPORARIAMENTE DESATIVADO PARA TESTES
+    logger.info("Payment verification is currently disabled for testing")
+    # if payment_service:
+    #     payment_verified = False
+    #     
+    #     # If payment_id is provided, verify it
+    #     if payment_id:
+    #         if payment_service.is_payment_approved(payment_id):
+    #             payment_verified = True
+    #             logger.info(f"Payment {payment_id} verified for {email}")
+    #     else:
+    #         # Check if user has any approved payment for this pet
+    #         if payment_storage.can_upload(email, nome_pet):
+    #             payment_verified = True
+    #             logger.info(f"Payment verified from storage for {email} - {nome_pet}")
+    #     
+    #     if not payment_verified:
+    #         raise HTTPException(
+    #             status_code=402,
+    #             detail="Pagamento não verificado. Por favor, complete o pagamento primeiro.",
+    #         )
     
     # Validate files
     if not fotos or len(fotos) == 0:
