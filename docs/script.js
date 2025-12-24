@@ -316,10 +316,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Função para buscar e atualizar preços do backend
 async function loadPricing() {
     try {
-        // Detecta a URL da API baseado no ambiente
-        const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:8000' 
-            : window.location.origin; // Usa a mesma origem em produção
+        // Usa config.js para obter a URL da API
+        const apiUrl = window.APP_CONFIG?.API_URL || 'https://petstory.finderbit.com.br';
         
         const response = await fetch(`${apiUrl}/api/pricing`);
         

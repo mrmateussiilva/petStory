@@ -20,6 +20,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Configuração da Aplicação (deve ser carregado antes de outros scripts) -->
+    <script src="config.js"></script>
+    
     <style>
         /* ========================================
            📐 STYLEGUIDE - VARIÁVEIS E PADRÕES
@@ -503,21 +506,13 @@
            📤 UPLOAD FORM FUNCTIONALITY
            ======================================== */
         
-        // API Configuration
-        const isDevelopment = window.location.hostname === 'localhost' || 
-                             window.location.hostname === '127.0.0.1' ||
-                             window.location.protocol === 'file:' ||
-                             !window.location.hostname;
+        // API Configuration - Usa config.js
+        const API_URL = window.APP_CONFIG?.API_URL || 'https://petstory.finderbit.com.br';
         
-        let API_URL;
-        if (isDevelopment) {
-            API_URL = 'http://localhost:8000';
-        } else {
-            API_URL = 'https://seu-backend.com';
-            console.warn('⚠️ Configure a URL do backend em produção!');
+        if (window.APP_CONFIG?.DEBUG) {
+            console.log('🔗 API URL:', API_URL);
+            console.log('🌍 Ambiente:', window.APP_CONFIG?.ENVIRONMENT);
         }
-        
-        console.log('🔗 API URL:', API_URL);
         
         const form = document.getElementById('uploadForm');
         const fileInput = document.getElementById('petFoto');
