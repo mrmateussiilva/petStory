@@ -185,13 +185,13 @@ class EmailService:
         pdf_filename: str = "kit_digital.pdf",
         homenagem_url: Optional[str] = None,
     ) -> bool:
-        """Send pet story email with PDF and HTML attachments.
+        """Send pet story email with PDF attachment.
         
         Args:
             to_email: Recipient email address
             pet_name: Pet's name (for subject)
             pdf_bytes: PDF file as bytes
-            html_content: HTML content for the tribute page
+            html_content: HTML content (not used, kept for backward compatibility)
             pdf_filename: Name for the PDF attachment
             homenagem_url: Optional URL to the tribute website for QR code
             
@@ -278,10 +278,9 @@ class EmailService:
                         <h2 style="color: #7c3aed;">🎉 O Kit Digital do {pet_name} está pronto!</h2>
                         <p>Olá!</p>
                         <p>Ficamos felizes em compartilhar que o kit digital personalizado do <strong>{pet_name}</strong> foi criado com sucesso!</p>
-                        <p>Você encontrará anexos:</p>
+                        <p>Você encontrará anexo:</p>
                         <ul>
                             <li><strong>PDF do Kit Digital</strong> - com capa, biografia, página para colorir e adesivos</li>
-                            <li><strong>Página Web de Homenagem</strong> - uma página HTML linda que você pode compartilhar ou guardar</li>
                         </ul>
                         {qr_code_html}
                         <p>Divirta-se colorindo e compartilhando as memórias do {pet_name}! 🐾</p>
@@ -308,16 +307,6 @@ class EmailService:
             )
             msg.attach(pdf_attachment)
             email_logger.debug(f"PDF attachment added: {pdf_filename}")
-            
-            # Attach HTML file
-            html_attachment = MIMEText(html_content, "html", "utf-8")
-            html_attachment.add_header(
-                "Content-Disposition",
-                "attachment",
-                filename=f"homenagem_{pet_name.replace(' ', '_')}.html",
-            )
-            msg.attach(html_attachment)
-            email_logger.debug("HTML file attachment added")
             
             # Connect to SMTP server and send
             try:
