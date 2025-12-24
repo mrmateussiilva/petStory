@@ -1,0 +1,59 @@
+# Caddyfile para PetStory API
+# Substitua api.seudominio.com pelo seu domínio real
+
+api.seudominio.com {
+    # Reverse proxy para a API
+    reverse_proxy localhost:8000 {
+        # Headers para manter informações do cliente
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        
+        # Timeouts para uploads grandes
+        transport http {
+            dial_timeout 30s
+            response_header_timeout 300s
+        }
+    }
+    
+    # Limite de tamanho de upload (100MB)
+    request_body_max_size 100MB
+    
+    # Headers de segurança
+    header {
+        # Segurança
+        -Server
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # CORS é gerenciado pelo FastAPI via CORS_ORIGINS
+    }
+    
+    # Logs
+    log {
+        output file /var/log/caddy/petstory-api.log
+        format json
+    }
+    
+    # Compressão
+    encode gzip zstd
+    
+    # Rate limiting (opcional, descomente se necessário)
+    # @rate_limit {
+    #     remote_ip
+    # }
+    # rate_limit @rate_limit {
+    #     zone dynamic {
+    #         key {remote_host}
+    #         events 100
+    #         window 1m
+    #     }
+    # }
+}
+
+# Redirecionar HTTP para HTTPS (se necessário)
+http://api.seudominio.com {
+    redir https://api.seudominio.com{uri} permanent
+}
+
