@@ -3,18 +3,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: petstory-api:latest
     container_name: petstory-api
     restart: unless-stopped
     ports:
-      - "127.0.0.1:8000:8000"  # Apenas localhost, Caddy fará o proxy
+      - "127.0.0.1:8000:8000"
     env_file:
       - .env
     volumes:
-      - ./temp:/app/temp  # Persistir arquivos temporários
-      - ./logs:/app/logs  # Persistir logs
-      - ./petstory.db:/app/petstory.db  # Persistir banco SQLite (se usar)
-    environment:
-      - TEMP_DIR=/app/temp
+      - ./data:/app/data
+      - ./logs:/app/logs
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s
@@ -27,4 +25,3 @@ services:
 networks:
   petstory-network:
     driver: bridge
-

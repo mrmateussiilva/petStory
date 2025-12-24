@@ -31,10 +31,10 @@ class Settings(BaseSettings):
     WORKER_SLEEP_SECONDS: float = 2.0  # Delay entre gerações para evitar rate limit
 
     # Backup/Storage Configuration
-    TEMP_DIR: str = "temp"  # Diretório para salvar backups dos arquivos gerados
+    TEMP_DIR: str = "/app/data/temp"  # Diretório para salvar backups dos arquivos gerados (padrão produção)
 
     # Database Configuration
-    DATABASE_URL: str = "sqlite:///./petstory.db"  # SQLite padrão, pode usar PostgreSQL em produção
+    DATABASE_URL: str = "sqlite:////app/data/database.sqlite"  # SQLite para produção
 
     # Gemini Model Configuration
     GEMINI_IMAGE_MODEL: str = "gemini-2.5-flash-image"  # ou "gemini-3-pro-image-preview"

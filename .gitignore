@@ -72,6 +72,8 @@ tmp/
 # Backup directory (contains user-generated files)
 temp/
 
-
-
+# Production data directories
+data/
+logs/
 *.db
+database.sqlite
