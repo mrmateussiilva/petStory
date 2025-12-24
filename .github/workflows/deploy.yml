@@ -1,0 +1,124 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Permite execução manual
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Add server to known hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create .env file on server
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd ~/petstory-api || exit 1
+            if [ ! -f .env ]; then
+              echo "⚠️ Arquivo .env não encontrado. Criando a partir do env.example..."
+              cp env.example .env
+              echo "✅ Arquivo .env criado. Configure as variáveis antes de continuar."
+              exit 1
+            fi
+          EOF
+
+      - name: Deploy to server
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e  # Parar em caso de erro
+            
+            echo "🚀 Iniciando deploy..."
+            
+            # Navegar para o diretório do projeto
+            cd ~/petstory-api || { echo "❌ Diretório não encontrado!"; exit 1; }
+            
+            # Fazer pull das mudanças
+            echo "📥 Fazendo pull do código..."
+            git pull origin main || { echo "❌ Erro ao fazer pull"; exit 1; }
+            
+            # Criar diretórios se não existirem
+            echo "📁 Criando diretórios necessários..."
+            mkdir -p data logs
+            
+            # Rebuild da imagem
+            echo "🔨 Reconstruindo imagem Docker..."
+            docker compose build || { echo "❌ Erro ao construir imagem"; exit 1; }
+            
+            # Parar containers antigos
+            echo "🛑 Parando containers antigos..."
+            docker compose down || true
+            
+            # Iniciar novos containers
+            echo "▶️  Iniciando containers..."
+            docker compose up -d || { echo "❌ Erro ao iniciar containers"; exit 1; }
+            
+            # Aguardar API ficar pronta
+            echo "⏳ Aguardando API ficar pronta..."
+            sleep 10
+            
+            # Verificar saúde da API
+            echo "🏥 Verificando saúde da API..."
+            if curl -f http://localhost:8000/health > /dev/null 2>&1; then
+              echo "✅ API está respondendo corretamente!"
+            else
+              echo "⚠️  API pode não estar pronta ainda. Verifique os logs:"
+              docker compose logs --tail=50 api
+              exit 1
+            fi
+            
+            # Mostrar status final
+            echo "📊 Status dos containers:"
+            docker compose ps
+            
+            echo "✅ Deploy concluído com sucesso!"
+          EOF
+
+      - name: Verify deployment
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd ~/petstory-api
+            echo "🔍 Verificando deployment..."
+            
+            # Verificar se container está rodando
+            if docker compose ps | grep -q "Up"; then
+              echo "✅ Container está rodando"
+            else
+              echo "❌ Container não está rodando!"
+              docker compose ps
+              exit 1
+            fi
+            
+            # Verificar health check
+            if curl -f http://localhost:8000/health > /dev/null 2>&1; then
+              echo "✅ Health check passou"
+            else
+              echo "❌ Health check falhou!"
+              exit 1
+            fi
+            
+            echo "✅ Verificação concluída com sucesso!"
+          EOF
+
+      - name: Show container logs
+        if: failure()
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd ~/petstory-api
+            echo "📋 Últimas 100 linhas dos logs:"
+            docker compose logs --tail=100 api
+          EOF
+
