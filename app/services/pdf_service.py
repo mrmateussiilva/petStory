@@ -227,6 +227,7 @@ class PDFService:
         original_image_paths: Optional[List[str]] = None,
         sticker_paths: Optional[List[str]] = None,
         story_text: Optional[str] = None,
+        homenagem_url: Optional[str] = None,
     ) -> str:
         """Create a digital kit PDF with multiple pages: cover, biography, coloring pages, and sticker grid.
         
@@ -666,6 +667,61 @@ class PDFService:
                     pdf.image(temp_buffer, x=x, y=y, w=width, h=height)
                 except Exception as e:
                     logger.error(f"Error adding sticker {row * 3 + col + 1} from {sticker_path}: {e}")
+        
+        # ============================================
+        # FINAL PAGE: QR CODE FOR TRIBUTE WEBSITE
+        # ============================================
+        if homenagem_url:
+            try:
+                from app.services.qrcode_service import QRCodeService
+                
+                qr_service = QRCodeService()
+                qr_image = qr_service.generate_qr_code(homenagem_url, size=150)
+                
+                # Save QR code temporarily
+                qr_path = os.path.join(output_dir, "qr_code_temp.png")
+                qr_image.save(qr_path)
+                
+                # Add new page
+                pdf.add_page()
+                
+                # Title
+                self._set_font(pdf, "B", 20)
+                pdf.set_text_color(124, 58, 237)  # Purple color
+                pdf.cell(0, 15, "Site de Homenagem", ln=1, align="C")
+                pdf.ln(5)
+                
+                # Explanatory text
+                self._set_font(pdf, "", 12)
+                pdf.set_text_color(0, 0, 0)  # Black
+                pdf.cell(0, 10, "Escaneie o QR Code abaixo para acessar", ln=1, align="C")
+                pdf.cell(0, 10, "o site de homenagem online:", ln=1, align="C")
+                pdf.ln(10)
+                
+                # Add QR code (centered)
+                qr_size_mm = 60  # 60mm = ~2.36 inches
+                x_position = (self.A4_WIDTH_MM - qr_size_mm) / 2
+                y_position = pdf.get_y()
+                pdf.image(qr_path, x=x_position, y=y_position, w=qr_size_mm, h=qr_size_mm)
+                
+                pdf.ln(qr_size_mm + 10)
+                
+                # URL below QR code
+                self._set_font(pdf, "", 10)
+                pdf.set_text_color(100, 100, 100)  # Gray
+                # Truncate URL if too long for display
+                display_url = homenagem_url
+                if len(display_url) > 60:
+                    display_url = display_url[:57] + "..."
+                pdf.cell(0, 10, display_url, ln=1, align="C", link=homenagem_url)
+                
+                # Clean up temporary file
+                if os.path.exists(qr_path):
+                    os.remove(qr_path)
+                
+                logger.info(f"QR code added to PDF for URL: {homenagem_url}")
+            except Exception as e:
+                logger.warning(f"Could not add QR code to PDF: {e}")
         
         # Save PDF
         os.makedirs(output_dir, exist_ok=True)

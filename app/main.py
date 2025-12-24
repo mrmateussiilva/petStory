@@ -17,7 +17,7 @@ from fastapi import (
 )
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 
 from app.core.config import settings
 from app.core.database import init_db
@@ -465,4 +465,43 @@ async def upload_pet_story(
     except Exception as e:
         logger.error(f"Error processing upload: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Erro ao processar upload: {str(e)}")
+
+
+@app.get("/homenagem/{homenagem_id}", response_class=HTMLResponse)
+async def serve_tribute_page(homenagem_id: str):
+    """Serve tribute page HTML by unique ID.
+
+    Args:
+        homenagem_id: Unique ID for the tribute page (12 char hash)
+
+    Returns:
+        HTML content of the tribute page
+    """
+    temp_dir = Path(settings.TEMP_DIR)
+
+    # Procurar arquivo HTML pelo ID no nome
+    # Formato esperado: homenagem_{homenagem_id}.html
+    html_files = list(temp_dir.rglob(f"homenagem_{homenagem_id}.html"))
+
+    if not html_files:
+        raise HTTPException(
+            status_code=404, detail="Página de homenagem não encontrada"
+        )
+
+    html_file = html_files[0]
+
+    # Verificar se arquivo existe
+    if not html_file.exists():
+        raise HTTPException(
+            status_code=404, detail="Arquivo de homenagem não encontrado"
+        )
+
+    # Retornar HTML com headers apropriados
+    return FileResponse(
+        path=str(html_file),
+        media_type="text/html",
+        headers={
+            "Cache-Control": "public, max-age=3600",  # Cache por 1 hora
+        },
+    )
 

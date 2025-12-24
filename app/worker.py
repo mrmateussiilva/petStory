@@ -1,5 +1,6 @@
 """Background worker for processing pet stories into digital kits."""
 
+import hashlib
 import logging
 import os
 import time
@@ -141,6 +142,15 @@ def process_pet_story(
             logger.warning(f"Error generating story: {e}", exc_info=True)
             # Continue without story - PDF will be created without story parts
         
+        # Generate unique ID for tribute page (before creating PDF and HTML)
+        homenagem_id = hashlib.md5(
+            f"{email}_{nome_pet}_{timestamp}".encode("utf-8")
+        ).hexdigest()[:12]
+        base_url = settings.API_BASE_URL.rstrip("/")
+        homenagem_url = f"{base_url}/homenagem/{homenagem_id}"
+        print(f"🔗 ID da homenagem gerado: {homenagem_id}")
+        print(f"🌐 URL pública: {homenagem_url}")
+        
         # Step 2: Create PDF with create_digital_kit
         print(f"📄 Passo 2/4: Criando PDF do kit digital...")
         try:
@@ -153,6 +163,7 @@ def process_pet_story(
                 sticker_paths=generated_stickers,  # Pass stickers separately
                 output_dir=user_temp_dir,
                 story_text=story_text,  # Pass generated story
+                homenagem_url=homenagem_url,  # Pass URL for QR code
             )
             print(f"✅ PDF criado com sucesso: {pdf_path}")
         except Exception as e:
@@ -169,12 +180,13 @@ def process_pet_story(
                 art_image_path=generated_arts[0],  # Use first art for web page
             )
             
-            # Save HTML file
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            html_path = os.path.join(user_temp_dir, f"homenagem_{timestamp}.html")
+            # Save HTML file with unique ID in filename
+            html_filename = f"homenagem_{homenagem_id}.html"
+            html_path = os.path.join(user_temp_dir, html_filename)
             with open(html_path, "w", encoding="utf-8") as f:
                 f.write(html_content)
             print(f"✅ Página web gerada: {html_path}")
+            print(f"🌐 URL pública: {homenagem_url}")
         except Exception as e:
             print(f"❌ Erro ao gerar página web: {str(e)}")
             raise
@@ -196,6 +208,7 @@ def process_pet_story(
                     pdf_bytes=pdf_bytes,
                     html_content=html_content,
                     pdf_filename=os.path.basename(pdf_path),
+                    homenagem_url=homenagem_url,  # Pass URL for QR code in email
                 )
             )
             
@@ -223,6 +236,8 @@ def process_pet_story(
             "sticker_paths": generated_stickers,
             "pdf_path": pdf_path,
             "html_path": html_path,
+            "homenagem_url": homenagem_url,  # URL pública do site
+            "homenagem_id": homenagem_id,  # ID único da homenagem
             "email_sent": email_sent,
         }
         

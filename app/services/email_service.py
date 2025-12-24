@@ -183,6 +183,7 @@ class EmailService:
         pdf_bytes: bytes,
         html_content: str,
         pdf_filename: str = "kit_digital.pdf",
+        homenagem_url: Optional[str] = None,
     ) -> bool:
         """Send pet story email with PDF and HTML attachments.
         
@@ -192,6 +193,7 @@ class EmailService:
             pdf_bytes: PDF file as bytes
             html_content: HTML content for the tribute page
             pdf_filename: Name for the PDF attachment
+            homenagem_url: Optional URL to the tribute website for QR code
             
         Returns:
             True if sent successfully, False otherwise
@@ -234,6 +236,40 @@ class EmailService:
             
             email_logger.debug(f"Email subject: {msg['Subject']}")
             
+            # Generate QR code if URL provided
+            qr_code_html = ""
+            if homenagem_url:
+                try:
+                    from app.services.qrcode_service import QRCodeService
+                    
+                    qr_service = QRCodeService()
+                    qr_base64 = qr_service.generate_qr_code_base64(homenagem_url, size=200)
+                    qr_code_html = f"""
+                    <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #f9fafb; border-radius: 10px;">
+                        <h3 style="color: #7c3aed; margin-bottom: 15px;">🌐 Acesse o Site de Homenagem</h3>
+                        <p style="color: #666; margin-bottom: 20px;">Escaneie o QR Code abaixo ou clique no link:</p>
+                        <img src="{qr_base64}" 
+                             alt="QR Code - Site de Homenagem" 
+                             style="width: 200px; height: 200px; margin: 20px auto; display: block; border: 3px solid #7c3aed; border-radius: 10px; padding: 10px; background-color: white;">
+                        <p style="margin-top: 20px;">
+                            <a href="{homenagem_url}" 
+                               style="color: #7c3aed; text-decoration: none; font-weight: bold; font-size: 14px;">
+                                {homenagem_url}
+                            </a>
+                        </p>
+                    </div>
+                    """
+                    email_logger.info(f"QR code generated for email: {homenagem_url}")
+                except Exception as e:
+                    logger.warning(f"Could not generate QR code for email: {e}")
+                    email_logger.warning(f"Could not generate QR code: {e}")
+                    # Fallback: apenas link
+                    qr_code_html = f"""
+                    <div style="text-align: center; margin: 30px 0;">
+                        <p><a href="{homenagem_url}" style="color: #7c3aed;">Acesse o site de homenagem: {homenagem_url}</a></p>
+                    </div>
+                    """
+            
             # Create HTML body
             body_html = f"""
             <html>
@@ -247,6 +283,7 @@ class EmailService:
                             <li><strong>PDF do Kit Digital</strong> - com capa, biografia, página para colorir e adesivos</li>
                             <li><strong>Página Web de Homenagem</strong> - uma página HTML linda que você pode compartilhar ou guardar</li>
                         </ul>
+                        {qr_code_html}
                         <p>Divirta-se colorindo e compartilhando as memórias do {pet_name}! 🐾</p>
                         <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
                         <p style="color: #666; font-size: 12px; text-align: center;">
