@@ -72,3 +72,6 @@ tmp/
 # Backup directory (contains user-generated files)
 temp/
 
+
+
+*.db
